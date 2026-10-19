@@ -8,7 +8,7 @@
 node tests/run-all.js
 ```
 
-Сейчас: **30/30 наборов** — синтаксис, функциональные тесты №13–41,
+Сейчас: **31/31 наборов** — синтаксис, функциональные тесты №13–41 + №43 (UI/UX),
 статика/i18n и smoke по всем ролям/разделам/языкам/темам.
 
 ## Проверка по скриншотам
@@ -45,6 +45,7 @@ node tests/test32.js
 node tests/test36.js
 node tests/test38.js
 node tests/test41.js
+node tests/test43.js
 node tests/static.js
 node tests/smoke.js
 ```
