@@ -1,7 +1,7 @@
 {
   "settings": {
     "model": "deepseek/deepseek-flash#high",
-    "maxTasks": 6,
+    "maxTasks": 8,
     "maxHours": 8,
     "taskTimeoutMinutes": 90,
     "stopOnFailure": true,
@@ -25,7 +25,13 @@
             "height": 900,
             "lang": "ru",
             "theme": "light",
-            "expect": { "selector": ".schedule-card", "count": 10, "noText": "102-PR", "minTextLength": 80 }
+            "expect": {
+              "selector": ".schedule-card",
+              "count": 10,
+              "noText": "102-PR",
+              "minTextLength": 80,
+              "hasText": "101-PR"
+            }
           },
           {
             "name": "manager-schedule-desktop-dark-en",
@@ -35,7 +41,13 @@
             "height": 900,
             "lang": "en",
             "theme": "dark",
-            "expect": { "selector": ".schedule-card", "count": 10, "noText": "102-PR", "minTextLength": 80 }
+            "expect": {
+              "selector": ".schedule-card",
+              "count": 10,
+              "noText": "102-PR",
+              "minTextLength": 80,
+              "hasText": "101-PR"
+            }
           },
           {
             "name": "manager-schedule-mobile-light-uz",
@@ -46,7 +58,13 @@
             "lang": "uz",
             "theme": "light",
             "mobile": true,
-            "expect": { "selector": ".schedule-card", "count": 10, "noText": "102-PR", "minTextLength": 80 }
+            "expect": {
+              "selector": ".schedule-card",
+              "count": 10,
+              "noText": "102-PR",
+              "minTextLength": 80,
+              "hasText": "101-PR"
+            }
           },
           {
             "name": "manager-dashboard-regression",
@@ -56,7 +74,11 @@
             "height": 900,
             "lang": "ru",
             "theme": "light",
-            "expect": { "selector": ".stat-card", "count": 3, "minTextLength": 60 }
+            "expect": {
+              "selector": ".stat-card",
+              "count": 3,
+              "minTextLength": 60
+            }
           }
         ]
       }
@@ -78,7 +100,11 @@
             "height": 900,
             "lang": "ru",
             "theme": "light",
-            "expect": { "selector": ".stat-card", "count": 4, "minTextLength": 80 }
+            "expect": {
+              "selector": ".stat-card",
+              "count": 4,
+              "minTextLength": 80
+            }
           },
           {
             "name": "admin-dashboard-desktop-dark-en",
@@ -88,7 +114,11 @@
             "height": 900,
             "lang": "en",
             "theme": "dark",
-            "expect": { "selector": ".stat-card", "count": 4, "minTextLength": 80 }
+            "expect": {
+              "selector": ".stat-card",
+              "count": 4,
+              "minTextLength": 80
+            }
           },
           {
             "name": "admin-dashboard-mobile-light-uz",
@@ -99,7 +129,11 @@
             "lang": "uz",
             "theme": "light",
             "mobile": true,
-            "expect": { "selector": ".stat-card", "count": 4, "minTextLength": 80 }
+            "expect": {
+              "selector": ".stat-card",
+              "count": 4,
+              "minTextLength": 80
+            }
           }
         ]
       }
@@ -121,7 +155,11 @@
             "height": 900,
             "lang": "ru",
             "theme": "light",
-            "expect": { "selector": "table tbody tr", "count": 1, "minTextLength": 80 }
+            "expect": {
+              "selector": "table tbody tr",
+              "count": 1,
+              "minTextLength": 80
+            }
           },
           {
             "name": "admin-users-desktop-dark-en",
@@ -131,7 +169,11 @@
             "height": 900,
             "lang": "en",
             "theme": "dark",
-            "expect": { "selector": "table tbody tr", "count": 1, "minTextLength": 80 }
+            "expect": {
+              "selector": "table tbody tr",
+              "count": 1,
+              "minTextLength": 80
+            }
           },
           {
             "name": "admin-users-mobile-light-uz",
@@ -142,7 +184,11 @@
             "lang": "uz",
             "theme": "light",
             "mobile": true,
-            "expect": { "selector": "table tbody tr", "count": 1, "minTextLength": 80 }
+            "expect": {
+              "selector": "table tbody tr",
+              "count": 1,
+              "minTextLength": 80
+            }
           }
         ]
       }
@@ -164,7 +210,10 @@
             "height": 900,
             "lang": "ru",
             "theme": "light",
-            "expect": { "hasText": "101-PR", "minTextLength": 80 }
+            "expect": {
+              "hasText": "101-PR",
+              "minTextLength": 80
+            }
           },
           {
             "name": "admin-groups-desktop-dark-en",
@@ -174,7 +223,10 @@
             "height": 900,
             "lang": "en",
             "theme": "dark",
-            "expect": { "hasText": "101-PR", "minTextLength": 80 }
+            "expect": {
+              "hasText": "101-PR",
+              "minTextLength": 80
+            }
           },
           {
             "name": "admin-groups-mobile-light-uz",
@@ -185,7 +237,10 @@
             "lang": "uz",
             "theme": "light",
             "mobile": true,
-            "expect": { "hasText": "101-PR", "minTextLength": 80 }
+            "expect": {
+              "hasText": "101-PR",
+              "minTextLength": 80
+            }
           }
         ]
       }
@@ -207,7 +262,11 @@
             "height": 900,
             "lang": "ru",
             "theme": "light",
-            "expect": { "selector": "table tbody tr", "count": 1, "minTextLength": 80 }
+            "expect": {
+              "selector": "table tbody tr",
+              "count": 1,
+              "minTextLength": 80
+            }
           },
           {
             "name": "admin-add-user-modal-ru",
@@ -219,7 +278,11 @@
             "theme": "light",
             "click": "[data-admin-action=\"add-user\"]",
             "wait": 700,
-            "expect": { "modal": true, "minTextLength": 40, "noStub": false }
+            "expect": {
+              "modal": true,
+              "minTextLength": 40,
+              "noStub": false
+            }
           },
           {
             "name": "admin-users-desktop-dark-en",
@@ -229,7 +292,11 @@
             "height": 900,
             "lang": "en",
             "theme": "dark",
-            "expect": { "selector": "table tbody tr", "count": 1, "minTextLength": 80 }
+            "expect": {
+              "selector": "table tbody tr",
+              "count": 1,
+              "minTextLength": 80
+            }
           },
           {
             "name": "admin-add-user-mobile-uz",
@@ -242,7 +309,11 @@
             "mobile": true,
             "click": "[data-admin-action=\"add-user\"]",
             "wait": 700,
-            "expect": { "modal": true, "minTextLength": 40, "noStub": false }
+            "expect": {
+              "modal": true,
+              "minTextLength": 40,
+              "noStub": false
+            }
           }
         ]
       }
@@ -264,7 +335,9 @@
             "height": 900,
             "lang": "ru",
             "theme": "light",
-            "expect": { "minTextLength": 80 }
+            "expect": {
+              "minTextLength": 80
+            }
           },
           {
             "name": "admin-managers-desktop-dark-en",
@@ -274,7 +347,9 @@
             "height": 900,
             "lang": "en",
             "theme": "dark",
-            "expect": { "minTextLength": 80 }
+            "expect": {
+              "minTextLength": 80
+            }
           },
           {
             "name": "admin-managers-mobile-light-uz",
@@ -285,7 +360,9 @@
             "lang": "uz",
             "theme": "light",
             "mobile": true,
-            "expect": { "minTextLength": 80 }
+            "expect": {
+              "minTextLength": 80
+            }
           }
         ]
       }
@@ -307,7 +384,11 @@
             "height": 900,
             "lang": "ru",
             "theme": "light",
-            "expect": { "selector": ".progress-track", "count": 1, "minTextLength": 100 }
+            "expect": {
+              "selector": ".progress-track",
+              "count": 1,
+              "minTextLength": 100
+            }
           },
           {
             "name": "admin-reports-desktop-dark-en",
@@ -317,7 +398,11 @@
             "height": 900,
             "lang": "en",
             "theme": "dark",
-            "expect": { "selector": ".progress-track", "count": 1, "minTextLength": 100 }
+            "expect": {
+              "selector": ".progress-track",
+              "count": 1,
+              "minTextLength": 100
+            }
           },
           {
             "name": "admin-reports-mobile-light-uz",
@@ -328,7 +413,11 @@
             "lang": "uz",
             "theme": "light",
             "mobile": true,
-            "expect": { "selector": ".progress-track", "count": 1, "minTextLength": 100 }
+            "expect": {
+              "selector": ".progress-track",
+              "count": 1,
+              "minTextLength": 100
+            }
           }
         ]
       }
@@ -350,7 +439,9 @@
             "height": 900,
             "lang": "ru",
             "theme": "light",
-            "expect": { "minTextLength": 80 }
+            "expect": {
+              "minTextLength": 80
+            }
           },
           {
             "name": "admin-settings-desktop-dark-en",
@@ -360,7 +451,9 @@
             "height": 900,
             "lang": "en",
             "theme": "dark",
-            "expect": { "minTextLength": 80 }
+            "expect": {
+              "minTextLength": 80
+            }
           },
           {
             "name": "admin-settings-mobile-light-uz",
@@ -371,7 +464,9 @@
             "lang": "uz",
             "theme": "light",
             "mobile": true,
-            "expect": { "minTextLength": 80 }
+            "expect": {
+              "minTextLength": 80
+            }
           }
         ]
       }

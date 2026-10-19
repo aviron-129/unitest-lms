@@ -6,6 +6,16 @@
     "keep": { "tokens": 30000 },
     "buffer": 20000
   },
+  "agents": {
+    "night": {
+      "description": "Автономный ночной исполнитель UniTest: одна задача, без вопросов",
+      "mode": "primary",
+      "model": "deepseek/deepseek-flash#high",
+      "permissions": [
+        { "action": "question", "resource": "*", "effect": "deny" }
+      ]
+    }
+  },
   "permissions": [
     { "action": "read", "resource": "*.env", "effect": "deny" },
     { "action": "read", "resource": "*.env.*", "effect": "deny" },

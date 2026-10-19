@@ -14,6 +14,7 @@
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
+const crypto = require("crypto");
 const { spawn, execFileSync } = require("child_process");
 const { pathToFileURL } = require("url");
 
@@ -289,7 +290,8 @@ async function runScenario(cdp, task, scenario, taskDir) {
       innerWidth: window.innerWidth,
       stubText: stub,
       selectorCount: sel ? document.querySelectorAll(sel).length : -1,
-      modalVisible: !!document.querySelector('.modal-overlay:not(.hidden), [class*="overlay"]:not(.hidden)')
+      modalVisible: [...document.querySelectorAll('.pt-overlay, .notif-modal, [class*="modal"], dialog[open]')]
+        .some(el => !el.classList.contains('hidden') && el.getBoundingClientRect().width > 0)
     };
   })()`);
 
@@ -300,6 +302,7 @@ async function runScenario(cdp, task, scenario, taskDir) {
 
   await cdp.screenshot(file);
   const size = fs.existsSync(file) ? fs.statSync(file).size : 0;
+  const hash = size ? crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex").slice(0, 16) : "";
 
   const checks = runChecks(task, scenario, { ...metrics, ...errors, ...clickInfo }, size);
   const ok = checks.every((c) => c.ok);
@@ -308,6 +311,7 @@ async function runScenario(cdp, task, scenario, taskDir) {
     name, role, section, width, height, lang, theme,
     screenshot: path.relative(ROOT, file).replace(/\\/g, "/"),
     screenshotBytes: size,
+    screenshotHash: hash,
     ok,
     checks,
     consoleErrors: errors.consoleErrors
@@ -370,6 +374,26 @@ async function runScenario(cdp, task, scenario, taskDir) {
       await sleep(300);
       try { fs.rmSync(launch.profile, { recursive: true, force: true }); } catch (e) {}
     }
+  }
+
+  // Защита от «залипшего» экрана: одинаковые PNG в разных темах/языках/ширинах — подозрительно
+  const seenHashes = new Map();
+  for (const r of results) {
+    if (!r.screenshotHash) continue;
+    if (seenHashes.has(r.screenshotHash)) {
+      r.ok = false;
+      r.checks.push({
+        name: "уникальный скриншот",
+        ok: false,
+        detail: `совпадает с ${seenHashes.get(r.screenshotHash)} — возможно, экран не перерисовался`
+      });
+    } else {
+      seenHashes.set(r.screenshotHash, r.name);
+    }
+  }
+  for (const r of results) {
+    const dup = r.checks.find((c) => c.name === "уникальный скриншот" && !c.ok);
+    if (dup) console.log(`  FAIL | ${r.name}: ${dup.detail}`);
   }
 
   const ok = results.length > 0 && results.every((r) => r.ok);

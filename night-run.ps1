@@ -346,7 +346,7 @@ node tests/verify-screens.js --task $id
 
   # 3.3 Запуск opencode
   $argList = @(
-    "run", "--auto", "--model", $model,
+    "run", "--auto", "--agent", "night", "--model", $model,
     "--title", "Night $id",
     "--file", $promptPath,
     "Execute exactly one task from the attached file. Work autonomously, do not ask questions."
