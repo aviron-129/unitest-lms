@@ -3539,6 +3539,356 @@
     .pt-legend { font-size: 0.78rem; color: var(--text-muted); }
 
     /* ============================================================
+       6.13 ГРУППОВОЙ ЧАТ (Промт №35)
+       ============================================================ */
+    .chat-page { display: flex; flex-direction: column; gap: 14px; }
+
+    /* Шапка чата: иконка, заголовок, подпись и бейдж «Демо» */
+    .chat-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .chat-head-icon {
+      width: 46px;
+      height: 46px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      color: #ffffff;
+      background: var(--accent);
+      font-size: 1.1rem;
+    }
+    .chat-head-text { flex: 1; min-width: 0; }
+    .chat-title { font-size: 1.12rem; font-weight: 800; line-height: 1.3; overflow-wrap: anywhere; }
+    .chat-subtitle { margin-top: 2px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
+    .chat-demo-badge {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(99, 102, 241, 0.28);
+      background: rgba(99, 102, 241, 0.12);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* Честная пометка: демо без сервера */
+    .chat-demo-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 10px 14px;
+      border: 1px dashed var(--surface-border);
+      border-radius: 12px;
+      background: var(--hover-bg);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+    .chat-demo-note i { color: var(--accent); margin-top: 2px; flex-shrink: 0; }
+
+    /* Окно чата: колонка сообщений + прижатое к низу поле ввода */
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      background: var(--surface-solid);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+    }
+    .chat-page--student .chat-panel {
+      height: calc(100vh - 330px);
+      min-height: 380px;
+    }
+    .chat-messages {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 18px;
+      background:
+        linear-gradient(180deg, rgba(99, 102, 241, 0.04), transparent 150px),
+        var(--surface-solid);
+      scrollbar-width: thin;
+    }
+    .chat-msg { display: flex; align-items: flex-end; gap: 10px; max-width: 100%; }
+    .chat-msg--other { justify-content: flex-start; }
+    .chat-msg--own { justify-content: flex-end; }
+    .chat-msg-avatar {
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 11px;
+      color: #ffffff;
+      background: var(--role, var(--accent));
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+    .chat-msg-body { max-width: min(78%, 560px); min-width: 0; }
+    .chat-msg--own .chat-msg-body { max-width: min(78%, 520px); }
+    .chat-msg-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+    }
+    .chat-msg--own .chat-msg-meta { justify-content: flex-end; }
+    .chat-msg-author {
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+    .chat-msg-time { flex-shrink: 0; }
+    .chat-msg-text {
+      padding: 10px 14px;
+      border: 1px solid var(--card-border);
+      border-radius: 14px 14px 14px 4px;
+      background: var(--card-bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+      white-space: normal;
+    }
+    .chat-msg--own .chat-msg-text {
+      border-color: transparent;
+      border-radius: 14px 14px 4px 14px;
+      background: var(--accent);
+      color: #ffffff;
+    }
+    [data-theme="dark"] .chat-msg--other .chat-msg-text {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.10);
+    }
+
+    /* Пустое состояние */
+    .chat-empty {
+      flex: 1;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .chat-empty i { font-size: 2rem; color: var(--accent); opacity: 0.7; }
+
+    /* Поле ввода и кнопка отправки */
+    .chat-composer {
+      flex-shrink: 0;
+      padding: 12px 14px 10px;
+      border-top: 1px solid var(--surface-border);
+      background: var(--surface-solid);
+    }
+    .chat-input-row { display: flex; align-items: flex-end; gap: 10px; }
+    .chat-input {
+      flex: 1;
+      min-width: 0;
+      max-height: 120px;
+      resize: none;
+      padding: 11px 14px;
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      background: var(--hover-bg);
+      color: var(--text);
+      font: inherit;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .chat-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.16);
+    }
+    .chat-input::placeholder { color: var(--text-muted); }
+    .chat-send-btn {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 16px;
+      border: none;
+      border-radius: 14px;
+      background: var(--accent);
+      color: #ffffff;
+      font: inherit;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .chat-send-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.30); }
+    .chat-send-btn:active { transform: translateY(0); }
+    .chat-composer-hint { margin-top: 7px; color: var(--text-muted); font-size: 0.7rem; }
+    .chat-composer-hint i { margin-right: 4px; }
+
+    /* Панель преподавателя: слева список групп (250px), справа чат */
+    .chat-page--teacher .chat-layout {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 14px;
+      min-width: 0;
+      height: calc(100vh - 330px);
+      min-height: 400px;
+    }
+    .chat-groups {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+      background: var(--surface-solid);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+    }
+    .chat-groups-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--surface-border);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    .chat-groups-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: rgba(99, 102, 241, 0.14);
+      color: var(--accent);
+      font-size: 0.74rem;
+      letter-spacing: 0;
+    }
+    .chat-groups-list {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px;
+      scrollbar-width: thin;
+    }
+    .chat-group-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease;
+    }
+    .chat-group-item:hover { background: var(--hover-bg); }
+    .chat-group-item.active {
+      background: rgba(99, 102, 241, 0.12);
+      border-color: rgba(99, 102, 241, 0.30);
+    }
+    .chat-group-avatar {
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      color: #ffffff;
+      background: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+    .chat-group-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .chat-group-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .chat-group-name { font-size: 0.9rem; font-weight: 700; }
+    .chat-group-time { flex-shrink: 0; color: var(--text-muted); font-size: 0.68rem; }
+    .chat-group-preview {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-muted);
+      font-size: 0.74rem;
+    }
+    .chat-panel-head {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--surface-border);
+    }
+    .chat-panel-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .chat-panel-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+    .chat-panel-sub { color: var(--text-muted); font-size: 0.72rem; }
+    .chat-back {
+      display: none;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      transition: color 0.18s ease, border-color 0.18s ease;
+    }
+    .chat-back:hover { color: var(--accent); border-color: var(--accent); }
+    .chat-page--teacher .chat-panel { height: 100%; }
+
+    /* ============================================================
        7. АДАПТИВНОСТЬ
        ============================================================ */
     /* Мобильные (<1024px): sidebar уезжает за бургер (off-canvas) */
@@ -3562,12 +3912,40 @@
       .sidebar-overlay { display: none !important; }
     }
 
+    /* Планшет/мобильный: чат преподавателя — сначала список групп,
+       после клика список скрывается и открывается чат на весь экран. */
+    @media (max-width: 899.98px) {
+      .chat-page--teacher .chat-layout {
+        display: block;
+        height: calc(100vh - 330px);
+        min-height: 420px;
+      }
+      .chat-groups { height: 100%; }
+      .chat-page--teacher .chat-panel { display: none; height: 100%; }
+      .chat-page--teacher .chat-layout.chat-open .chat-groups { display: none; }
+      .chat-page--teacher .chat-layout.chat-open .chat-panel { display: flex; }
+      .chat-back { display: inline-flex; }
+    }
+
     /* Мелкие экраны: ужимаем шапку */
     @media (max-width: 480px) {
       .header { padding: 12px 14px; flex-wrap: wrap; }
       .logo { font-size: 1.15rem; }
       .login-title { font-size: 1.7rem; }
       .lang-btn { padding: 6px 8px; font-size: 0.75rem; }
+
+      /* Чат на телефоне: на всю ширину, поле ввода прижато к низу */
+      .chat-head { gap: 11px; padding: 14px; flex-wrap: wrap; }
+      .chat-demo-badge { order: 3; }
+      .chat-page--student .chat-panel,
+      .chat-page--teacher .chat-layout { height: calc(100dvh - 350px); min-height: 300px; }
+      .chat-messages { padding: 14px 12px; }
+      .chat-msg-body,
+      .chat-msg--own .chat-msg-body { max-width: 86%; }
+      .chat-msg-author { max-width: 150px; }
+      .chat-send-btn { padding: 11px 13px; }
+      .chat-send-btn span { display: none; }
+      .chat-composer-hint { display: none; }
     }
   </style>
   <!-- KaTeX: рендер математических формул ($...$ / $$...$$) -->
@@ -4274,7 +4652,27 @@
         adminResetDb:           "Сбросить базу данных",
         adminResetHint:         "Удаляет тесты, пользователей, результаты и настройки. Язык и тема сохраняются.",
         adminResetConfirm:      "Вы уверены? Все данные (тесты, пользователи, результаты) будут удалены!",
-        adminResetDone:         "База данных очищена. Страница будет перезагружена."
+        adminResetDone:         "База данных очищена. Страница будет перезагружена.",
+        // Групповой чат (Промт №35)
+        chat:                   "Чат",
+        chatGroupTitle:         "Чат группы {0}",
+        chatSubtitle:           "Общайтесь с преподавателем и однокурсниками",
+        chatTeacherSubtitle:    "Сообщения студентам ваших групп",
+        chatMyGroups:           "Мои группы",
+        chatDemoBadge:          "Демо",
+        chatDemoNote:           "Демо без сервера: сообщения хранятся только в этом браузере (localStorage) и синхронизируются между вкладками.",
+        chatInputPlaceholder:   "Напишите сообщение...",
+        chatSend:               "Отправить",
+        chatEnterHint:          "Enter — отправить, Shift+Enter — новая строка",
+        chatEmpty:              "Пока нет сообщений. Напишите первым!",
+        chatNoMessages:         "Нет сообщений",
+        chatSelectGroup:        "Выберите группу",
+        chatBack:               "Назад",
+        chatNoGroups:           "У вас нет групп для чата",
+        chatAriaMessages:       "Сообщения чата",
+        chatAriaInput:          "Поле ввода сообщения",
+        chatYou:                "Вы",
+        chatStudents:           "Студентов: {0}"
       },
       uz: {
         welcome:        "Xush kelibsiz",
@@ -4732,7 +5130,27 @@
         adminResetDb:           "Ma'lumotlar bazasini tozalash",
         adminResetHint:         "Testlar, foydalanuvchilar, natijalar va sozlamalar o'chiriladi. Til va mavzu saqlanadi.",
         adminResetConfirm:      "Ishonchingiz komilmi? Barcha ma'lumotlar (testlar, foydalanuvchilar, natijalar) o'chiriladi!",
-        adminResetDone:         "Ma'lumotlar bazasi tozalandi. Sahifa qayta yuklanadi."
+        adminResetDone:         "Ma'lumotlar bazasi tozalandi. Sahifa qayta yuklanadi.",
+        // Guruh chati (35-vazifa)
+        chat:                   "Chat",
+        chatGroupTitle:         "{0} guruhi chati",
+        chatSubtitle:           "O'qituvchi va guruhdoshlaringiz bilan muloqot qiling",
+        chatTeacherSubtitle:    "Guruhlaringiz talabalariga xabarlar",
+        chatMyGroups:           "Mening guruhlarim",
+        chatDemoBadge:          "Demo",
+        chatDemoNote:           "Demo serversiz: xabarlar faqat shu brauzerda (localStorage) saqlanadi va oynalar orasida sinxronlanadi.",
+        chatInputPlaceholder:   "Xabar yozing...",
+        chatSend:               "Yuborish",
+        chatEnterHint:          "Enter — yuborish, Shift+Enter — yangi qator",
+        chatEmpty:              "Hozircha xabarlar yo'q. Birinchi bo'lib yozing!",
+        chatNoMessages:         "Xabarlar yo'q",
+        chatSelectGroup:        "Guruhni tanlang",
+        chatBack:               "Orqaga",
+        chatNoGroups:           "Sizda chat uchun guruhlar yo'q",
+        chatAriaMessages:       "Chat xabarlari",
+        chatAriaInput:          "Xabar kiritish maydoni",
+        chatYou:                "Siz",
+        chatStudents:           "Talabalar: {0}"
       },
       en: {
         welcome:        "Welcome",
@@ -5190,7 +5608,27 @@
         adminResetDb:           "Reset database",
         adminResetHint:         "Deletes tests, users, results and settings. Language and theme are kept.",
         adminResetConfirm:      "Are you sure? All data (tests, users, results) will be deleted!",
-        adminResetDone:         "The database has been cleared. The page will reload."
+        adminResetDone:         "The database has been cleared. The page will reload.",
+        // Group chat (task 35)
+        chat:                   "Chat",
+        chatGroupTitle:         "{0} group chat",
+        chatSubtitle:           "Chat with your teacher and classmates",
+        chatTeacherSubtitle:    "Messages to students in your groups",
+        chatMyGroups:           "My groups",
+        chatDemoBadge:          "Demo",
+        chatDemoNote:           "Serverless demo: messages are stored only in this browser (localStorage) and sync between tabs.",
+        chatInputPlaceholder:   "Write a message...",
+        chatSend:               "Send",
+        chatEnterHint:          "Enter — send, Shift+Enter — new line",
+        chatEmpty:              "No messages yet. Be the first to write!",
+        chatNoMessages:         "No messages",
+        chatSelectGroup:        "Select a group",
+        chatBack:               "Back",
+        chatNoGroups:           "You have no groups to chat with",
+        chatAriaMessages:       "Chat messages",
+        chatAriaInput:          "Message input field",
+        chatYou:                "You",
+        chatStudents:           "Students: {0}"
       }
     };
 
@@ -5248,6 +5686,7 @@
         { id: "results",    icon: "fa-square-poll-vertical",label: "results" },
         { id: "appeals",    icon: "fa-triangle-exclamation", label: "appeals" },
         { id: "announcements", icon: "fa-bullhorn",          label: "announcements" },
+        { id: "chat",       icon: "fa-comments",            label: "chat" },
         { id: "schedule",   icon: "fa-calendar-days",       label: "schedule" }
       ],
       student: [
@@ -5255,6 +5694,7 @@
         { id: "availableTests", icon: "fa-file-circle-check",  label: "availableTests" },
         { id: "schedule",       icon: "fa-calendar-days",      label: "schedule" },
         { id: "announcements",  icon: "fa-bullhorn",           label: "announcements" },
+        { id: "chat",           icon: "fa-comments",           label: "chat" },
         { id: "gradebook",      icon: "fa-book-open-reader",   label: "gradebook" },
         { id: "appeals",        icon: "fa-triangle-exclamation", label: "appeals" }
       ]
@@ -5313,6 +5753,8 @@
     const RESULTS_KEY = "unitest_results";
     // Ключ апелляций студентов (Промт №33): каждая запись привязана к resultId
     const APPEALS_KEY = "unitest_appeals";
+    // Ключ сообщений группового чата (Промт №35)
+    const MESSAGES_KEY = "unitest_messages";
     // Ключ базы тестов (Промт №14): весь mockTests пишется сюда при создании/удалении теста
     const ALL_TESTS_KEY = "unitestalltests";
     // Ключ справочника групп (Промт №25): сохранённые/созданные админом группы
@@ -6209,6 +6651,8 @@
     function logout() {
       currentRole = null;
       currentSection = null;
+      currentChatGroup = null;                             // сбрасываем состояние чата (Промт №35)
+      chatPanelOpen = false;
       closeNotifications();
       closeSidebar();
       try { closeAppealModal(); } catch (e) {}
@@ -6256,6 +6700,15 @@
       // Раздел «Объявления» — только для студента (Промт №9)
       if (currentRole === 'student' && currentSection === 'announcements') {
         box.innerHTML = renderAnnouncements();
+        return;
+      }
+
+      // Групповой чат студента (Промт №35)
+      if (currentRole === 'student' && currentSection === 'chat') {
+        box.innerHTML = renderStudentChat();
+        bindChat();
+        renderMessages();
+        scrollChatToBottom();
         return;
       }
 
@@ -6317,6 +6770,15 @@
       if (currentRole === 'teacher' && currentSection === 'announcements') {
         box.innerHTML = renderTeacherAnnouncements();
         bindTeacherAnnouncements();
+        return;
+      }
+
+      // Групповой чат преподавателя (Промт №35)
+      if (currentRole === 'teacher' && currentSection === 'chat') {
+        box.innerHTML = renderTeacherChat();
+        bindChat();
+        renderMessages();
+        scrollChatToBottom();
         return;
       }
 
@@ -7601,6 +8063,29 @@
       { id: 'g3', name: '102-DZ', course: 1, direction: 'design',       form: 'part', studentsCount: 15, teacherId: 't2' },
       { id: 'g4', name: '202-DZ', course: 2, direction: 'design',       form: 'part', studentsCount: 18, teacherId: 't2' }
     ];
+
+    /* ============================================================
+       ГРУППОВОЙ ЧАТ (Промт №35)
+       Демо-сообщения: student ↔ teacher. Реальные сообщения пользователя
+       дописываются в mockMessages и сохраняются в localStorage (MESSAGES_KEY).
+       ============================================================ */
+    const mockMessagesSeed = [
+      { id: 'msg_demo_1', groupName: '101-PR', senderName: 'Tosheva Malika Alisherovna', senderRole: 'student',
+        text: 'Здравствуйте! Подскажите, пожалуйста, будет ли консультация перед контрольной?', time: '09:12', date: '2026-10-19' },
+      { id: 'msg_demo_2', groupName: '101-PR', senderName: 'Sardor Rahimov', senderRole: 'teacher',
+        text: 'Здравствуйте! Да, в пятницу в 14:00 в аудитории 305.', time: '09:20', date: '2026-10-19' },
+      { id: 'msg_demo_3', groupName: '101-PR', senderName: 'Ivanov Ivan', senderRole: 'student',
+        text: 'Спасибо! А можно сдать работу позже?', time: '09:25', date: '2026-10-19' },
+      { id: 'msg_demo_4', groupName: '201-PR', senderName: 'Karimov Aziz', senderRole: 'student',
+        text: 'Добрый день! Когда будут результаты теста?', time: '10:05', date: '2026-10-19' },
+      { id: 'msg_demo_5', groupName: '201-PR', senderName: 'Sardor Rahimov', senderRole: 'teacher',
+        text: 'Опубликую сегодня после обеда.', time: '10:12', date: '2026-10-19' }
+    ];
+    // Рабочая копия: при старте заменяется данными из localStorage (если они есть)
+    let mockMessages = mockMessagesSeed.map(m => ({ ...m }));
+    // Текущая открытая группа и состояние мобильной колонки преподавателя
+    let currentChatGroup = null;
+    let chatPanelOpen = false;
 
     /* ============================================================
        ПАНЕЛЬ МЕНЕДЖЕРА (Промты №18–20)
@@ -13287,6 +13772,340 @@
     }
 
     /* ============================================================
+       5.13 ГРУППОВОЙ ЧАТ (Промт №35)
+       Студент ↔ преподаватель. Данные — mockMessages + localStorage
+       (ключ unitest_messages). Это демо без сервера: синхронизация между
+       вкладками идёт через событие storage, а не через WebSocket.
+       ============================================================ */
+
+    // Полное имя текущего пользователя (для определения «своих» сообщений)
+    function chatCurrentUserName() {
+      if (currentRole === 'teacher') return mockTeacher.name;
+      if (currentRole === 'student') {
+        return [mockStudent.lastName, mockStudent.firstName, mockStudent.middleName].filter(Boolean).join(' ');
+      }
+      return MOCK_USERS[currentRole] ? MOCK_USERS[currentRole].name : '';
+    }
+
+    // Приводит запись из localStorage к безопасному виду (защита от битых данных)
+    function normalizeChatMessage(m) {
+      return {
+        id: String(m && m.id ? m.id : 'msg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6)),
+        groupName: String((m && m.groupName) || ''),
+        senderName: String((m && m.senderName) || ''),
+        senderRole: m && m.senderRole === 'teacher' ? 'teacher' : 'student',
+        text: String((m && m.text) || ''),
+        time: String((m && m.time) || ''),
+        date: String((m && m.date) || '')
+      };
+    }
+
+    // Читает сообщения из localStorage. Если ключа ещё нет — оставляет демо-набор
+    // и сохраняет его, чтобы первые сообщения не «потеряли» историю.
+    function loadMessagesFromStorage(persistSeed) {
+      try {
+        const saved = JSON.parse(localStorage.getItem(MESSAGES_KEY));
+        if (Array.isArray(saved)) {
+          mockMessages = saved
+            .filter(m => m && m.groupName && typeof m.text === 'string')
+            .map(normalizeChatMessage);
+          return;
+        }
+      } catch (e) {
+        console.error("Не удалось прочитать сообщения чата:", e);
+      }
+      mockMessages = mockMessagesSeed.map(m => ({ ...m }));
+      if (persistSeed !== false) saveMessages();
+    }
+
+    // Сохраняет все сообщения в localStorage
+    function saveMessages() {
+      try {
+        localStorage.setItem(MESSAGES_KEY, JSON.stringify(mockMessages));
+      } catch (e) {
+        console.error("Не удалось сохранить сообщения чата в localStorage:", e);
+        alert(translations[currentLang].storageFull || "Не хватает места в localStorage");
+      }
+    }
+
+    // Своё ли сообщение (для выравнивания вправо)
+    function isOwnChatMessage(m) {
+      return !!m && m.senderRole === currentRole && m.senderName === chatCurrentUserName();
+    }
+
+    // HTML одного сообщения
+    function chatMessageHTML(m) {
+      const dict = translations[currentLang];
+      const own = isOwnChatMessage(m);
+      return `
+        <article class="chat-msg ${own ? 'chat-msg--own' : 'chat-msg--other'}" data-msg-id="${escapeHtml(m.id)}">
+          ${own ? '' : `<div class="chat-msg-avatar" aria-hidden="true">${escapeHtml(authorInitials(m.senderName))}</div>`}
+          <div class="chat-msg-body">
+            <div class="chat-msg-meta">
+              <span class="chat-msg-author">${own ? dict.chatYou : escapeHtml(m.senderName)}</span>
+              <span class="chat-msg-time">${escapeHtml(m.time)}</span>
+            </div>
+            <div class="chat-msg-text">${escapeHtml(m.text).replace(/\n/g, '<br>')}</div>
+          </div>
+        </article>`;
+    }
+
+    // Пустое состояние окна сообщений
+    function chatEmptyHTML() {
+      const dict = translations[currentLang];
+      return `<div class="chat-empty">
+        <i class="fas fa-comments" aria-hidden="true"></i>
+        <span>${dict.chatEmpty}</span>
+      </div>`;
+    }
+
+    // Рисует сообщения текущей группы (фильтр ровно по groupName)
+    function renderMessages() {
+      const chatMessages = mockMessages.filter(m => m.groupName === currentChatGroup);
+      console.log("Сообщений в чате", currentChatGroup, ":", chatMessages.length);
+
+      const box = document.getElementById('chatMessages');
+      if (box) {
+        box.innerHTML = chatMessages.length
+          ? chatMessages.map(chatMessageHTML).join('')
+          : chatEmptyHTML();
+      }
+      return chatMessages;
+    }
+
+    // Автопрокрутка к последнему сообщению (при открытии и после отправки)
+    function scrollChatToBottom() {
+      const box = document.getElementById('chatMessages');
+      if (box) box.scrollTop = box.scrollHeight;
+    }
+
+    // Поле ввода + кнопка «Отправить»
+    function chatComposerHTML() {
+      const dict = translations[currentLang];
+      return `
+        <div class="chat-composer">
+          <div class="chat-input-row">
+            <textarea id="chatInput" class="chat-input" rows="1" maxlength="2000"
+                      placeholder="${escapeHtml(dict.chatInputPlaceholder)}"
+                      aria-label="${escapeHtml(dict.chatAriaInput)}"></textarea>
+            <button type="button" class="chat-send-btn" id="chatSendBtn"
+                    aria-label="${escapeHtml(dict.chatSend)}" title="${escapeHtml(dict.chatSend)}">
+              <i class="fas fa-paper-plane" aria-hidden="true"></i>
+              <span>${dict.chatSend}</span>
+            </button>
+          </div>
+          <div class="chat-composer-hint"><i class="fas fa-keyboard" aria-hidden="true"></i>${dict.chatEnterHint}</div>
+        </div>`;
+    }
+
+    // Шапка чата + честная пометка «демо без сервера»
+    function chatHeadHTML(title, subtitle) {
+      const dict = translations[currentLang];
+      return `
+        <header class="chat-head">
+          <div class="chat-head-icon" aria-hidden="true"><i class="fas fa-comments"></i></div>
+          <div class="chat-head-text">
+            <h2 class="chat-title">${escapeHtml(title)}</h2>
+            <p class="chat-subtitle">${escapeHtml(subtitle)}</p>
+          </div>
+          <span class="chat-demo-badge"><i class="fas fa-circle-info" aria-hidden="true"></i> ${dict.chatDemoBadge}</span>
+        </header>
+        <div class="chat-demo-note" role="note">
+          <i class="fas fa-server" aria-hidden="true"></i>
+          <span>${dict.chatDemoNote}</span>
+        </div>`;
+    }
+
+    // Чат студента: одна группа (mockStudent.group), окно на весь экран
+    function renderStudentChat() {
+      const dict = translations[currentLang];
+      currentChatGroup = mockStudent.group;
+      chatPanelOpen = true;
+      const title = dict.chatGroupTitle.replace('{0}', mockStudent.group);
+      return `
+        <section class="chat-page chat-page--student">
+          ${chatHeadHTML(title, dict.chatSubtitle)}
+          <div class="chat-panel">
+            <div class="chat-messages" id="chatMessages" role="log" aria-live="polite"
+                 aria-label="${escapeHtml(dict.chatAriaMessages)}"></div>
+            ${chatComposerHTML()}
+          </div>
+        </section>`;
+    }
+
+    // HTML кнопки группы в левой колонке преподавателя
+    function chatGroupItemHTML(group) {
+      const dict = translations[currentLang];
+      const msgs = mockMessages.filter(m => m.groupName === group.name);
+      const last = msgs.length ? msgs[msgs.length - 1] : null;
+      const preview = last ? last.text.replace(/\s+/g, ' ').slice(0, 46) : dict.chatNoMessages;
+      return `
+        <button type="button" class="chat-group-item${group.name === currentChatGroup ? ' active' : ''}"
+                data-chat-group="${escapeHtml(group.name)}">
+          <span class="chat-group-avatar" aria-hidden="true"><i class="fas fa-user-group"></i></span>
+          <span class="chat-group-main">
+            <span class="chat-group-top">
+              <span class="chat-group-name">${escapeHtml(group.name)}</span>
+              ${last ? `<span class="chat-group-time">${escapeHtml(last.time)}</span>` : ''}
+            </span>
+            <span class="chat-group-preview">${escapeHtml(preview)}</span>
+          </span>
+        </button>`;
+    }
+
+    // Чат преподавателя: слева группы из getMyGroups(), справа окно выбранной группы
+    function renderTeacherChat() {
+      const dict = translations[currentLang];
+      const groups = getMyGroups();
+
+      if (!groups.length) {
+        return `<div class="content-placeholder">
+          <i class="fas fa-people-group"></i>
+          <span>${dict.chatNoGroups}</span>
+        </div>`;
+      }
+
+      const groupNames = groups.map(g => g.name);
+      if (!currentChatGroup || groupNames.indexOf(currentChatGroup) === -1) {
+        currentChatGroup = groupNames[0];
+        chatPanelOpen = typeof window !== 'undefined' ? window.innerWidth >= 900 : true;
+      }
+      const group = groups.find(g => g.name === currentChatGroup) || groups[0];
+      const title = dict.chatGroupTitle.replace('{0}', group.name);
+
+      return `
+        <section class="chat-page chat-page--teacher">
+          ${chatHeadHTML(title, dict.chatTeacherSubtitle)}
+          <div class="chat-layout${chatPanelOpen ? ' chat-open' : ''}">
+            <aside class="chat-groups" aria-label="${escapeHtml(dict.chatMyGroups)}">
+              <div class="chat-groups-head">
+                <span>${dict.chatMyGroups}</span>
+                <span class="chat-groups-count">${groups.length}</span>
+              </div>
+              <div class="chat-groups-list">${groups.map(chatGroupItemHTML).join('')}</div>
+            </aside>
+            <section class="chat-panel">
+              <div class="chat-panel-head">
+                <button type="button" class="chat-back" id="chatBackBtn"
+                        aria-label="${escapeHtml(dict.chatBack)}" title="${escapeHtml(dict.chatBack)}">
+                  <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                </button>
+                <div class="chat-panel-title">
+                  <span class="chat-panel-name">${escapeHtml(title)}</span>
+                  <span class="chat-panel-sub">${dict.chatStudents.replace('{0}', group.studentsCount)}</span>
+                </div>
+              </div>
+              <div class="chat-messages" id="chatMessages" role="log" aria-live="polite"
+                   aria-label="${escapeHtml(dict.chatAriaMessages)}"></div>
+              ${chatComposerHTML()}
+            </section>
+          </div>
+        </section>`;
+    }
+
+    // Навешивает обработчики: отправка, Enter, переключение групп, «Назад»
+    function bindChat() {
+      const sendBtn = document.getElementById('chatSendBtn');
+      if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+
+      const input = document.getElementById('chatInput');
+      if (input) {
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+          }
+        });
+      }
+
+      const backBtn = document.getElementById('chatBackBtn');
+      if (backBtn) {
+        backBtn.addEventListener('click', () => {
+          chatPanelOpen = false;
+          renderSectionContent();
+        });
+      }
+
+      document.querySelectorAll('#sectionContent [data-chat-group]').forEach(btn => {
+        btn.addEventListener('click', () => selectChatGroup(btn.dataset.chatGroup));
+      });
+    }
+
+    // Переключение группы у преподавателя (на мобильном открывает чат вместо списка)
+    function selectChatGroup(groupName) {
+      currentChatGroup = groupName;
+      chatPanelOpen = true;
+      console.log("Открыт чат группы:", groupName);
+      renderSectionContent();
+    }
+
+    // Отправка сообщения: пустые не отправляются, поле очищается, всё сохраняется
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input ? input.value.trim() : '';
+      if (!text) {
+        console.log("Пустое сообщение не отправлено");
+        return false;
+      }
+      if (!currentChatGroup) {
+        console.error("Не выбрана группа для чата");
+        return false;
+      }
+
+      const message = {
+        id: 'msg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        groupName: currentChatGroup,
+        senderName: chatCurrentUserName(),
+        senderRole: currentRole === 'teacher' ? 'teacher' : 'student',
+        text,
+        time: new Date().toTimeString().slice(0, 5),
+        date: new Date().toISOString().slice(0, 10)
+      };
+      mockMessages.push(message);
+      saveMessages();
+
+      if (input) input.value = '';
+      console.log("Отправлено сообщение в группу:", currentChatGroup, "Текст:", text);
+
+      if (currentRole === 'teacher') {
+        renderSectionContent();          // обновляем и превью в списке групп
+        const newInput = document.getElementById('chatInput');
+        if (newInput) { try { newInput.focus(); } catch (e) {} }
+      } else {
+        renderMessages();
+        scrollChatToBottom();
+        if (input) { try { input.focus(); } catch (e) {} }
+      }
+      return true;
+    }
+
+    // Синхронизация между вкладками: storage-событие обновляет открытый чат
+    function initChatSync() {
+      window.addEventListener('storage', (e) => {
+        if (e.key !== MESSAGES_KEY) return;
+        loadMessagesFromStorage(false);
+        if (currentSection === 'chat' && (currentRole === 'student' || currentRole === 'teacher')) {
+          if (currentRole === 'teacher') {
+            // Не теряем недописанное сообщение при перерисовке из другой вкладки
+            const draft = document.getElementById('chatInput');
+            const draftValue = draft ? draft.value : '';
+            renderSectionContent();
+            const newInput = document.getElementById('chatInput');
+            if (newInput && draftValue) {
+              newInput.value = draftValue;
+              try { newInput.focus(); } catch (e) {}
+            }
+          } else {
+            renderMessages();
+            scrollChatToBottom();
+          }
+          console.log("Чат синхронизирован из другой вкладки. Сообщений:",
+            mockMessages.filter(m => m.groupName === currentChatGroup).length);
+        }
+      });
+    }
+
+    /* ============================================================
        6. ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
        ============================================================ */
     function initApp() {
@@ -13319,6 +14138,10 @@
       loadAppealsFromStorage();
       // Восстанавливаем динамические уведомления из unitest_dynamic_notifications (Промт №34)
       loadDynamicNotificationsFromStorage();
+      // Восстанавливаем сообщения группового чата из unitest_messages (Промт №35)
+      loadMessagesFromStorage();
+      // Синхронизация чата между вкладками через событие storage (Промт №35)
+      initChatSync();
       // Демо-тесты (формулы и схемы) — только при открытии через file://
       ensureFormulaDemoTest();
       ensureDiagramDemoTest();

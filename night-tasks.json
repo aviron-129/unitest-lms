@@ -710,7 +710,71 @@
       "notes": "Студент ↔ преподаватель, сообщения в localStorage. Синхронизация между вкладками через storage. Это демо без сервера — честно указать в UI.",
       "verify": {
         "role": "student",
-        "section": "announcements"
+        "section": "chat",
+        "scenarios": [
+          {
+            "name": "student-chat-desktop-light-ru",
+            "role": "student",
+            "section": "chat",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "selector": ".chat-msg",
+              "count": 3,
+              "minTextLength": 80,
+              "hasText": "Чат группы 101-PR"
+            }
+          },
+          {
+            "name": "teacher-chat-desktop-dark-en",
+            "role": "teacher",
+            "section": "chat",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": {
+              "selector": ".chat-group-item",
+              "count": 2,
+              "minTextLength": 80,
+              "hasText": "201-PR"
+            }
+          },
+          {
+            "name": "student-chat-mobile-light-uz",
+            "role": "student",
+            "section": "chat",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "light",
+            "mobile": true,
+            "expect": {
+              "selector": ".chat-msg",
+              "count": 3,
+              "minTextLength": 60,
+              "hasText": "101-PR"
+            }
+          },
+          {
+            "name": "teacher-chat-mobile-dark-uz",
+            "role": "teacher",
+            "section": "chat",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "dark",
+            "mobile": true,
+            "expect": {
+              "selector": ".chat-group-item",
+              "count": 2,
+              "minTextLength": 60,
+              "hasText": "101-PR"
+            }
+          }
+        ]
       }
     },
     {
