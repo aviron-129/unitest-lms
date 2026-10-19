@@ -1940,6 +1940,202 @@
     .admin-user-card .results-card-row { overflow-wrap: anywhere; }
 
     /* ============================================================
+       6.8.2 ПАНЕЛЬ АДМИНИСТРАТОРА: УПРАВЛЕНИЕ ГРУППАМИ (Промт №25)
+       ============================================================ */
+    .admin-groups-toolbar { display: flex; flex-direction: column; gap: 10px; margin: 20px 0 16px; }
+    .admin-groups-summary { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+    .admin-groups-toolbar .btn-primary { white-space: nowrap; }
+    @media (min-width: 768px) {
+      .admin-groups-toolbar { flex-direction: row; align-items: center; justify-content: space-between; }
+      .admin-groups-toolbar .btn-primary { margin-left: auto; }
+    }
+
+    .admin-direction-block { margin-top: 22px; }
+    .admin-direction-block:first-of-type { margin-top: 4px; }
+    .admin-direction-block-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .admin-direction-block-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+      font-size: 0.95rem;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+    .admin-direction-block-title i { color: var(--role, var(--accent)); }
+    .admin-direction-block-count {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--role-soft, rgba(99, 102, 241, 0.16));
+      color: var(--role, var(--accent));
+      font-size: 0.74rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .admin-groups-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 640px)  { .admin-groups-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 1180px) { .admin-groups-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+    .admin-group-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+      padding: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: border-color 0.2s ease, transform 0.15s ease;
+    }
+    .admin-group-card:hover { border-color: var(--role, var(--accent)); transform: translateY(-2px); }
+    .admin-group-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-width: 0;
+    }
+    .admin-group-name {
+      font-size: 1.02rem;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      overflow-wrap: anywhere;
+    }
+    .admin-group-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .admin-group-meta span { display: inline-flex; align-items: center; gap: 6px; overflow-wrap: anywhere; }
+    .admin-group-meta i { color: var(--role, var(--accent)); font-size: 0.76rem; }
+    .admin-group-students {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+    .admin-group-students i { color: var(--role, var(--accent)); font-size: 0.78rem; }
+    .admin-group-edit { align-self: flex-start; padding: 9px 14px; font-size: 0.82rem; }
+
+    /* Модальное окно создания / редактирования группы */
+    .admin-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .admin-modal-overlay.hidden { display: none; }
+    .admin-modal {
+      width: min(520px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 20px;
+      background: var(--surface-solid);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.35);
+    }
+    .admin-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .admin-modal-title { font-size: 1.05rem; font-weight: 800; }
+    .admin-modal-close {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--surface-border);
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .admin-modal-close:hover { color: var(--role, var(--accent)); border-color: var(--role, var(--accent)); }
+    .admin-modal .form-grid { gap: 14px; }
+    .admin-modal .form-actions { margin-top: 20px; }
+    @media (max-width: 479.98px) {
+      .admin-modal-overlay { padding: 0; }
+      .admin-modal { width: 100%; max-height: 100vh; min-height: 100vh; border-radius: 0; }
+      .admin-modal .form-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Справочники факультетов и курсов */
+    .admin-ref-subtitle { margin: 4px 0 18px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+    .admin-ref-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 768px)  { .admin-ref-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 1180px) { .admin-ref-grid.admin-course-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    .admin-ref-card {
+      min-width: 0;
+      padding: 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .admin-ref-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 12px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+    .admin-ref-title i { color: var(--role, var(--accent)); }
+    .admin-ref-list { list-style: none; margin: 0; padding: 0; }
+    .admin-ref-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--card-border);
+      font-size: 0.84rem;
+    }
+    .admin-ref-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .admin-ref-item > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+    .admin-ref-count { color: var(--text-muted); font-size: 0.78rem; white-space: nowrap; }
+    .admin-ref-total {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--card-border);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .admin-ref-total span { color: var(--text-muted); }
+    .admin-ref-total strong { font-size: 0.9rem; }
+
+    /* ============================================================
        6.9 СОЗДАНИЕ ТЕСТА. ШАГ 1: ОСНОВНЫЕ НАСТРОЙКИ (Промт №12)
        ============================================================ */
     /* Форма: на мобильном 1 колонка, на десктопе — max-width 800px по центру */
@@ -3274,7 +3470,34 @@
         adminAddUser:          "Добавить пользователя",
         adminAddUserDev:       "Форма добавления в разработке",
         adminUserCardDev:      "Карточка пользователя в разработке: {0}",
-        adminUsersNotFound:    "Пользователи не найдены. Измените параметры поиска"
+        adminUsersNotFound:    "Пользователи не найдены. Измените параметры поиска",
+        // Панель администратора: управление группами (Промт №25)
+        adminCreateGroup:      "Создать группу",
+        adminEditGroup:        "Редактировать",
+        adminGroupName:        "Название группы",
+        adminGroupNamePh:      "Например, 301-PR",
+        adminGroupCourse:      "Курс",
+        adminGroupDirection:   "Направление",
+        adminGroupForm:        "Форма обучения",
+        adminSave:             "Сохранить",
+        adminNoGroups:         "Групп пока нет. Создайте первую группу",
+        adminGroupStudents:    "Студентов",
+        adminGroupSummary:     "Всего групп: {0} · направлений: {1}",
+        adminErrGroupName:     "Введите название группы",
+        adminErrGroupCourse:   "Укажите корректный курс",
+        adminErrGroupDirection:"Выберите направление",
+        adminErrGroupDuplicate:"Группа с таким названием уже существует",
+        adminGroupCreated:     "Группа создана: {0}",
+        adminGroupUpdated:     "Группа обновлена: {0}",
+        // Панель администратора: справочники факультетов и курсов (Промт №25)
+        adminFacultiesSubtitle:"Справочник факультетов и направлений",
+        adminCoursesSubtitle:  "Справочник курсов: группы и студенты",
+        adminRefDirections:    "Направления",
+        adminRefGroups:        "Группы",
+        adminRefStudents:      "Студенты",
+        facultyIt:             "Факультет информационных технологий",
+        facultyEconomics:      "Экономический факультет",
+        adminNoCourses:        "Курсы пока не заданы"
       },
       uz: {
         welcome:        "Xush kelibsiz",
@@ -3560,7 +3783,34 @@
         adminAddUser:          "Foydalanuvchi qo'shish",
         adminAddUserDev:       "Foydalanuvchi qo'shish formasi ishlab chiqilmoqda",
         adminUserCardDev:      "Foydalanuvchi kartasi ishlab chiqilmoqda: {0}",
-        adminUsersNotFound:    "Foydalanuvchilar topilmadi. Qidiruv parametrlarini o'zgartiring"
+        adminUsersNotFound:    "Foydalanuvchilar topilmadi. Qidiruv parametrlarini o'zgartiring",
+        // Панель администратора: управление группами (Промт №25)
+        adminCreateGroup:      "Guruh yaratish",
+        adminEditGroup:        "Tahrirlash",
+        adminGroupName:        "Guruh nomi",
+        adminGroupNamePh:      "Masalan, 301-PR",
+        adminGroupCourse:      "Kurs",
+        adminGroupDirection:   "Yo'nalish",
+        adminGroupForm:        "Ta'lim shakli",
+        adminSave:             "Saqlash",
+        adminNoGroups:         "Hozircha guruhlar yo'q. Birinchi guruhni yarating",
+        adminGroupStudents:    "Talabalar",
+        adminGroupSummary:     "Jami guruhlar: {0} · yo'nalishlar: {1}",
+        adminErrGroupName:     "Guruh nomini kiriting",
+        adminErrGroupCourse:   "To'g'ri kursni ko'rsating",
+        adminErrGroupDirection:"Yo'nalishni tanlang",
+        adminErrGroupDuplicate:"Bunday nomli guruh allaqachon mavjud",
+        adminGroupCreated:     "Guruh yaratildi: {0}",
+        adminGroupUpdated:     "Guruh yangilandi: {0}",
+        // Панель администратора: справочники факультетов и курсов (Промт №25)
+        adminFacultiesSubtitle:"Fakultetlar va yo'nalishlar ma'lumotnomasi",
+        adminCoursesSubtitle:  "Kurslar ma'lumotnomasi: guruhlar va talabalar",
+        adminRefDirections:    "Yo'nalishlar",
+        adminRefGroups:        "Guruhlar",
+        adminRefStudents:      "Talabalar",
+        facultyIt:             "Axborot texnologiyalari fakulteti",
+        facultyEconomics:      "Iqtisodiyot fakulteti",
+        adminNoCourses:        "Hozircha kurslar yo'q"
       },
       en: {
         welcome:        "Welcome",
@@ -3846,7 +4096,34 @@
         adminAddUser:          "Add user",
         adminAddUserDev:       "The add user form is under development",
         adminUserCardDev:      "User card is under development: {0}",
-        adminUsersNotFound:    "No users found. Change the search parameters"
+        adminUsersNotFound:    "No users found. Change the search parameters",
+        // Панель администратора: управление группами (Промт №25)
+        adminCreateGroup:      "Create group",
+        adminEditGroup:        "Edit",
+        adminGroupName:        "Group name",
+        adminGroupNamePh:      "For example, 301-PR",
+        adminGroupCourse:      "Course",
+        adminGroupDirection:   "Direction",
+        adminGroupForm:        "Study form",
+        adminSave:             "Save",
+        adminNoGroups:         "No groups yet. Create the first group",
+        adminGroupStudents:    "Students",
+        adminGroupSummary:     "Total groups: {0} · directions: {1}",
+        adminErrGroupName:     "Enter the group name",
+        adminErrGroupCourse:   "Specify a valid course",
+        adminErrGroupDirection:"Choose a direction",
+        adminErrGroupDuplicate:"A group with this name already exists",
+        adminGroupCreated:     "Group created: {0}",
+        adminGroupUpdated:     "Group updated: {0}",
+        // Панель администратора: справочники факультетов и курсов (Промт №25)
+        adminFacultiesSubtitle:"Reference of faculties and directions",
+        adminCoursesSubtitle:  "Reference of courses: groups and students",
+        adminRefDirections:    "Directions",
+        adminRefGroups:        "Groups",
+        adminRefStudents:      "Students",
+        facultyIt:             "Faculty of Information Technology",
+        facultyEconomics:      "Faculty of Economics",
+        adminNoCourses:        "No courses configured yet"
       }
     };
 
@@ -3967,6 +4244,8 @@
     const RESULTS_KEY = "unitest_results";
     // Ключ базы тестов (Промт №14): весь mockTests пишется сюда при создании/удалении теста
     const ALL_TESTS_KEY = "unitestalltests";
+    // Ключ справочника групп (Промт №25): сохранённые/созданные админом группы
+    const GROUPS_KEY = "unitest_groups";
 
     // Исторические результаты (Промт №15): прошлые прохождения из других систем.
     // К ним при слиянии добавляются записи из localStorage unitest_results.
@@ -4009,6 +4288,48 @@
         return true;
       } catch (e) {
         console.error("Не удалось сохранить тесты в localStorage:", e);
+        const dict = translations[currentLang];
+        alert(dict.storageFull || "Не хватает места в localStorage");
+        return false;
+      }
+    }
+
+    /* ---- Справочник групп (Промт №25) ---- */
+    // Восстанавливает группы из localStorage. Если ключа нет — остаются mock-группы.
+    function loadGroupsFromStorage() {
+      try {
+        const raw = localStorage.getItem(GROUPS_KEY);
+        if (raw == null) return;
+        const saved = JSON.parse(raw);
+        if (!Array.isArray(saved)) return;
+
+        mockTeacherGroups.length = 0;               // mockTeacherGroups — const, меняем содержимое
+        saved.forEach((g, index) => {
+          if (!g || typeof g !== 'object' || !g.name) return;
+          const course = Number(g.course);
+          mockTeacherGroups.push({
+            id: g.id || ('g_' + index + '_' + Date.now()),
+            name: String(g.name),
+            course: (course >= 1 && course <= 5) ? course : 1,
+            direction: g.direction || 'programming',
+            form: g.form === 'part' ? 'part' : 'full',
+            studentsCount: Number(g.studentsCount) || 0,
+            teacherId: g.teacherId || null
+          });
+        });
+        console.log("Группы восстановлены из localStorage:", mockTeacherGroups.length);
+      } catch (e) {
+        console.error("Не удалось прочитать базу групп:", e);
+      }
+    }
+
+    // Полная перезапись справочника групп в localStorage (создание/редактирование).
+    function saveGroupsToStorage() {
+      try {
+        localStorage.setItem(GROUPS_KEY, JSON.stringify(mockTeacherGroups));
+        return true;
+      } catch (e) {
+        console.error("Не удалось сохранить группы в localStorage:", e);
         const dict = translations[currentLang];
         alert(dict.storageFull || "Не хватает места в localStorage");
         return false;
@@ -4672,6 +4993,21 @@
       // Панель администратора: дашборд вуза (Промт №23)
       if (currentRole === 'admin' && currentSection === 'dashboard') {
         box.innerHTML = renderAdminDashboard();
+        return;
+      }
+
+      // Панель администратора: управление группами + справочники (Промт №25)
+      if (currentRole === 'admin' && currentSection === 'groups') {
+        box.innerHTML = renderAdminGroups();
+        bindAdminGroups();
+        return;
+      }
+      if (currentRole === 'admin' && currentSection === 'faculties') {
+        box.innerHTML = renderAdminFaculties();
+        return;
+      }
+      if (currentRole === 'admin' && currentSection === 'courses') {
+        box.innerHTML = renderAdminCourses();
         return;
       }
 
@@ -5509,6 +5845,17 @@
       { id: 's7', name: 'Volkova Olga',   group: '202-DZ', course: 2, form: 'part', category: 'regular' }
     ];
 
+    // Минимальный справочник факультетов (Промт №25): факультет объединяет
+    // направления, а группы и студенты считаются по этим направлениям.
+    const mockFaculties = [
+      { id: 'f1', nameKey: 'facultyIt',        directions: ['programming', 'design'] },
+      { id: 'f2', nameKey: 'facultyEconomics', directions: ['economics'] }
+    ];
+
+    // Порядок направлений в админке. Незнакомые направления из localStorage
+    // добавляются в конец, чтобы созданные данные не терялись.
+    const ADMIN_DIRECTION_KEYS = ['programming', 'design', 'economics'];
+
     /* ============================================================
        ПАНЕЛЬ АДМИНИСТРАТОРА: ДАШБОРД ВУЗА (Промт №23)
        ============================================================ */
@@ -5824,6 +6171,363 @@
         const row = e.target.closest('[data-admin-user]');
         if (row) {
           alert(dict.adminUserCardDev.replace('{0}', row.dataset.adminUser || ''));
+        }
+      };
+    }
+
+    /* ============================================================
+       ПАНЕЛЬ АДМИНИСТРАТОРА: УПРАВЛЕНИЕ ГРУППАМИ (Промт №25)
+       ============================================================ */
+    let adminGroupEditingId = null;
+
+    // Список направлений: сначала базовые ключи, затем любые из localStorage.
+    function adminDirectionKeys() {
+      const keys = ADMIN_DIRECTION_KEYS.slice();
+      mockTeacherGroups.forEach(g => {
+        if (g && g.direction && !keys.includes(g.direction)) keys.push(g.direction);
+      });
+      return keys;
+    }
+
+    // Количество студентов группы — по реальным записям mockAllStudents.
+    function adminGroupStudentCount(group) {
+      if (!group || !group.name) return 0;
+      const students = Array.isArray(mockAllStudents) ? mockAllStudents : [];
+      return students.filter(s => s && s.group === group.name).length;
+    }
+
+    // Название формы обучения по ключу full/part.
+    function adminFormLabel(form) {
+      const dict = translations[currentLang];
+      return form === 'part' ? dict.formPart : dict.formFull;
+    }
+
+    // Карточка одной группы: название, курс, форма, студенты, «Редактировать».
+    function adminGroupCardHTML(group) {
+      const dict = translations[currentLang];
+      const count = adminGroupStudentCount(group);
+      return `
+        <article class="admin-group-card" data-admin-group-id="${escapeHtml(String(group.id))}">
+          <div class="admin-group-card-head">
+            <span class="admin-group-name">${escapeHtml(group.name)}</span>
+            <span class="course-badge">${escapeHtml(String(group.course))} ${escapeHtml(dict.courseSuffix)}</span>
+          </div>
+          <div class="admin-group-meta">
+            <span><i class="fas fa-book-open"></i>${escapeHtml(adminFormLabel(group.form))}</span>
+            <span><i class="fas fa-compass"></i>${escapeHtml(adminDirectionLabel(group.direction))}</span>
+          </div>
+          <div class="admin-group-students">
+            <i class="fas fa-user-group"></i>${count} ${escapeHtml(studentsWord(count))}
+          </div>
+          <button type="button" class="btn-ghost admin-group-edit"
+                  data-admin-edit-group="${escapeHtml(String(group.id))}">
+            <i class="fas fa-pen"></i> ${escapeHtml(dict.adminEditGroup)}
+          </button>
+        </article>`;
+    }
+
+    // Раздел «Группы»: кнопка создания + группы, сгруппированные по направлениям.
+    function renderAdminGroups() {
+      const dict = translations[currentLang];
+      const groups = Array.isArray(mockTeacherGroups) ? mockTeacherGroups : [];
+      console.log("Всего групп в системе:", groups.length);
+
+      const directions = adminDirectionKeys()
+        .filter(direction => groups.some(g => g && g.direction === direction));
+      console.log("Группы по направлениям:", directions.map(d => d + ': ' + groups.filter(g => g.direction === d).length).join(', ') || "нет");
+
+      const blocks = directions.map(direction => {
+        const list = groups.filter(g => g && g.direction === direction);
+        return `
+          <section class="admin-direction-block" data-admin-direction="${escapeHtml(direction)}">
+            <div class="admin-direction-block-head">
+              <h3 class="admin-direction-block-title">
+                <i class="fas fa-compass-drafting"></i>${escapeHtml(adminDirectionLabel(direction))}
+              </h3>
+              <span class="admin-direction-block-count">${escapeHtml(dict.adminDirectionGroups.replace('{0}', String(list.length)))}</span>
+            </div>
+            <div class="admin-groups-grid">${list.map(adminGroupCardHTML).join('')}</div>
+          </section>`;
+      }).join('');
+
+      const content = groups.length
+        ? blocks
+        : `<div class="content-placeholder">
+             <i class="fas fa-people-group"></i>
+             <span>${escapeHtml(dict.adminNoGroups)}</span>
+           </div>`;
+
+      return `
+        <div class="admin-groups-toolbar">
+          <div class="admin-groups-summary">${escapeHtml(
+            dict.adminGroupSummary
+              .replace('{0}', String(groups.length))
+              .replace('{1}', String(directions.length))
+          )}</div>
+          <button type="button" class="btn-primary" data-admin-action="create-group">
+            <i class="fas fa-plus"></i> ${escapeHtml(dict.adminCreateGroup)}
+          </button>
+        </div>
+        ${content}`;
+    }
+
+    // Минимальный справочник факультетов: направления, группы и студенты.
+    function renderAdminFaculties() {
+      const dict = translations[currentLang];
+      const groups = Array.isArray(mockTeacherGroups) ? mockTeacherGroups : [];
+
+      const cards = mockFaculties.map(faculty => {
+        const rows = faculty.directions.map(direction => {
+          const list = groups.filter(g => g && g.direction === direction);
+          return `
+            <li class="admin-ref-item">
+              <span>${escapeHtml(adminDirectionLabel(direction))}</span>
+              <span class="admin-ref-count">${escapeHtml(dict.adminRefGroups)}: ${list.length}</span>
+            </li>`;
+        }).join('');
+
+        const facultyGroups = groups.filter(g => g && faculty.directions.includes(g.direction));
+        const facultyGroupNames = facultyGroups.map(g => g.name);
+        const students = (Array.isArray(mockAllStudents) ? mockAllStudents : [])
+          .filter(s => s && facultyGroupNames.includes(s.group)).length;
+
+        return `
+          <section class="admin-ref-card" data-admin-faculty="${escapeHtml(faculty.id)}">
+            <h3 class="admin-ref-title"><i class="fas fa-building-columns"></i>${escapeHtml(dict[faculty.nameKey] || faculty.nameKey)}</h3>
+            <ul class="admin-ref-list">${rows}</ul>
+            <div class="admin-ref-total">
+              <span>${escapeHtml(dict.adminRefStudents)}</span>
+              <strong>${students}</strong>
+            </div>
+          </section>`;
+      }).join('');
+
+      return `
+        <p class="admin-ref-subtitle">${escapeHtml(dict.adminFacultiesSubtitle)}</p>
+        <div class="admin-ref-grid">${cards}</div>`;
+    }
+
+    // Минимальный справочник курсов: 1–5, число групп и студентов на курсе.
+    function renderAdminCourses() {
+      const dict = translations[currentLang];
+      const groups = Array.isArray(mockTeacherGroups) ? mockTeacherGroups : [];
+      const students = Array.isArray(mockAllStudents) ? mockAllStudents : [];
+      const courseNumbers = [1, 2, 3, 4, 5];
+
+      if (!groups.length) {
+        return `
+          <p class="admin-ref-subtitle">${escapeHtml(dict.adminCoursesSubtitle)}</p>
+          <div class="content-placeholder">
+            <i class="fas fa-book"></i>
+            <span>${escapeHtml(dict.adminNoCourses)}</span>
+          </div>`;
+      }
+
+      const cards = courseNumbers.map(course => {
+        const list = groups.filter(g => g && Number(g.course) === course);
+        const groupNames = list.map(g => g.name);
+        const courseStudents = students.filter(s => s && groupNames.includes(s.group)).length;
+        const fullCount = list.filter(g => g.form === 'full').length;
+        const partCount = list.filter(g => g.form === 'part').length;
+
+        return `
+          <section class="admin-ref-card" data-admin-course="${course}">
+            <h3 class="admin-ref-title"><i class="fas fa-book"></i>${course} ${escapeHtml(dict.courseSuffix)}</h3>
+            <ul class="admin-ref-list">
+              <li class="admin-ref-item">
+                <span>${escapeHtml(dict.adminRefGroups)}</span>
+                <span class="admin-ref-count">${list.length}</span>
+              </li>
+              <li class="admin-ref-item">
+                <span>${escapeHtml(dict.adminRefStudents)}</span>
+                <span class="admin-ref-count">${courseStudents}</span>
+              </li>
+            </ul>
+            <div class="admin-ref-total">
+              <span>${escapeHtml(dict.adminGroupForm)}</span>
+              <strong>${escapeHtml(dict.formFull)}: ${fullCount} · ${escapeHtml(dict.formPart)}: ${partCount}</strong>
+            </div>
+          </section>`;
+      }).join('');
+
+      return `
+        <p class="admin-ref-subtitle">${escapeHtml(dict.adminCoursesSubtitle)}</p>
+        <div class="admin-ref-grid admin-course-grid">${cards}</div>`;
+    }
+
+    // Закрывает модалку группы и снимает Esc-обработчик.
+    function closeAdminGroupModal() {
+      const overlay = document.getElementById('adminGroupOverlay');
+      if (overlay) overlay.remove();
+      adminGroupEditingId = null;
+      document.removeEventListener('keydown', adminGroupModalKeydown);
+    }
+
+    function adminGroupModalKeydown(e) {
+      if (e.key === 'Escape') closeAdminGroupModal();
+    }
+
+    // Модалка создания/редактирования группы. groupId == null — создание.
+    function openAdminGroupModal(groupId) {
+      const dict = translations[currentLang];
+      const group = groupId == null
+        ? null
+        : mockTeacherGroups.find(g => String(g.id) === String(groupId)) || null;
+      adminGroupEditingId = group ? group.id : null;
+
+      const availableDirections = adminDirectionKeys();
+      console.log("Доступные направления для выбора:", availableDirections);
+
+      // На всякий случай убираем предыдущую модалку (без дублей id).
+      const old = document.getElementById('adminGroupOverlay');
+      if (old) old.remove();
+      document.removeEventListener('keydown', adminGroupModalKeydown);
+
+      const directionOptions = availableDirections.map(direction => `
+        <option value="${escapeHtml(direction)}">${escapeHtml(adminDirectionLabel(direction))}</option>`).join('');
+      const courseOptions = [1, 2, 3, 4, 5].map(course => `
+        <option value="${course}">${course} ${escapeHtml(dict.courseSuffix)}</option>`).join('');
+
+      const overlay = document.createElement('div');
+      overlay.className = 'admin-modal-overlay';
+      overlay.id = 'adminGroupOverlay';
+      overlay.innerHTML = `
+        <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="adminGroupModalTitle">
+          <div class="admin-modal-head">
+            <h3 class="admin-modal-title" id="adminGroupModalTitle">${escapeHtml(group ? dict.adminEditGroup : dict.adminCreateGroup)}</h3>
+            <button type="button" class="admin-modal-close" id="adminGroupClose"
+                    aria-label="${escapeHtml(dict.close)}" title="${escapeHtml(dict.close)}">✕</button>
+          </div>
+          <form class="admin-modal-form" id="adminGroupForm" novalidate>
+            <div class="form-grid">
+              <label class="field field-full">
+                <span class="field-label">${escapeHtml(dict.adminGroupName)} <span class="req">*</span></span>
+                <input type="text" class="field-input" id="adminGroupName" maxlength="40"
+                       placeholder="${escapeHtml(dict.adminGroupNamePh)}" autocomplete="off">
+              </label>
+              <label class="field">
+                <span class="field-label">${escapeHtml(dict.adminGroupCourse)} <span class="req">*</span></span>
+                <select class="field-input" id="adminGroupCourse">${courseOptions}</select>
+              </label>
+              <label class="field">
+                <span class="field-label">${escapeHtml(dict.adminGroupDirection)} <span class="req">*</span></span>
+                <select class="field-input" id="adminGroupDirection">${directionOptions}</select>
+              </label>
+              <label class="field">
+                <span class="field-label">${escapeHtml(dict.adminGroupForm)}</span>
+                <select class="field-input" id="adminGroupForm">
+                  <option value="full">${escapeHtml(dict.formFull)}</option>
+                  <option value="part">${escapeHtml(dict.formPart)}</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-ghost" id="adminGroupCancel">${escapeHtml(dict.cancel)}</button>
+              <button type="submit" class="btn-primary" id="adminGroupSave">
+                <i class="fas fa-floppy-disk"></i> ${escapeHtml(dict.adminSave)}
+              </button>
+            </div>
+          </form>
+        </div>`;
+
+      document.body.appendChild(overlay);
+
+      // Заполняем поля: при редактировании — текущими значениями группы.
+      const nameInput = document.getElementById('adminGroupName');
+      const courseSelect = document.getElementById('adminGroupCourse');
+      const directionSelect = document.getElementById('adminGroupDirection');
+      const formSelect = document.getElementById('adminGroupForm');
+      if (group) {
+        nameInput.value = group.name || '';
+        courseSelect.value = String(group.course || 1);
+        directionSelect.value = group.direction || availableDirections[0];
+        formSelect.value = group.form === 'part' ? 'part' : 'full';
+      }
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay || (e.target.closest && (e.target.closest('#adminGroupClose') || e.target.closest('#adminGroupCancel')))) {
+          closeAdminGroupModal();
+        }
+      });
+      document.getElementById('adminGroupForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        saveAdminGroup();
+      });
+      document.addEventListener('keydown', adminGroupModalKeydown);
+
+      if (nameInput) nameInput.focus();
+    }
+
+    // Валидация и сохранение группы (создание или обновление).
+    function saveAdminGroup() {
+      const dict = translations[currentLang];
+      const nameInput = document.getElementById('adminGroupName');
+      const courseSelect = document.getElementById('adminGroupCourse');
+      const directionSelect = document.getElementById('adminGroupDirection');
+      const formSelect = document.getElementById('adminGroupForm');
+      if (!nameInput || !courseSelect || !directionSelect || !formSelect) return;
+
+      const name = (nameInput.value || '').trim();
+      const course = Number(courseSelect.value);
+      const direction = directionSelect.value;
+      const form = formSelect.value === 'part' ? 'part' : 'full';
+
+      if (!name) { alert(dict.adminErrGroupName); nameInput.focus(); return; }
+      if (!course || course < 1 || course > 5) { alert(dict.adminErrGroupCourse); courseSelect.focus(); return; }
+      if (!direction) { alert(dict.adminErrGroupDirection); directionSelect.focus(); return; }
+
+      const duplicate = mockTeacherGroups.some(g =>
+        g && String(g.id) !== String(adminGroupEditingId) &&
+        String(g.name).toLowerCase() === name.toLowerCase()
+      );
+      if (duplicate) { alert(dict.adminErrGroupDuplicate); nameInput.focus(); return; }
+
+      if (adminGroupEditingId != null) {
+        const group = mockTeacherGroups.find(g => String(g.id) === String(adminGroupEditingId));
+        if (group) {
+          group.name = name;
+          group.course = course;
+          group.direction = direction;
+          group.form = form;
+          console.log("Группа обновлена:", group.name, "Направление:", group.direction);
+        }
+      } else {
+        const newGroup = {
+          id: 'g_' + Date.now(),
+          name,
+          course,
+          direction,
+          form,
+          studentsCount: 0,
+          teacherId: null
+        };
+        mockTeacherGroups.push(newGroup);
+        console.log("Группа создана:", newGroup.name, "Направление:", newGroup.direction);
+      }
+
+      saveGroupsToStorage();                            // ключ unitest_groups
+      closeAdminGroupModal();
+      if (currentRole === 'admin' && currentSection === 'groups') {
+        navigate('groups', false);                      // сразу перерисовываем список
+      }
+    }
+
+    // Обработчики раздела «Группы»: создание и редактирование (делегирование).
+    function bindAdminGroups() {
+      const box = document.getElementById('sectionContent');
+      if (!box) return;
+      box.onclick = (e) => {
+        const target = e.target && e.target.closest ? e.target : null;
+        if (!target) return;
+        if (target.closest('[data-admin-action="create-group"]')) {
+          e.preventDefault();
+          openAdminGroupModal(null);
+          return;
+        }
+        const editBtn = target.closest('[data-admin-edit-group]');
+        if (editBtn) {
+          e.preventDefault();
+          openAdminGroupModal(editBtn.dataset.adminEditGroup);
         }
       };
     }
@@ -9172,6 +9876,8 @@
 
       // Восстанавливаем сохранённые тесты (созданные преподавателями, Промт №14)
       loadTestsFromStorage();
+      // Восстанавливаем группы из unitest_groups (созданные админом, Промт №25)
+      loadGroupsFromStorage();
       // Демо-тесты (формулы и схемы) — только при открытии через file://
       ensureFormulaDemoTest();
       ensureDiagramDemoTest();
