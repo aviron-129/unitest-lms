@@ -155,6 +155,51 @@ w.navigate("profile");
 T("данные восстановлены — профиль снова отрисован", !!section().querySelector(".profile-card"));
 T("в профиле нет «undefined»", !txt(section()).includes("undefined"));
 
+console.log("\n[5.1] Пустые данные студента: апелляции, результаты, отчёты");
+// Аудит q6: normalizeResult() обращался к mockStudent.firstName[0] напрямую,
+// поэтому без профиля падали сразу 3 раздела (апелляции/результаты/отчёты).
+ev("Object.keys(mockStudent).forEach(k => delete mockStudent[k]);");
+const fallbackNorm = ev(`normalizeResult({
+  testId: 1, correct: 1, total: 2, percent: 50, grade: 3, date: "2026-10-20"
+})`);
+T("normalizeResult без профиля: имя «—»", fallbackNorm.studentName === "—", fallbackNorm.studentName);
+T("normalizeResult без профиля: группа «—»", fallbackNorm.studentGroup === "—", fallbackNorm.studentGroup);
+T("normalizeResult без testId: название «—»",
+  ev('normalizeResult({ correct: 0, total: 0 }).testTitle') === "—",
+  ev('normalizeResult({ correct: 0, total: 0 }).testTitle'));
+
+w.selectRole("student");
+app.errors.length = 0;
+w.navigate("appeals");
+T("апелляции без профиля: заглушка", !!section().querySelector(".empty-state")
+  && !section().querySelector(".empty-state--error"), txt(section()).slice(0, 80));
+T("апелляции без профиля: текст dataNotFound", txt(section()).includes(ev("translations.ru.dataNotFoundTitle")));
+T("апелляции без профиля: без ошибки рендера", app.errors.length === 0, app.errors);
+
+app.errors.length = 0;
+w.selectRole("teacher");
+app.errors.length = 0;
+w.navigate("results");
+T("результаты преподавателя без профиля: раздел отрисован",
+  !!section().querySelector("#trTestFilter") && !section().querySelector(".empty-state--error"),
+  txt(section()).slice(0, 80));
+T("результаты преподавателя без профиля: без ошибки рендера", app.errors.length === 0, app.errors);
+
+app.errors.length = 0;
+w.selectRole("admin");
+app.errors.length = 0;
+w.navigate("reports");
+T("отчёты админа без профиля: раздел отрисован",
+  !!section().querySelector("#adminReportTable") && !section().querySelector(".empty-state--error"),
+  txt(section()).slice(0, 80));
+T("отчёты админа без профиля: без ошибки рендера", app.errors.length === 0, app.errors);
+
+ev(`Object.assign(mockStudent, ${studentSnapshot});`);
+app.errors.length = 0;
+w.selectRole("student");
+w.navigate("profile");
+T("после проверки профиль снова отрисован", !!section().querySelector(".profile-card"));
+
 console.log("\n[6] Битый localStorage не роняет приложение");
 const beforeTestsLen = ev("mockTests.length");
 w.localStorage.setItem("unitestalltests", "битый_текст");

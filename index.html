@@ -14536,9 +14536,26 @@
       return 2;
     }
 
+    // ФИО/группа студента для записей без собственного studentName (Промт №7).
+    // Промт q6: частично загруженный профиль (нет firstName/middleName/group)
+    // не должен ронять таблицы результатов — подставляем безопасные значения.
+    function studentIdentity() {
+      const s = (mockStudent && typeof mockStudent === 'object') ? mockStudent : {};
+      const initials = [s.firstName, s.middleName]
+        .filter(Boolean)
+        .map(part => String(part).trim().charAt(0) + '.')
+        .join('');
+      return {
+        full: [s.lastName, s.firstName, s.middleName].filter(Boolean).join(' ').trim() || '—',
+        short: [s.lastName, initials].filter(Boolean).join(' ').trim() || '—',
+        group: s.group ? String(s.group) : '—'
+      };
+    }
+
     // Приводит запись результата (историческую или из localStorage) к единому виду
     // для таблицы: { testId, testTitle, studentName, studentGroup, correct, total, percent, grade, date }
     function normalizeResult(r) {
+      r = (r && typeof r === 'object') ? r : {};
       const total   = Number(r.total || r.maxScore || 0);
       const correct = Number(r.correct != null ? r.correct : (r.score || 0));
       const percent = r.percent != null ? Number(r.percent)
@@ -14549,7 +14566,7 @@
       let title = r.testTitle;
       if (!title) {
         const t = mockTests.find(x => String(x.id) === String(r.testId));
-        title = t ? testTitle(t) : String(r.testId);
+        title = t ? testTitle(t) : (r.testId != null ? String(r.testId) : '—');
       }
 
       // Дата: DD.MM.YYYY как есть, YYYY-MM-DD → через formatDate, иначе — сегодня
@@ -14557,13 +14574,14 @@
       const date = /^\d{2}\.\d{2}\.\d{4}$/.test(rawDate) ? rawDate
                  : (/^\d{4}-\d{2}-\d{2}$/.test(rawDate) ? formatDate(r.date) : formatDate());
 
+      // В unitest_results имя студента не сохраняется (Промт №7) — берём из mockStudent.
+      // Промт q6: если профиль не загружен, показываем «—», а не падаем.
+      const identity = studentIdentity();
       return {
         testId: r.testId,
         testTitle: title,
-        // В unitest_results имя студента не сохраняется (Промт №7) — берём из mockStudent
-        studentName: r.studentName ||
-          `${mockStudent.lastName} ${mockStudent.firstName[0]}.${mockStudent.middleName[0]}.`,
-        studentGroup: r.studentGroup || mockStudent.group,
+        studentName: r.studentName || identity.short,
+        studentGroup: r.studentGroup || identity.group,
         correct, total, percent, grade, date
       };
     }
@@ -14997,13 +15015,15 @@
       const title = (target && target.testTitle)
         || (foundTest ? testTitle(foundTest) : String(testId || ""));
 
+      // Промт q6: безопасное ФИО/группа даже при неполном профиле
+      const identity = studentIdentity();
       const newAppeal = {
         id: "app_" + Date.now(),
         resultId: currentAppealResultId,          // привязка к конкретному результату
         testId: testId,
         testTitle: title,
-        studentName: `${mockStudent.lastName} ${mockStudent.firstName} ${mockStudent.middleName}`,
-        studentGroup: mockStudent.group,
+        studentName: identity.full,
+        studentGroup: identity.group,
         reason: reason,
         date: new Date().toISOString().slice(0, 10),
         status: "pending"
@@ -15028,6 +15048,11 @@
     // Раздел «Апелляции»: результаты студента + статус/кнопка подачи
     function renderStudentAppeals() {
       const dict = translations[currentLang];
+      // Промт q6: без данных студента раздел не к чему привязать —
+      // показываем ту же заглушку, что в профиле/тестах/расписании/чате.
+      if (!mockStudent || typeof mockStudent !== 'object' || Object.keys(mockStudent).length === 0) {
+        return renderEmptyState('fa-user-slash', dict.dataNotFoundTitle, dict.dataNotFoundDesc);
+      }
       const rawResults = getResults();
       const results = Array.isArray(rawResults) ? rawResults : [];
 
