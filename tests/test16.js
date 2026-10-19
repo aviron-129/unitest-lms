@@ -68,7 +68,8 @@ T("фильтр: только «Все тесты»", JSON.stringify(opts0) === 
 
 // клик по экспорту — заглушка
 w.document.getElementById("trExportBtn").click();
-T("экспорт → alert «Экспорт в разработке»", w.__alerts[0] === "Экспорт в разработке", w.__alerts[0]);
+T("экспорт → честное демо-сообщение (без «в разработке»)",
+  w.__alerts[0] === "Экспорт файла в демо-версии недоступен — результаты показаны в таблице.", w.__alerts[0]);
 
 // смена фильтра не падает
 const filterSel = w.document.getElementById("trTestFilter");

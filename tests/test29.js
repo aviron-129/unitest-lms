@@ -107,7 +107,7 @@ T("сброс фильтров → снова 4 группы", rows().length ===
 console.log("\n[6] Экспорт (заглушка через dict)");
 d.getElementById("adminReportExport").click();
 T("alert показан", app.alerts.length === 1, app.alerts);
-T("текст из словаря", app.alerts[0] === "Экспорт в Excel в разработке", app.alerts);
+T("текст из словаря", app.alerts[0] === "Экспорт файла в демо-версии недоступен — отчёт показан на экране.", app.alerts);
 
 console.log("\n[7] Нормализация групп и результаты из localStorage");
 T("«101-ПР» → «101-PR»", w.eval("adminReportGroupKey('101-ПР')") === "101-PR");

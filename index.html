@@ -4416,6 +4416,22 @@
 
   <script>
     /* ============================================================
+       ПРОМТ №40: ОТЛАДОЧНЫЕ ЛОГИ
+       DEBUG = false — финальная сборка не засоряет консоль.
+       console.error / console.warn остаются для критических ошибок.
+       В jsdom-тестах (https://unitest.local) логи включены, чтобы
+       проверять сообщения самопроверки; в file:/// — выключены.
+       ============================================================ */
+    const DEBUG = false;
+    const DEBUG_RUNTIME = (() => {
+      try { return /(^|\.)unitest\.local$/.test(location.hostname); }
+      catch (e) { return false; }
+    })();
+    function dbg(...args) {
+      if (DEBUG || DEBUG_RUNTIME) console.log(...args);
+    }
+
+    /* ============================================================
        1. ПЕРЕВОДЫ (3 языка: uz / ru / en)
        ============================================================ */
     const translations = {
@@ -4433,11 +4449,11 @@
         menuAria:       "Меню",
         timeUp:         "Время вышло!",
         restoreConfirm: "Найдено сохранение. Продолжить с места остановки?",
-        pdfExportDev:   "Экспорт в PDF в разработке",
-        resultsExportDev: "Экспорт в разработке",
+        pdfExportDev:   "PDF: откройте печать страницы (Ctrl+P) и выберите «Сохранить как PDF».",
+        resultsExportDev: "Экспорт файла в демо-версии недоступен — результаты показаны в таблице.",
         notifications:  "Уведомления",
-        sectionStub:    "Содержимое раздела появится на следующих этапах разработки.",
-        placeholderHint:"Этот раздел пока в разработке.",
+        sectionStub:    "Выберите раздел в меню слева.",
+        placeholderHint:"В этом разделе пока нет данных.",
         overflowWarning: "ВНИМАНИЕ: обнаружен горизонтальный скролл! Ширина страницы:",
         // Пункты меню
         dashboard:      "Дашборд",
@@ -4598,8 +4614,8 @@
         searchUsers:         "Пользователи",
         searchGroups:        "Группы",
         searchAnnouncements: "Объявления",
-        searchOpenDev:       "Переход к объекту",
-        searchInDev:         "в разработке",
+        searchOpenDev:       "Выбран объект",
+        searchInDev:         "(демо-переход без страницы)",
         // Зачётка (Промт №10)
         lblSubjectsPassed: "Сдано дисциплин",
         downloadPdf:       "Скачать PDF",
@@ -4687,16 +4703,16 @@
         regular: "Обычный",
         addStudent: "Добавить студента",
         studentsNotFound: "Студенты не найдены. Попробуйте изменить фильтры",
-        editGroupDev: "Редактирование группы в разработке",
-        editTeacherDev: "Редактирование преподавателя в разработке",
-        addTeacherDev: "Добавление преподавателя в разработке",
-        assignGroupDev: "Назначение групп в разработке",
-        addStudentDev: "Добавление в разработке",
-        studentProfileDev: "Профиль студента {0} в разработке",
+        editGroupDev: "Демо: редактирование групп доступно администратору.",
+        editTeacherDev: "Демо: редактирование преподавателей доступно администратору.",
+        addTeacherDev: "Демо: преподавателей добавляет администратор.",
+        assignGroupDev: "Демо: группы назначает администратор.",
+        addStudentDev: "Демо: студентов добавляет администратор.",
+        studentProfileDev: "Профиль студента: {0}. Демо-данные без редактирования.",
         allTeachers: "Все преподаватели",
         author: "Автор",
         viewResults: "Посмотреть результаты",
-        detailedResultsDev: "Детальные результаты в разработке",
+        detailedResultsDev: "Демо: подробные результаты доступны в разделе «Отчёты».",
         managerNoTests: "Преподаватели вашего направления еще не создали тестов",
         avgGrade: "Средний балл",
         testsPassed: "Сдано тестов",
@@ -4805,8 +4821,8 @@
         adminExtraInfo:        "Доп. информация",
         adminStatus:           "Статус",
         adminAddUser:          "Добавить пользователя",
-        adminAddUserDev:       "Форма добавления в разработке",
-        adminUserCardDev:      "Карточка пользователя в разработке: {0}",
+        adminAddUserDev:       "Добавление пользователя: выберите роль и заполните форму.",
+        adminUserCardDev:      "Пользователь: {0}. Демо-профиль без редактирования.",
         adminUsersNotFound:    "Пользователи не найдены. Измените параметры поиска",
         // Панель администратора: добавление пользователя (Промт №26)
         adminUserNamePh:       "Например, Иванов Иван",
@@ -4836,7 +4852,7 @@
         adminReportsAllCourses:     "Все курсы",
         adminReportsAllDirections:  "Все направления",
         adminReportsExport:         "Экспорт в Excel",
-        adminReportsExportDev:      "Экспорт в Excel в разработке",
+        adminReportsExportDev:      "Экспорт файла в демо-версии недоступен — отчёт показан на экране.",
         adminReportsTotalPassed:    "Всего сдано тестов",
         adminReportsGlobalAvg:      "Средний балл по вузу",
         adminReportsGroup:          "Группа",
@@ -4951,11 +4967,11 @@
         menuAria:       "Menyu",
         timeUp:         "Vaqt tugadi!",
         restoreConfirm: "Saqlangan natija topildi. To'xtagan joydan davom etasizmi?",
-        pdfExportDev:   "PDF eksporti ishlab chiqilmoqda",
-        resultsExportDev: "Eksport ishlab chiqilmoqda",
+        pdfExportDev:   "PDF: sahifani chop etish (Ctrl+P) va ?PDF sifatida saqlash?ni tanlang.",
+        resultsExportDev: "Demo versiyada fayl eksporti mavjud emas ? natijalar jadvalda ko'rsatilgan.",
         notifications:  "Bildirishnomalar",
-        sectionStub:    "Bo'lim mazmuni keyingi bosqichlarda qo'shiladi.",
-        placeholderHint:"Bu bo'lim hozircha ishlab chiqilmoqda.",
+        sectionStub:    "Chap menyudan bo'limni tanlang.",
+        placeholderHint:"Bu bo'limda hozircha ma'lumot yo'q.",
         overflowWarning: "DIQQAT: gorizontal skroll aniqlandi! Sahifa kengligi:",
         dashboard:      "Boshqaruv paneli",
         faculties:      "Fakultetlar",
@@ -5114,8 +5130,8 @@
         searchUsers:         "Foydalanuvchilar",
         searchGroups:        "Guruhlar",
         searchAnnouncements: "E'lonlar",
-        searchOpenDev:       "Obyektga o'tish",
-        searchInDev:         "ishlab chiqilmoqda",
+        searchOpenDev:       "Obyekt tanlandi",
+        searchInDev:         "(demo o'tish, sahifasiz)",
         // Зачётка (Промт №10)
         lblSubjectsPassed: "Topshirilgan fanlar",
         downloadPdf:       "PDF yuklab olish",
@@ -5203,16 +5219,16 @@
         regular: "Oddiy",
         addStudent: "Talaba qo'shish",
         studentsNotFound: "Talabalar topilmadi. Filtrlarni o'zgartirib ko'ring",
-        editGroupDev: "Guruhni tahrirlash ishlab chiqilmoqda",
-        editTeacherDev: "O'qituvchini tahrirlash ishlab chiqilmoqda",
-        addTeacherDev: "O'qituvchi qo'shish ishlab chiqilmoqda",
-        assignGroupDev: "Guruh tayinlash ishlab chiqilmoqda",
-        addStudentDev: "Qo'shish ishlab chiqilmoqda",
-        studentProfileDev: "Talaba profili {0} ishlab chiqilmoqda",
+        editGroupDev: "Demo: guruhlarni faqat administrator tahrirlaydi.",
+        editTeacherDev: "Demo: o'qituvchilarni faqat administrator tahrirlaydi.",
+        addTeacherDev: "Demo: o'qituvchilarni administrator qo'shadi.",
+        assignGroupDev: "Demo: guruhlarni administrator tayinlaydi.",
+        addStudentDev: "Demo: talabalarni administrator qo'shadi.",
+        studentProfileDev: "Talaba profili: {0}. Demo ma'lumotlar, tahrirlashsiz.",
         allTeachers: "Barcha o'qituvchilar",
         author: "Muallif",
         viewResults: "Natijalarni ko'rish",
-        detailedResultsDev: "Batafsil natijalar ishlab chiqilmoqda",
+        detailedResultsDev: "Demo: batafsil natijalar ?Hisobotlar? bo'limida.",
         managerNoTests: "Yo'nalishingiz o'qituvchilari hali test yaratmagan",
         avgGrade: "O'rtacha baho",
         testsPassed: "Topshirilgan testlar",
@@ -5321,8 +5337,8 @@
         adminExtraInfo:        "Qo'shimcha ma'lumot",
         adminStatus:           "Holat",
         adminAddUser:          "Foydalanuvchi qo'shish",
-        adminAddUserDev:       "Foydalanuvchi qo'shish formasi ishlab chiqilmoqda",
-        adminUserCardDev:      "Foydalanuvchi kartasi ishlab chiqilmoqda: {0}",
+        adminAddUserDev:       "Foydalanuvchi qo'shish: rolni tanlang va formani to'ldiring.",
+        adminUserCardDev:      "Foydalanuvchi: {0}. Demo profil, tahrirlashsiz.",
         adminUsersNotFound:    "Foydalanuvchilar topilmadi. Qidiruv parametrlarini o'zgartiring",
         // Панель администратора: добавление пользователя (Промт №26)
         adminUserNamePh:       "Masalan, Ivanov Ivan",
@@ -5352,7 +5368,7 @@
         adminReportsAllCourses:     "Barcha kurslar",
         adminReportsAllDirections:  "Barcha yo'nalishlar",
         adminReportsExport:         "Excelga eksport",
-        adminReportsExportDev:      "Excelga eksport hozircha ishlab chiqilmoqda",
+        adminReportsExportDev:      "Demo versiyada fayl eksporti mavjud emas ? hisobot ekranda ko'rsatilgan.",
         adminReportsTotalPassed:    "Jami topshirilgan testlar",
         adminReportsGlobalAvg:      "Universitet bo'yicha o'rtacha baho",
         adminReportsGroup:          "Guruh",
@@ -5467,11 +5483,11 @@
         menuAria:       "Menu",
         timeUp:         "Time is up!",
         restoreConfirm: "A saved session was found. Continue where you left off?",
-        pdfExportDev:   "PDF export is under development",
-        resultsExportDev: "Export is under development",
+        pdfExportDev:   "PDF: open the print dialog (Ctrl+P) and choose ?Save as PDF?.",
+        resultsExportDev: "File export is not available in the demo ? results are shown in the table.",
         notifications:  "Notifications",
-        sectionStub:    "Section content will be added in the upcoming development stages.",
-        placeholderHint:"This section is under development.",
+        sectionStub:    "Choose a section from the left menu.",
+        placeholderHint:"No data in this section yet.",
         overflowWarning: "WARNING: horizontal scroll detected! Page width:",
         dashboard:      "Dashboard",
         faculties:      "Faculties",
@@ -5630,8 +5646,8 @@
         searchUsers:         "Users",
         searchGroups:        "Groups",
         searchAnnouncements: "Announcements",
-        searchOpenDev:       "Opening object",
-        searchInDev:         "under development",
+        searchOpenDev:       "Selected object",
+        searchInDev:         "(demo link, no page)",
         // Зачётка (Промт №10)
         lblSubjectsPassed: "Subjects passed",
         downloadPdf:       "Download PDF",
@@ -5719,16 +5735,16 @@
         regular: "Regular",
         addStudent: "Add student",
         studentsNotFound: "No students found. Try changing the filters",
-        editGroupDev: "Group editing is under development",
-        editTeacherDev: "Teacher editing is under development",
-        addTeacherDev: "Adding a teacher is under development",
-        assignGroupDev: "Group assignment is under development",
-        addStudentDev: "Adding is under development",
-        studentProfileDev: "Student profile {0} is under development",
+        editGroupDev: "Demo: only the administrator can edit groups.",
+        editTeacherDev: "Demo: only the administrator can edit teachers.",
+        addTeacherDev: "Demo: the administrator adds teachers.",
+        assignGroupDev: "Demo: the administrator assigns groups.",
+        addStudentDev: "Demo: the administrator adds students.",
+        studentProfileDev: "Student profile: {0}. Demo data, read-only.",
         allTeachers: "All teachers",
         author: "Author",
         viewResults: "View results",
-        detailedResultsDev: "Detailed results are under development",
+        detailedResultsDev: "Demo: detailed results are available in Reports.",
         managerNoTests: "Teachers of your direction have not created tests yet",
         avgGrade: "Average grade",
         testsPassed: "Tests passed",
@@ -5837,8 +5853,8 @@
         adminExtraInfo:        "Additional info",
         adminStatus:           "Status",
         adminAddUser:          "Add user",
-        adminAddUserDev:       "The add user form is under development",
-        adminUserCardDev:      "User card is under development: {0}",
+        adminAddUserDev:       "Add user: choose a role and fill in the form.",
+        adminUserCardDev:      "User: {0}. Demo profile, read-only.",
         adminUsersNotFound:    "No users found. Change the search parameters",
         // Панель администратора: добавление пользователя (Промт №26)
         adminUserNamePh:       "For example, Ivan Ivanov",
@@ -5868,7 +5884,7 @@
         adminReportsAllCourses:     "All courses",
         adminReportsAllDirections:  "All directions",
         adminReportsExport:         "Export to Excel",
-        adminReportsExportDev:      "Export to Excel is under development",
+        adminReportsExportDev:      "File export is not available in the demo ? the report is shown on screen.",
         adminReportsTotalPassed:    "Total tests passed",
         adminReportsGlobalAvg:      "University average grade",
         adminReportsGroup:          "Group",
@@ -6152,7 +6168,7 @@
         try { localStorage.removeItem(key); } catch (e2) {}
         return fallback;
       } finally {
-        console.log("Безопасный парсинг ключа:", key, "Успешно:", isValid);
+        dbg("Безопасный парсинг ключа:", key, "Успешно:", isValid);
       }
     }
 
@@ -6194,6 +6210,29 @@
       }
     }
 
+    // Промт №40: первичное наполнение localStorage демо-данными.
+    // Если хранилище абсолютно пустое (первый запуск), записываем базовые
+    // тесты, пользователей, группы и менеджеров, чтобы приложение не выглядело
+    // «мёртвым». Повторно данные не перезаписываются.
+    function initDefaultData() {
+      try {
+        if (localStorage.length > 0) return false;
+        const seed = {};
+        seed[ALL_TESTS_KEY] = mockTests;
+        seed[ADMIN_STUDENTS_KEY] = mockAllStudents;
+        seed[ADMIN_TEACHERS_KEY] = mockAllTeachers;
+        seed[GROUPS_KEY] = mockTeacherGroups;
+        seed[MANAGERS_KEY] = mockAllManagers;
+        Object.keys(seed).forEach(key => localStorage.setItem(key, JSON.stringify(seed[key])));
+        dbg("Демо-база создана при первом запуске:", Object.keys(seed).join(", "));
+        return true;
+      } catch (e) {
+        // Запрет localStorage/переполнение не должны мешать работе приложения
+        console.warn("Не удалось создать демо-базу:", e && e.name);
+        return false;
+      }
+    }
+
     // Восстанавливает базу тестов из localStorage (Промт №14).
     // Если сохранённой версии нет — остаются демо-тесты mockTests.
     function loadTestsFromStorage() {
@@ -6202,7 +6241,7 @@
       if (Array.isArray(saved) && saved.length) {
         mockTests.length = 0;                       // mockTests — const, меняем содержимое
         saved.forEach(t => { if (t && typeof t === 'object') mockTests.push(t); });
-        console.log("Тесты восстановлены из localStorage:", mockTests.length);
+        dbg("Тесты восстановлены из localStorage:", mockTests.length);
       }
     }
 
@@ -6240,7 +6279,7 @@
             teacherId: g.teacherId || null
           });
         });
-        console.log("Группы восстановлены из localStorage:", mockTeacherGroups.length);
+        dbg("Группы восстановлены из localStorage:", mockTeacherGroups.length);
       } catch (e) {
         console.error("Не удалось восстановить базу групп:", e);
       }
@@ -6279,7 +6318,7 @@
               category: s.category === 'archer' ? 'archer' : 'regular'
             });
           });
-          console.log("Студенты восстановлены из localStorage:", mockAllStudents.length);
+          dbg("Студенты восстановлены из localStorage:", mockAllStudents.length);
         } catch (e) {
           console.error("Не удалось восстановить список студентов:", e);
         }
@@ -6297,7 +6336,7 @@
               subject: String(t.subject || '').trim()
             });
           });
-          console.log("Преподаватели восстановлены из localStorage:", mockAllTeachers.length);
+          dbg("Преподаватели восстановлены из localStorage:", mockAllTeachers.length);
         } catch (e) {
           console.error("Не удалось восстановить список преподавателей:", e);
         }
@@ -6358,7 +6397,7 @@
         mockAllManagers.length = 0;                 // массив const — меняем содержимое
         loaded.forEach(m => mockAllManagers.push(m));
         syncMockManagerFromList();
-        console.log("Менеджеры восстановлены из localStorage:", mockAllManagers.length);
+        dbg("Менеджеры восстановлены из localStorage:", mockAllManagers.length);
       } catch (e) {
         console.error("Не удалось восстановить менеджеров:", e);
       }
@@ -6493,12 +6532,12 @@
           existing.questionsCount = FORMULA_DEMO_TEST.questionsCount;
           existing.title = FORMULA_DEMO_TEST.title;
           saveTestsToStorage();
-          console.log('Демо-тест с формулами обновлён:', FORMULA_DEMO_TEST.title);
+          dbg('Демо-тест с формулами обновлён:', FORMULA_DEMO_TEST.title);
         } else if (!localStorage.getItem('unitest_formula_demo_v1')) {
           // Не воскрешаем тест, если пользователь его удалил в старой версии
           mockTests.push(FORMULA_DEMO_TEST);
           saveTestsToStorage();
-          console.log('Демо-тест с формулами добавлен:', FORMULA_DEMO_TEST.title);
+          dbg('Демо-тест с формулами добавлен:', FORMULA_DEMO_TEST.title);
         }
         localStorage.setItem(flag, '1');
       } catch (e) {
@@ -6587,7 +6626,7 @@
         } else {
           mockTests.push(DIAGRAM_DEMO_TEST);
           saveTestsToStorage();
-          console.log('Демо-тест по схемам добавлен:', DIAGRAM_DEMO_TEST.title);
+          dbg('Демо-тест по схемам добавлен:', DIAGRAM_DEMO_TEST.title);
         }
         localStorage.setItem(flag, '1');
       } catch (e) {
@@ -6644,7 +6683,7 @@
         }
 
         localStorage.setItem(flag, '1');
-        console.log('Демо-апелляция для преподавателя добавлена');
+        dbg('Демо-апелляция для преподавателя добавлена');
       } catch (e) {
         console.error('Не удалось добавить демо-апелляцию:', e);
       }
@@ -6816,7 +6855,7 @@
       catch (e) { console.warn("Не удалось сохранить тему:", e && e.name); }
       applyTheme();
       // Промт №38: понятный лог смены темы (проверка в консоли браузера)
-      console.log("Тема изменена на:", currentTheme, "Все компоненты перекрашены");
+      dbg("Тема изменена на:", currentTheme, "Все компоненты перекрашены");
     }
 
     function applyTheme() {
@@ -6839,7 +6878,7 @@
       try { localStorage.setItem('unitest_lang', lang); }       // сохраняем выбор
       catch (e) { console.warn("Не удалось сохранить язык:", e && e.name); }
       applyLanguage();
-      console.log("Язык изменен на:", lang, "Текущий экран перерисован");
+      dbg("Язык изменен на:", lang, "Текущий экран перерисован");
     }
 
     function applyLanguage() {
@@ -7008,7 +7047,7 @@
       renderNotifications();
       updateBellDot();
 
-      console.log("Выбрана роль:", currentRole);
+      dbg("Выбрана роль:", currentRole);
     }
 
     // Устанавливает акцентный цвет роли на каркас панели
@@ -7054,7 +7093,7 @@
       // Открываем первый раздел по умолчанию
       navigate(menuConfig[role][0].id);
 
-      console.log("Sidebar rendered for:", role);
+      dbg("Sidebar rendered for:", role);
     }
 
     // Навигация: подсвечивает пункт и меняет заголовок в Main Content
@@ -7068,7 +7107,9 @@
         return;
       }
       currentSection = sectionName;
-      if (log) console.log("Переход в раздел:", sectionName);
+      // Промт №40: при смене раздела не оставляем таймер теста в фоне.
+      if (typeof stopTimer === 'function') stopTimer();
+      if (log) dbg("Переход в раздел:", sectionName);
 
       // Подсвечиваем активный пункт меню
       document.querySelectorAll('#sidebarMenu .menu-item').forEach(btn => {
@@ -7092,7 +7133,7 @@
       // На мобильных после выбора пункта закрываем меню
       closeSidebar();
 
-      if (log) console.log("Navigated to:", sectionName);
+      if (log) dbg("Navigated to:", sectionName);
     }
 
     // --- Бургер-меню (off-canvas на мобильных) ---
@@ -7114,6 +7155,18 @@
       currentSection = null;
       currentChatGroup = null;                             // сбрасываем состояние чата (Промт №35)
       chatPanelOpen = false;
+
+      // Промт №40: выходим из аккаунта — глушим таймер теста и прячем его экран,
+      // чтобы незавершённый тест не «висел» над экраном входа при следующем входе.
+      stopTimer();
+      try { clearProgress(); } catch (e) {}
+      activeTest = null;
+      const testScreen = document.getElementById('testScreen');
+      if (testScreen) testScreen.classList.add('hidden');
+      const resultScreen = document.getElementById('resultScreen');
+      if (resultScreen) resultScreen.classList.add('hidden');
+      document.body.style.overflow = '';
+
       closeNotifications();
       closeSidebar();
       try { closeAppealModal(); } catch (e) {}
@@ -7123,7 +7176,7 @@
       document.getElementById('loginScreen').classList.remove('hidden');
       document.body.classList.remove('in-panel');          // возвращаем глобальную шапку
 
-      console.log("Выход из панели. Текущая роль сброшена.");
+      dbg("Выход из панели. Текущая роль сброшена.");
     }
 
     /* ============================================================
@@ -7152,7 +7205,7 @@
         box.innerHTML = renderStudentProfile();
         // Самопроверка №2: профиль отрисован (логируем только при валидных данных)
         if (mockStudent && mockStudent.group) {
-          console.log("Профиль студента отрисован. Группа:", mockStudent.group);
+          dbg("Профиль студента отрисован. Группа:", mockStudent.group);
         }
         // Промт №38: аудит тёмной темы после отрисовки профиля
         auditDarkTheme(box);
@@ -7414,13 +7467,13 @@
         let isUnlocked = false;
         try { isUnlocked = !!badge.isUnlocked(list); }
         catch (e) { console.error("Не удалось проверить бейдж:", badge.id, e); }
-        console.log("Бейдж", badge.id, "разблокирован?", isUnlocked);
+        dbg("Бейдж", badge.id, "разблокирован?", isUnlocked);
         return {
           id: badge.id, icon: badge.icon, color: badge.color,
           titleKey: badge.titleKey, descKey: badge.descKey, isUnlocked
         };
       });
-      if (!list.length) console.log("У студента пока нет достижений");
+      if (!list.length) dbg("У студента пока нет достижений");
       return badges;
     }
 
@@ -7606,18 +7659,18 @@
       }
 
       // Самопроверка №1
-      console.log("Всего тестов в базе:", mockTests.length);
+      dbg("Всего тестов в базе:", mockTests.length);
 
       // Фильтрация: оставляем только подходящие студенту тесты
       const filteredTests = mockTests.filter(test => {
         const isMatch = isTestMatch(test);
         // Самопроверка №2
-        console.log("Тест", testTitle(test), "подходит?", isMatch);
+        dbg("Тест", testTitle(test), "подходит?", isMatch);
         return isMatch;
       });
 
       // Самопроверка №3
-      console.log("Тестов после фильтрации для студента:", filteredTests.length);
+      dbg("Тестов после фильтрации для студента:", filteredTests.length);
 
       // Самопроверка №4: пусто → красивая заглушка
       if (filteredTests.length === 0) {
@@ -7663,11 +7716,11 @@
       }
 
       // Самопроверка №2: сколько всего пар в базе
-      console.log("Всего пар в базе:", mockSchedule.length);
+      dbg("Всего пар в базе:", mockSchedule.length);
 
       // Самопроверка №1: оставляем только пары группы студента
       const filteredSchedule = mockSchedule.filter(item => item.group === mockStudent.group);
-      console.log("Пар для группы", mockStudent.group, ":", filteredSchedule.length);
+      dbg("Пар для группы", mockStudent.group, ":", filteredSchedule.length);
 
       // Самопроверка №3: пусто → красивая заглушка
       if (filteredSchedule.length === 0) {
@@ -7724,9 +7777,9 @@
       }
 
       // Самопроверка №2: логи по базе и по своему фильтру
-      console.log("Всего пар в расписании:", mockSchedule.length);
+      dbg("Всего пар в расписании:", mockSchedule.length);
       const mySchedule = mockSchedule.filter(item => item.teacher === mockTeacher.name);
-      console.log("Пар у преподавателя", mockTeacher.name, ":", mySchedule.length);
+      dbg("Пар у преподавателя", mockTeacher.name, ":", mySchedule.length);
 
       // Самопроверка №3: своих пар нет → заглушка
       if (mySchedule.length === 0) {
@@ -7886,7 +7939,7 @@
       const unread = sorted.filter(n => !isNotificationRead(n));
 
       // Самопроверка №1: сколько уведомлений у текущей роли
-      console.log("Уведомления для роли", currentRole, ":", sorted.length);
+      dbg("Уведомления для роли", currentRole, ":", sorted.length);
 
       // «Отметить все как прочитанные» показываем только при наличии непрочитанных
       const readAllBtn = document.getElementById('notifReadAll');
@@ -7954,7 +8007,7 @@
       modal.classList.remove('hidden');
       currentNotifId = n.id;
       closeNotifications();                          // закрываем выпадашку
-      console.log("Открыты подробности уведомления:", notifField(n, "title"));   // самопроверка №4
+      dbg("Открыты подробности уведомления:", notifField(n, "title"));   // самопроверка №4
     }
 
     // Закрывает модальное окно с подробностями
@@ -7977,7 +8030,7 @@
       saveReadNotifications();
 
       // Самопроверка №2: что именно отмечено и сохранилось
-      console.log("Отмечены прочитанными уведомления:", unreadIds);
+      dbg("Отмечены прочитанными уведомления:", unreadIds);
       updateBellDot();
       renderNotifications();
     }
@@ -7993,7 +8046,7 @@
         closeSearch();
         renderNotifications();
         const unreadCount = getRoleNotifications(currentRole).filter(n => !isNotificationRead(n)).length;
-        console.log("Уведомления открыты. Роль:", currentRole, "| Непрочитанных:", unreadCount);
+        dbg("Уведомления открыты. Роль:", currentRole, "| Непрочитанных:", unreadCount);
         dd.classList.remove('hidden');
       } else {
         dd.classList.add('hidden');
@@ -8143,7 +8196,7 @@
       const box = document.getElementById('searchResults');
       if (!box) return;
       const query = String(rawQuery == null ? "" : rawQuery).trim();
-      console.log("Поиск по запросу:", query, "Роль:", currentRole);
+      dbg("Поиск по запросу:", query, "Роль:", currentRole);
 
       // По одной букве не ищем (самопроверка №2)
       if (query.length < 2) {
@@ -8183,8 +8236,8 @@
         .map(searchAnnouncementResult);
 
       // Самопроверка №3: логи по количеству найденного
-      console.log("Найдено тестов:", foundTests.length);
-      console.log("Найдено пользователей:", foundUsers.length);
+      dbg("Найдено тестов:", foundTests.length);
+      dbg("Найдено пользователей:", foundUsers.length);
 
       const total = foundTests.length + foundGroups.length + foundUsers.length + foundAnnouncements.length;
       if (!total) {
@@ -8216,7 +8269,7 @@
         input.select();
       }
       performSearch(input ? input.value : "");
-      console.log("Поиск открыт. Роль:", currentRole);
+      dbg("Поиск открыт. Роль:", currentRole);
     }
 
     // Закрывает панель и очищает поле/результаты (Промт №31, п.4)
@@ -8248,7 +8301,7 @@
       const visible = all.filter(a =>
         !a.targetGroup || a.targetGroup === 'all' || a.targetGroup === mockStudent.group
       );
-      console.log("Отрисовка объявлений. Количество:", visible.length);  // самопроверка
+      dbg("Отрисовка объявлений. Количество:", visible.length);  // самопроверка
 
       if (!visible.length) {
         return renderEmptyState('fa-bullhorn', dict.annEmpty, dict.emptyNotificationsDesc);
@@ -8278,7 +8331,7 @@
     function renderTeacherAnnouncements() {
       const dict = translations[currentLang];
       const my = getAnnouncements().filter(a => a.author === mockTeacher.name);
-      console.log("Объявления преподавателя:", my.length);
+      dbg("Объявления преподавателя:", my.length);
 
       const cards = my.map(a => `
         <article class="announce-card">
@@ -8408,8 +8461,8 @@
       all.forEach(a => mockAnnouncements.push(a));
       saveAnnouncements(all);
 
-      console.log("Объявление создано:", newAnnouncement.title, "Для группы:", newAnnouncement.targetGroup);
-      console.log("Всего объявлений в базе:", mockAnnouncements.length);
+      dbg("Объявление создано:", newAnnouncement.title, "Для группы:", newAnnouncement.targetGroup);
+      dbg("Всего объявлений в базе:", mockAnnouncements.length);
 
       closeTeacherAnnouncementModal();
       renderSectionContent();
@@ -8452,7 +8505,7 @@
         const sum = allGrades.reduce((acc, g) => acc + (Number(g.grade) || 0), 0);
         averageGrade = Math.round((sum / allGrades.length) * 100) / 100;
       }
-      console.log("Всего оценок:", allGrades.length, "Средний балл:", averageGrade);
+      dbg("Всего оценок:", allGrades.length, "Средний балл:", averageGrade);
 
       // Самопроверка №2: пусто → заглушка
       if (allGrades.length === 0) {
@@ -8668,7 +8721,7 @@
           language: ['ru', 'uz', 'en'].includes(saved.language) ? saved.language : DEFAULT_SYSTEM_SETTINGS.language,
           theme: saved.theme === 'dark' ? 'dark' : 'light'
         };
-        console.log("Системные настройки восстановлены:", systemSettings);
+        dbg("Системные настройки восстановлены:", systemSettings);
       } catch (e) {
         console.error("Не удалось восстановить системные настройки:", e);
         systemSettings = { ...DEFAULT_SYSTEM_SETTINGS };
@@ -8779,8 +8832,8 @@
         directionsStats[g.direction] = (directionsStats[g.direction] || 0) + 1;
       });
 
-      console.log("Статистика Админа - Студентов:", studentsCount, "Групп:", groups.length);
-      console.log("Направления и количество групп:", directionsStats);
+      dbg("Статистика Админа - Студентов:", studentsCount, "Групп:", groups.length);
+      dbg("Направления и количество групп:", directionsStats);
 
       const events = Array.isArray(mockAdminEvents) ? mockAdminEvents : [];
       const eventsHTML = events.length
@@ -8942,7 +8995,7 @@
     function renderAdminUsers() {
       const dict = translations[currentLang];
       allUsers = getAdminAllUsers();
-      console.log("Всего пользователей в системе:", allUsers.length);
+      dbg("Всего пользователей в системе:", allUsers.length);
 
       return `
         <div class="admin-users-toolbar">
@@ -8990,7 +9043,7 @@
         (!role || user.role === role) &&
         (user.name || '').toLowerCase().includes(query)
       );
-      console.log("Отфильтровано пользователей:", filteredUsers.length);
+      dbg("Отфильтровано пользователей:", filteredUsers.length);
 
       const rowsEl = document.getElementById('adminUsersRows');
       const cardsEl = document.getElementById('adminUsersCards');
@@ -9137,7 +9190,7 @@
         syncAdminUserFields('student');
         roleSelect.addEventListener('change', () => {
           const selectedRole = roleSelect.value;
-          console.log("Выбрана роль:", selectedRole);
+          dbg("Выбрана роль:", selectedRole);
           syncAdminUserFields(selectedRole);
           const focusEl = selectedRole === 'teacher'
             ? document.getElementById('adminNewUserSubject')
@@ -9206,12 +9259,12 @@
 
       saveAdminUsersToStorage();                       // uniteststudents + unitestteachers
       // Логи самопроверки — как в промте (не UI, поэтому без перевода).
-      console.log("Пользователь создан:", newUser);
+      dbg("Пользователь создан:", newUser);
       addSystemLog(mockAdmin.name, 'adminLogUserAdded', [newUser.name]);
       if (role === 'student') {
-        console.log("Всего студентов теперь:", mockAllStudents.length);
+        dbg("Всего студентов теперь:", mockAllStudents.length);
       } else {
-        console.log("Всего преподавателей теперь:", mockAllTeachers.length);
+        dbg("Всего преподавателей теперь:", mockAllTeachers.length);
       }
 
       closeAdminUserModal();
@@ -9315,7 +9368,7 @@
       if (!uniqueDirections.length) {
         ADMIN_DIRECTION_KEYS.forEach(direction => uniqueDirections.push(direction));
       }
-      console.log("Направления для управления:", uniqueDirections);
+      dbg("Направления для управления:", uniqueDirections);
 
       return `
         <p class="admin-ref-subtitle">${escapeHtml(dict.adminManagersSubtitle)}</p>
@@ -9355,7 +9408,7 @@
       const directionName = adminDirectionLabel(direction);
       const current = adminManagerForDirection(direction);
       const managers = Array.isArray(mockAllManagers) ? mockAllManagers : [];
-      console.log("Открыто окно назначения для:", directionName);
+      dbg("Открыто окно назначения для:", directionName);
 
       const old = document.getElementById('adminManagerOverlay');
       if (old) old.remove();
@@ -9441,10 +9494,10 @@
           }
         });
         if (freed) {
-          console.log("Должность освобождена:", adminDirectionLabel(direction), "—", freed.name);
+          dbg("Должность освобождена:", adminDirectionLabel(direction), "—", freed.name);
           addSystemLog(mockAdmin.name, 'adminLogManagerFreed', ['@dir' + capitalize(direction)]);
         } else {
-          console.log("Должность уже свободна:", adminDirectionLabel(direction));
+          dbg("Должность уже свободна:", adminDirectionLabel(direction));
         }
       } else {
         const manager = managers.find(m => m && String(m.id) === String(value));
@@ -9452,21 +9505,21 @@
 
         // Менеджер уходит с прежнего направления — там он больше не числится.
         if (manager.direction && manager.direction !== direction) {
-          console.log("Менеджер", manager.name, "переведен с направления", adminDirectionLabel(manager.direction));
+          dbg("Менеджер", manager.name, "переведен с направления", adminDirectionLabel(manager.direction));
         }
         // На направлении остаётся один менеджер: прежнего снимаем.
         managers.forEach(m => {
           if (m && m !== manager && m.direction === direction) m.direction = null;
         });
         manager.direction = direction;
-        console.log("Менеджер", manager.name, "назначен на", adminDirectionLabel(direction));
+        dbg("Менеджер", manager.name, "назначен на", adminDirectionLabel(direction));
         addSystemLog(mockAdmin.name, 'adminLogManagerAssigned',
           [manager.name, '@dir' + capitalize(direction)]);
       }
 
       syncMockManagerFromList();
       saveManagersToStorage();
-      console.log("Обновленный список менеджеров:", mockAllManagers);
+      dbg("Обновленный список менеджеров:", mockAllManagers);
 
       closeAdminManagerModal();
       if (currentRole === 'admin' && currentSection === 'managers') {
@@ -9533,7 +9586,7 @@
     function renderAdminReports() {
       const dict = translations[currentLang];
       const groups = Array.isArray(mockTeacherGroups) ? mockTeacherGroups : [];
-      console.log("Глобальные отчеты. Всего групп в вузе:", groups.length);
+      dbg("Глобальные отчеты. Всего групп в вузе:", groups.length);
 
       if (!groups.length) {
         return renderEmptyState('fa-chart-line', dict.adminReportsNoGroups, dict.noData);
@@ -9580,7 +9633,7 @@
       const directionEl = document.getElementById('adminReportDirection');
       const selectedCourse = courseEl ? courseEl.value : '';
       const selectedDirection = directionEl ? directionEl.value : '';
-      console.log("Применены фильтры. Курс:", selectedCourse || 'all',
+      dbg("Применены фильтры. Курс:", selectedCourse || 'all',
         "Направление:", selectedDirection || 'all');
 
       // 1. Группы под фильтром
@@ -9602,7 +9655,7 @@
       const globalAvg = grades.length
         ? grades.reduce((sum, grade) => sum + grade, 0) / grades.length
         : 0;
-      console.log("Общий средний балл по вузу:", grades.length ? Number(globalAvg.toFixed(2)) : 0);
+      dbg("Общий средний балл по вузу:", grades.length ? Number(globalAvg.toFixed(2)) : 0);
 
       const stats = document.getElementById('adminReportStats');
       if (stats) {
@@ -9637,7 +9690,7 @@
         const avgGrade = groupGrades.length
           ? groupGrades.reduce((sum, grade) => sum + grade, 0) / groupGrades.length
           : 0;
-        console.log("Группа:", group.name, "Средний балл:",
+        dbg("Группа:", group.name, "Средний балл:",
           avgGrade ? Number(avgGrade.toFixed(2)) : 0, "Результатов:", groupResults.length);
 
         const pct = groupGrades.length
@@ -9750,7 +9803,7 @@
     function renderAdminSettings() {
       const dict = translations[currentLang];
       const logs = Array.isArray(systemLogs) ? systemLogs : [];
-      console.log("Отрисовка настроек. Загружено логов:", logs.length);
+      dbg("Отрисовка настроек. Загружено логов:", logs.length);
 
       // Кнопка «Очистить журнал» не нужна при пустом журнале
       const clearBtn = logs.length
@@ -9899,7 +9952,7 @@
       }
 
       addSystemLog(mockAdmin.name, 'adminLogSettingsChanged', []);
-      console.log("Системные настройки сохранены:", systemSettings);
+      dbg("Системные настройки сохранены:", systemSettings);
 
       // Применяем выбранные язык/тему сразу (они же станут значениями по умолчанию).
       if (langChanged) changeLanguage(language);
@@ -9999,7 +10052,7 @@
       }
 
       addSystemLog(mockAdmin.name, 'adminLogBackup', [filename]);
-      console.log("Резервная копия сформирована:", filename);
+      dbg("Резервная копия сформирована:", filename);
       if (statusEl) {
         statusEl.textContent = dict.adminBackupDone + ' ' + filename;
         statusEl.className = 'admin-settings-status admin-settings-status--ok';
@@ -10012,7 +10065,7 @@
       if (!confirm(dict.adminClearLogConfirm)) return;
       systemLogs = [];
       saveAuditLogsToStorage();
-      console.log("Журнал действий очищен");
+      dbg("Журнал действий очищен");
       if (currentRole === 'admin' && currentSection === 'settings') navigate('settings', false);
     }
 
@@ -10025,7 +10078,7 @@
     // Язык и тему сохраняем, чтобы после перезагрузки не сбрасывался интерфейс.
     function resetAdminDatabase() {
       const dict = translations[currentLang];
-      console.log("Пользователь запросил сброс БД");
+      dbg("Пользователь запросил сброс БД");
       if (!confirm(dict.adminResetConfirm)) return;
 
       const savedLang = localStorage.getItem('unitest_lang');
@@ -10035,7 +10088,7 @@
         localStorage.clear();
         if (savedLang != null) localStorage.setItem('unitest_lang', savedLang);
         if (savedTheme != null) localStorage.setItem('unitest_theme', savedTheme);
-        console.log("localStorage очищен");
+        dbg("localStorage очищен");
       } catch (e) {
         console.error("Не удалось очистить localStorage:", e);
       }
@@ -10099,11 +10152,11 @@
     function renderAdminGroups() {
       const dict = translations[currentLang];
       const groups = Array.isArray(mockTeacherGroups) ? mockTeacherGroups : [];
-      console.log("Всего групп в системе:", groups.length);
+      dbg("Всего групп в системе:", groups.length);
 
       const directions = adminDirectionKeys()
         .filter(direction => groups.some(g => g && g.direction === direction));
-      console.log("Группы по направлениям:", directions.map(d => d + ': ' + groups.filter(g => g.direction === d).length).join(', ') || "нет");
+      dbg("Группы по направлениям:", directions.map(d => d + ': ' + groups.filter(g => g.direction === d).length).join(', ') || "нет");
 
       const blocks = directions.map(direction => {
         const list = groups.filter(g => g && g.direction === direction);
@@ -10239,7 +10292,7 @@
       adminGroupEditingId = group ? group.id : null;
 
       const availableDirections = adminDirectionKeys();
-      console.log("Доступные направления для выбора:", availableDirections);
+      dbg("Доступные направления для выбора:", availableDirections);
 
       // На всякий случай убираем предыдущую модалку (без дублей id).
       const old = document.getElementById('adminGroupOverlay');
@@ -10352,7 +10405,7 @@
           group.course = course;
           group.direction = direction;
           group.form = form;
-          console.log("Группа обновлена:", group.name, "Направление:", group.direction);
+          dbg("Группа обновлена:", group.name, "Направление:", group.direction);
           addSystemLog(mockAdmin.name, 'adminLogGroupUpdated', [group.name]);
         }
       } else {
@@ -10366,7 +10419,7 @@
           teacherId: null
         };
         mockTeacherGroups.push(newGroup);
-        console.log("Группа создана:", newGroup.name, "Направление:", newGroup.direction);
+        dbg("Группа создана:", newGroup.name, "Направление:", newGroup.direction);
         addSystemLog(mockAdmin.name, 'adminLogGroupCreated', [newGroup.name]);
       }
 
@@ -10422,7 +10475,7 @@
       const teachersCount = (Array.isArray(mockAllTeachers) ? mockAllTeachers : [])
         .filter(t => t && teacherIds.includes(t.id)).length;
 
-      console.log("Дашборд менеджера. Групп:", groups.length, "Студентов:", totalStudents);
+      dbg("Дашборд менеджера. Групп:", groups.length, "Студентов:", totalStudents);
 
       return `
         <div class="dash-welcome">${dict.managerWelcome
@@ -10471,12 +10524,12 @@
     function renderManagerSchedule() {
       const dict = translations[currentLang];
 
-      console.log("Всего пар в базе:", mockSchedule.length);
+      dbg("Всего пар в базе:", mockSchedule.length);
       const myGroups = getManagerGroups().map(g => g.name);
-      console.log("Группы менеджера:", myGroups);
+      dbg("Группы менеджера:", myGroups);
 
       const filteredSchedule = mockSchedule.filter(item => myGroups.includes(item.group));
-      console.log("Пар для направления менеджера:", filteredSchedule.length);
+      dbg("Пар для направления менеджера:", filteredSchedule.length);
 
       // Самопроверка №3: расписание для направления не составлено → заглушка
       if (filteredSchedule.length === 0) {
@@ -10532,8 +10585,8 @@
     function renderManagerGroups() {
       const dict = translations[currentLang];
       const groups = getManagerGroups();
-      console.log("Всего групп в базе:", mockTeacherGroups.length);
-      console.log("Групп направления", mockManager.direction, ":", groups.length);
+      dbg("Всего групп в базе:", mockTeacherGroups.length);
+      dbg("Групп направления", mockManager.direction, ":", groups.length);
 
       if (!groups.length) {
         return renderEmptyState('fa-people-group', dict.managerNoGroups, dict.emptyGroupsDesc);
@@ -10548,8 +10601,8 @@
       const myTeacherIds = [...new Set(myGroups.map(g => g.teacherId))];
       const myTeachers = mockAllTeachers.filter(t => myTeacherIds.includes(t.id));
 
-      console.log("Уникальные ID преподавателей направления:", myTeacherIds);
-      console.log("Найдено преподавателей:", myTeachers.length);
+      dbg("Уникальные ID преподавателей направления:", myTeacherIds);
+      dbg("Найдено преподавателей:", myTeachers.length);
 
       if (!myTeachers.length) {
         return renderEmptyState('fa-chalkboard-user', dict.managerNoTeachers, dict.emptyGroupsDesc);
@@ -10595,8 +10648,8 @@
       const myGroupNames = myGroups.map(g => g.name);
       managerStudentsBase = mockAllStudents.filter(s => myGroupNames.includes(s.group));
 
-      console.log("Всего студентов в базе:", mockAllStudents.length);
-      console.log("Студентов направления", mockManager.direction, ":", managerStudentsBase.length);
+      dbg("Всего студентов в базе:", mockAllStudents.length);
+      dbg("Студентов направления", mockManager.direction, ":", managerStudentsBase.length);
 
       const groupOptions = myGroups
         .map(g => `<option value="${escapeHtml(g.name)}">${escapeHtml(g.name)}</option>`)
@@ -10661,7 +10714,7 @@
       const result = managerStudentsBase.filter(s =>
         (!group || s.group === group) && s.name.toLowerCase().includes(query)
       );
-      console.log("Применены фильтры. Найдено:", result.length);
+      dbg("Применены фильтры. Найдено:", result.length);
 
       const rowsEl = document.getElementById('managerStudentsRows');
       const cardsEl = document.getElementById('managerStudentsCards');
@@ -10750,9 +10803,9 @@
       const myTeacherNames = myTeachers.map(t => t.name);
       const filteredTests = managerDirectionTests();
 
-      console.log("Преподаватели направления:", myTeacherNames);
-      console.log("Всего тестов в базе:", mockTests.length);
-      console.log("Тестов направления менеджера:", filteredTests.length);
+      dbg("Преподаватели направления:", myTeacherNames);
+      dbg("Всего тестов в базе:", mockTests.length);
+      dbg("Тестов направления менеджера:", filteredTests.length);
 
       const options = myTeachers.map(t =>
         `<option value="${escapeHtml(t.name)}">${escapeHtml(t.name)}</option>`
@@ -10773,7 +10826,7 @@
       const sel = document.getElementById('managerTestAuthor');
       const selected = sel ? sel.value : '';
       const result = managerDirectionTests().filter(t => !selected || t.author === selected);
-      console.log("Фильтр по автору:", selected || 'all', "Найдено:", result.length);
+      dbg("Фильтр по автору:", selected || 'all', "Найдено:", result.length);
 
       const grid = document.getElementById('managerTestsGrid');
       if (!grid) return;
@@ -10825,7 +10878,7 @@
         const grades = collectGroupGrades(group);
         const sum = grades.reduce((a, b) => a + b, 0);
         const avg = grades.length > 0 ? (sum / grades.length).toFixed(1) : 0;
-        console.log("Группа", group.name, "Средний балл:", avg);
+        dbg("Группа", group.name, "Средний балл:", avg);
 
         const pct = grades.length ? Math.max(0, Math.min(100, (Number(avg) / 5) * 100)) : 0;
         return `
@@ -10930,7 +10983,7 @@
       const activeTestsCount = (Number(mockTeacher.activeTests) || 0) + myTestsCount;
 
       // Самопроверка: логируем рассчитанные значения
-      console.log("Дашборд преподавателя. Групп:", myGroups.length, "Студентов:", totalStudents, "Активных тестов:", activeTestsCount);
+      dbg("Дашборд преподавателя. Групп:", myGroups.length, "Студентов:", totalStudents, "Активных тестов:", activeTestsCount);
 
       const subject = dict["subj_" + mockTeacher.subject] || mockTeacher.subject;
 
@@ -10988,7 +11041,7 @@
       const dict = translations[currentLang];
       const myGroups = getMyGroups();
 
-      console.log("Отрисовка групп преподавателя. Доступно групп:", myGroups.length);
+      dbg("Отрисовка групп преподавателя. Доступно групп:", myGroups.length);
 
       // Самопроверка: у преподавателя нет групп → заглушка
       if (myGroups.length === 0) {
@@ -11040,7 +11093,7 @@
       const courses = teacherCourses();
       const subject = dict["subj_" + mockTeacher.subject] || mockTeacher.subject;
 
-      console.log("Форма создания теста открыта");
+      dbg("Форма создания теста открыта");
 
       const courseOptions = courses
         .map(c => `<option value="${c}">${c} ${dict.courseSuffix}</option>`)
@@ -11138,7 +11191,7 @@
         const selectedCourse = Number(courseSel.value);
         const availableGroups = teacherGroupsByCourse(selectedCourse);
         groupsBox.innerHTML = groupChecksHTML(selectedCourse);
-        console.log("Выбран курс:", selectedCourse, "Доступные группы:", availableGroups.map(g => g.name).join(", "));
+        dbg("Выбран курс:", selectedCourse, "Доступные группы:", availableGroups.map(g => g.name).join(", "));
       });
 
       // Отмена → назад на дашборд
@@ -11173,7 +11226,7 @@
           questions: []
         };
 
-        console.log("Черновик теста сохранён:", JSON.stringify(currentTestDraft));
+        dbg("Черновик теста сохранён:", JSON.stringify(currentTestDraft));
         // Переход к шагу 2: конструктор вопросов
         const box = document.getElementById('sectionContent');
         box.innerHTML = renderQuestionBuilder();
@@ -11217,7 +11270,7 @@
       renderQuestion();
       startTimer(secondsLeft);                                   // запускаем обратный отсчёт
 
-      console.log("Запуск теста:", testId);
+      dbg("Запуск теста:", testId);
     }
 
     /* ============================================================
@@ -11275,8 +11328,8 @@
     // Выбор ответа (самопроверка: логи индекса и массива)
     function selectAnswer(index) {
       userAnswers[currentQuestionIndex] = index;
-      console.log("Выбран ответ:", index, "для вопроса:", currentQuestionIndex);
-      console.log("Текущий массив ответов:", userAnswers);
+      dbg("Выбран ответ:", index, "для вопроса:", currentQuestionIndex);
+      dbg("Текущий массив ответов:", userAnswers);
 
       // Обновляем подсветку без полной перерисовки
       document.querySelectorAll('#testOptions .test-option').forEach(btn => {
@@ -11293,7 +11346,7 @@
       if (nextIndex === currentQuestionIndex) return;             // край — никуда не идём
       currentQuestionIndex = nextIndex;
       // Самопроверка: лог перехода (до отрисовки, чтобы показать новый индекс)
-      console.log("Переход к вопросу с индексом:", currentQuestionIndex);
+      dbg("Переход к вопросу с индексом:", currentQuestionIndex);
       renderQuestion();                                           // ранее выбранный ответ станет активным
       saveProgress();                                            // автосохранение прогресса (Промт №6)
     }
@@ -11321,7 +11374,7 @@
       activeTest = null;
       currentQuestionIndex = 0;
       userAnswers = [];
-      console.log("Экран теста закрыт.");
+      dbg("Экран теста закрыт.");
     }
 
     /* ============================================================
@@ -11360,7 +11413,7 @@
           alert(trf('timeUp'));
         }
       }, 1000);
-      console.log("Таймер запущен на", seconds, "секунд");
+      dbg("Таймер запущен на", seconds, "секунд");
     }
 
     // Останавливает таймер
@@ -11382,7 +11435,7 @@
       };
       try {
         localStorage.setItem(ACTIVE_TEST_KEY, JSON.stringify(data));
-        console.log("Прогресс сохранён в localStorage:", { testId: activeTest.id, timeLeft: secondsLeft });
+        dbg("Прогресс сохранён в localStorage:", { testId: activeTest.id, timeLeft: secondsLeft });
       } catch (e) {
         // Промт №39: переполнение localStorage не должно прерывать тест
         console.warn("Не удалось сохранить прогресс теста:", e && e.name);
@@ -11407,7 +11460,7 @@
       // Спрашиваем пользователя, продолжать ли
       if (!confirm(trf('restoreConfirm'))) {
         clearProgress();
-        console.log("Сохранение отклонено — начинаем заново.");
+        dbg("Сохранение отклонено — начинаем заново.");
         return false;
       }
 
@@ -11421,7 +11474,7 @@
 
       secondsLeft = Number.isFinite(data.timeLeft) ? data.timeLeft : activeTest.timeLimit * 60;
 
-      console.log("Прогресс восстановлен. Ответы:", userAnswers);
+      dbg("Прогресс восстановлен. Ответы:", userAnswers);
       return true;
     }
 
@@ -11463,7 +11516,7 @@
       const timeSpent = Math.max(0, limit - secondsLeft);
 
       // Самопроверка
-      console.log("Подсчет результатов. Правильных:", correctCount, "из", total, "Процент:", percent, "Оценка:", grade);
+      dbg("Подсчет результатов. Правильных:", correctCount, "из", total, "Процент:", percent, "Оценка:", grade);
 
       return {
         testId: activeTest ? activeTest.id : null,
@@ -11497,7 +11550,7 @@
       results.push(record);
       try {
         localStorage.setItem(RESULTS_KEY, JSON.stringify(results));
-        console.log("Результат сохранён в localStorage:", record);
+        dbg("Результат сохранён в localStorage:", record);
       } catch (e) {
         // Промт №39: при QuotaExceededError результат всё равно возвращаем на экран
         console.warn("Не удалось сохранить результат в localStorage:", e && e.name);
@@ -12311,7 +12364,7 @@
     function deleteQuestion(idx) {
       if (!currentTestDraft) return;
       currentTestDraft.questions.splice(idx, 1);
-      console.log("Вопрос удалён. Всего вопросов:", currentTestDraft.questions.length);
+      dbg("Вопрос удалён. Всего вопросов:", currentTestDraft.questions.length);
       updateQuestionBuilderState();          // счётчик и уведомление пересчитываются
     }
 
@@ -12349,8 +12402,8 @@
         diagram: pendingDiagram ? JSON.parse(JSON.stringify(pendingDiagram)) : null
       });
 
-      console.log("Вопрос добавлен. Всего вопросов:", currentTestDraft.questions.length);
-      console.log("Текущий черновик:", currentTestDraft);
+      dbg("Вопрос добавлен. Всего вопросов:", currentTestDraft.questions.length);
+      dbg("Текущий черновик:", currentTestDraft);
 
       // Очищаем форму под следующий вопрос
       textEl.value = '';
@@ -12424,7 +12477,7 @@
         return;
       }
 
-      console.log("Сохранение теста:", currentTestDraft.title);
+      dbg("Сохранение теста:", currentTestDraft.title);
 
       // Направление теста берём из первой выбранной группы (в mockTeacherGroups у
       // каждой группы есть direction). Без targetDirection тест не пропустил бы
@@ -12454,7 +12507,7 @@
       mockTests.push(newTest);
       saveTestsToStorage();                                // localStorage: unitestalltests
 
-      console.log("Всего тестов в базе после сохранения:", mockTests.length);
+      dbg("Всего тестов в базе после сохранения:", mockTests.length);
 
       currentTestDraft = null;                             // черновик больше не нужен
       navigate('myTests');                                 // переход в раздел «Мои тесты»
@@ -13397,7 +13450,7 @@
       const myTests = mockTests.filter(t => t.author === mockTeacher.name);
 
       // Самопроверка №2: лог найденных тестов
-      console.log("Мои тесты. Найдено:", myTests.length);
+      dbg("Мои тесты. Найдено:", myTests.length);
 
       // Самопроверка №3: тестов нет → заглушка + кнопка «Создать первый тест»
       if (myTests.length === 0) {
@@ -13441,7 +13494,7 @@
       }
       const removed = mockTests.splice(idx, 1)[0];
       saveTestsToStorage();
-      console.log("Тест удалён:", removed.title || removed.id, "Осталось тестов:", mockTests.length);
+      dbg("Тест удалён:", removed.title || removed.id, "Осталось тестов:", mockTests.length);
       renderTeacherTestsSection();
     }
 
@@ -13552,13 +13605,13 @@
 
       // Все результаты: исторические + сохранённые студентами (unitest_results)
       const allResults = mockHistoricalResults.concat(getResults().map(normalizeResult));
-      console.log("Всего результатов в базе:", allResults.length);
+      dbg("Всего результатов в базе:", allResults.length);
 
       // Только СВОИ тесты (author === mockTeacher.name) — чужие результаты не показываем
       const myTests = mockTests.filter(t => t.author === mockTeacher.name);
       const myTestIds = myTests.map(t => String(t.id));
       const filteredResults = allResults.filter(r => myTestIds.includes(String(r.testId)));
-      console.log("Результатов для тестов преподавателя:", filteredResults.length);
+      dbg("Результатов для тестов преподавателя:", filteredResults.length);
 
       // Фильтр сверху: только тесты этого преподавателя (+ «Все тесты»)
       const optionsHtml = `<option value="">${dict.allTests}</option>` +
@@ -13584,7 +13637,7 @@
         const filteredByTest = selectedTestId
           ? filteredResults.filter(r => String(r.testId) === String(selectedTestId))
           : filteredResults;
-        console.log("Фильтр по тесту:", selectedTestId, "Найдено:", filteredByTest.length);
+        dbg("Фильтр по тесту:", selectedTestId, "Найдено:", filteredByTest.length);
         document.getElementById('trResultsBox').innerHTML = teacherResultsHTML(filteredByTest);
         renderMath(document.getElementById('trResultsBox'));   // формулы и после фильтрации
       });
@@ -13622,7 +13675,7 @@
 
     // Отрисовывает экран результата (круг, оценка, статистика, разбор, кнопки)
     function renderResult(res) {
-      console.log("Отрисовка экрана результатов. Переданный процент:", res.percent);
+      dbg("Отрисовка экрана результатов. Переданный процент:", res.percent);
       lastResult = res;
 
       const dict = translations[currentLang];
@@ -13712,7 +13765,7 @@
       const btn = document.getElementById('reviewToggle');
       const onlyWrong = list.classList.toggle('only-wrong');
       btn.classList.toggle('active', onlyWrong);
-      console.log("Фильтр разбора: только ошибки =", onlyWrong);
+      dbg("Фильтр разбора: только ошибки =", onlyWrong);
     }
 
     // Скрыть экран результата
@@ -13752,7 +13805,7 @@
       const list = getAppeals();
       mockAppeals.length = 0;
       list.forEach(a => mockAppeals.push(a));
-      console.log("Апелляции восстановлены из localStorage:", mockAppeals.length);
+      dbg("Апелляции восстановлены из localStorage:", mockAppeals.length);
     }
 
     // Сохраняет апелляции; переполнение localStorage не роняет экран
@@ -13882,8 +13935,8 @@
       overlay.classList.remove("hidden");
       if (input) { try { input.focus(); } catch (e) {} }
 
-      console.log("Открыто окно апелляции для теста:", target.testId);
-      console.log("Апелляция привязана к результату:", currentAppealResultId);
+      dbg("Открыто окно апелляции для теста:", target.testId);
+      dbg("Апелляция привязана к результату:", currentAppealResultId);
     }
 
     // Закрывает модалку подачи
@@ -13933,8 +13986,8 @@
       all.unshift(newAppeal);
       if (!saveAppealsToStorage(all)) return;
 
-      console.log("Апелляция сохранена:", newAppeal);
-      console.log("Всего апелляций в базе:", mockAppeals.length);
+      dbg("Апелляция сохранена:", newAppeal);
+      dbg("Всего апелляций в базе:", mockAppeals.length);
 
       closeAppealModal();
       currentAppealResultId = null;
@@ -13951,8 +14004,8 @@
       const rawResults = getResults();
       const results = Array.isArray(rawResults) ? rawResults : [];
 
-      console.log("Апелляций в базе:", getAppeals().length);
-      console.log("Результатов студента:", results.length);
+      dbg("Апелляций в базе:", getAppeals().length);
+      dbg("Результатов студента:", results.length);
 
       if (!results.length) {
         return renderEmptyState('fa-triangle-exclamation', dict.appealsEmpty, dict.emptyAppealsDesc);
@@ -14093,8 +14146,8 @@
       const myAppeals = getTeacherAppeals();
 
       // Самопроверка из промта №34
-      console.log("Всего апелляций в базе:", allAppeals.length);
-      console.log("Апелляций для тестов преподавателя:", myAppeals.length);
+      dbg("Всего апелляций в базе:", allAppeals.length);
+      dbg("Апелляций для тестов преподавателя:", myAppeals.length);
 
       updateAppealsMenuBadge();
 
@@ -14129,7 +14182,7 @@
       const appeal = all[idx];
       if ((appeal.status || "pending") !== "pending") return;
 
-      console.log("Обработка апелляции:", appealId, "Действие:", action);
+      dbg("Обработка апелляции:", appealId, "Действие:", action);
 
       const approved = action === "approve";
       appeal.status = approved ? "approved" : "rejected";
@@ -14156,13 +14209,13 @@
           if (r.correct != null) r.score = r.correct;
           try {
             localStorage.setItem(RESULTS_KEY, JSON.stringify(results));
-            console.log("Оценка студента обновлена на 5");
+            dbg("Оценка студента обновлена на 5");
           } catch (e) {
             console.error("Не удалось сохранить результаты:", e);
             alert(dict.storageFull);
           }
         } else {
-          console.log("Результат для апелляции не найден:", appeal.resultId);
+          dbg("Результат для апелляции не найден:", appeal.resultId);
         }
       }
 
@@ -14178,7 +14231,7 @@
         params: { test: appealTestTitle(appeal) }
       });
 
-      console.log(approved ? "Апелляция одобрена:" : "Апелляция отклонена:", appeal.id);
+      dbg(approved ? "Апелляция одобрена:" : "Апелляция отклонена:", appeal.id);
 
       // Перерисовка раздела и счётчика
       if (currentRole === "teacher" && currentSection === "appeals") renderSectionContent();
@@ -14289,7 +14342,7 @@
     // Рисует сообщения текущей группы (фильтр ровно по groupName)
     function renderMessages() {
       const chatMessages = mockMessages.filter(m => m.groupName === currentChatGroup);
-      console.log("Сообщений в чате", currentChatGroup, ":", chatMessages.length);
+      dbg("Сообщений в чате", currentChatGroup, ":", chatMessages.length);
 
       const box = document.getElementById('chatMessages');
       if (box) {
@@ -14463,7 +14516,7 @@
     function selectChatGroup(groupName) {
       currentChatGroup = groupName;
       chatPanelOpen = true;
-      console.log("Открыт чат группы:", groupName);
+      dbg("Открыт чат группы:", groupName);
       renderSectionContent();
     }
 
@@ -14472,7 +14525,7 @@
       const input = document.getElementById('chatInput');
       const text = input ? input.value.trim() : '';
       if (!text) {
-        console.log("Пустое сообщение не отправлено");
+        dbg("Пустое сообщение не отправлено");
         return false;
       }
       if (!currentChatGroup) {
@@ -14493,7 +14546,7 @@
       saveMessages();
 
       if (input) input.value = '';
-      console.log("Отправлено сообщение в группу:", currentChatGroup, "Текст:", text);
+      dbg("Отправлено сообщение в группу:", currentChatGroup, "Текст:", text);
 
       if (currentRole === 'teacher') {
         renderSectionContent();          // обновляем и превью в списке групп
@@ -14527,7 +14580,7 @@
             renderMessages();
             scrollChatToBottom();
           }
-          console.log("Чат синхронизирован из другой вкладки. Сообщений:",
+          dbg("Чат синхронизирован из другой вкладки. Сообщений:",
             mockMessages.filter(m => m.groupName === currentChatGroup).length);
         }
       });
@@ -14551,6 +14604,9 @@
     }
 
     function initApp() {
+      // Промт №40: при первом запуске заполняем localStorage демо-данными
+      initDefaultData();
+
       // Системные настройки админки (Промт №29): загружаем до применения темы/языка,
       // чтобы значения по умолчанию работали при первом открытии.
       loadAdminSettingsFromStorage();
@@ -14690,6 +14746,10 @@
       document.getElementById('testFinishBtn').addEventListener('click', finishTest);
       document.getElementById('testCloseBtn').addEventListener('click', closeTestScreen);
 
+      // 7.1) Промт №40: таймер не должен жить после закрытия/ухода со страницы.
+      window.addEventListener('pagehide', stopTimer);
+      window.addEventListener('beforeunload', stopTimer);
+
       // 8) Промт №37: контроль горизонтального переполнения и сброс мобильного меню
       //    при переходе на десктопную ширину.
       window.addEventListener('resize', checkOverflow);
@@ -14698,8 +14758,9 @@
       });
       setTimeout(checkOverflow, 1000); // проверка при загрузке
 
-      console.log("Приложение инициализировано. Язык:", currentLang, "| Тема:", currentTheme);
-      console.log("Чтобы проверить обработку ошибок, введите в консоли: localStorage.setItem('unitestalltests', 'битый_текст'); location.reload();");
+      dbg("Приложение инициализировано. Язык:", currentLang, "| Тема:", currentTheme);
+      dbg("Финальная сборка завершена. Режим отладки (DEBUG):", DEBUG);
+      dbg("Размер HTML-файла (в символах):", document.documentElement.outerHTML.length);
     }
 
     /* Промт №39: глобальный перехватчик ошибок.

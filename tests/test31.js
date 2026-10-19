@@ -107,7 +107,8 @@ console.log("\n[7] Закрытие, горячие клавиши и клик �
 app.alerts.length = 0;
 w.performSearch("101");
 resultItems()[0].click();
-T("клик по результату — alert-заглушка", app.alerts.length === 1 && app.alerts[0].includes("Переход к объекту") && app.alerts[0].includes("в разработке"), app.alerts);
+T("клик по результату — демо-переход без «в разработке»",
+  app.alerts.length === 1 && app.alerts[0].includes("Выбран объект") && app.alerts[0].includes("демо-переход"), app.alerts);
 
 d.getElementById("searchClose").click();
 T("крестик закрывает панель", !isOpen());

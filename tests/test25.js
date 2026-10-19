@@ -139,7 +139,7 @@ T("клик по строке показывает alert с именем",
   alerts.length === 1 && alerts[0].includes(firstName), safe(alerts));
 alerts.length = 0;
 cards()[0].click();
-T("клик по карточке показывает alert", alerts.length === 1 && alerts[0].includes("в разработке"), safe(alerts));
+T("клик по карточке показывает демо-профиль", alerts.length === 1 && alerts[0].includes("Демо-профиль"), safe(alerts));
 
 console.log("\n[6] Переводы ru/uz/en");
 const keys = ["adminRole", "adminAllRoles", "adminExtraInfo", "adminStatus", "adminAddUser",
