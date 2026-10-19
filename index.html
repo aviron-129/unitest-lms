@@ -3277,7 +3277,7 @@
               <div id="notifDropdown" class="notif-dropdown hidden">
                 <div class="notif-head">
                   <span class="notif-head-title" data-i18n="notifications">Уведомления</span>
-                  <button id="notifReadAll" class="notif-readall" data-i18n="markRead">Прочитать</button>
+                  <button id="notifReadAll" class="notif-readall" data-i18n="markAllRead" type="button">Отметить все как прочитанные</button>
                 </div>
                 <div id="notifList" class="notif-list"></div>
               </div>
@@ -3467,6 +3467,20 @@
         // Уведомления и объявления (Промт №9)
         noNotifications: "Нет новых уведомлений",
         markRead:        "Прочитать",
+        markAllRead:     "Отметить все как прочитанные",
+        // Глобальные уведомления по ролям (Промт №30)
+        gnTeacherTitle:        "Студент сдал тест",
+        gnTeacherText:         "Tosheva Malika сдала тест по математике на 5.",
+        gnTeacherSecondTitle:  "Новое объявление",
+        gnTeacherSecondText:   "Опубликовано объявление для группы 101-PR.",
+        gnAdminTitle:          "Системное обновление",
+        gnAdminText:           "Платформа обновлена до версии v1.2.",
+        gnAdminSecondTitle:    "Новый пользователь",
+        gnAdminSecondText:     "В системе зарегистрирован новый преподаватель.",
+        gnManagerTitle:        "Новый отчёт",
+        gnManagerText:         "Сформирован отчёт по направлению «Программирование».",
+        gnManagerSecondTitle:  "Расписание обновлено",
+        gnManagerSecondText:   "Расписание группы 101-PR на неделю обновлено.",
         // Уведомления с подробностями: новости/события (Промт №9.1)
         latestNews:      "Последние новости",
         newsTag:         "Новость",
@@ -3861,6 +3875,20 @@
         // Уведомления и объявления (Промт №9)
         noNotifications: "Yangi bildirishnomalar yo'q",
         markRead:        "O'qildi",
+        markAllRead:     "Barchasini o'qilgan deb belgilash",
+        // Глобальные уведомления по ролям (Промт №30)
+        gnTeacherTitle:        "Talaba test topshirdi",
+        gnTeacherText:         "Tosheva Malika matematika testini 5 bahoga topshirdi.",
+        gnTeacherSecondTitle:  "Yangi e'lon",
+        gnTeacherSecondText:   "101-PR guruhi uchun e'lon chop etildi.",
+        gnAdminTitle:          "Tizim yangilanishi",
+        gnAdminText:           "Platforma v1.2 versiyasiga yangilandi.",
+        gnAdminSecondTitle:    "Yangi foydalanuvchi",
+        gnAdminSecondText:     "Tizimda yangi o'qituvchi ro'yxatdan o'tdi.",
+        gnManagerTitle:        "Yangi hisobot",
+        gnManagerText:         "«Programmalash» yo'nalishi bo'yicha hisobot shakllantirildi.",
+        gnManagerSecondTitle:  "Jadval yangilandi",
+        gnManagerSecondText:   "101-PR guruhining haftalik jadvali yangilandi.",
         // Уведомления с подробностями: новости/события (Промт №9.1)
         latestNews:      "So'nggi yangiliklar",
         newsTag:         "Yangilik",
@@ -4255,6 +4283,20 @@
         // Уведомления и объявления (Промт №9)
         noNotifications: "No new notifications",
         markRead:        "Mark read",
+        markAllRead:     "Mark all as read",
+        // Глобальные уведомления по ролям (Промт №30)
+        gnTeacherTitle:        "Student completed a test",
+        gnTeacherText:         "Tosheva Malika scored 5 on the math test.",
+        gnTeacherSecondTitle:  "New announcement",
+        gnTeacherSecondText:   "An announcement for group 101-PR has been published.",
+        gnAdminTitle:          "System update",
+        gnAdminText:           "The platform has been updated to v1.2.",
+        gnAdminSecondTitle:    "New user",
+        gnAdminSecondText:     "A new teacher has registered in the system.",
+        gnManagerTitle:        "New report",
+        gnManagerText:         "A report for the Programming direction has been generated.",
+        gnManagerSecondTitle:  "Schedule updated",
+        gnManagerSecondText:   "The weekly schedule for group 101-PR has been updated.",
         // Уведомления с подробностями: новости/события (Промт №9.1)
         latestNews:      "Latest news",
         newsTag:         "News",
@@ -5159,7 +5201,7 @@
     // Показываем: 1 «строку последних новостей» (самое свежее с details) + до 3 остальных.
     const mockNotifications = [
       {
-        id: 1, type: "news", date: "2026-10-12", read: false,
+        id: 1, targetRole: "student", type: "news", date: "2026-10-12", read: false,
         title: "Открытие нового учебного корпуса",
         text: "С 15 октября занятия части факультетов пройдут в новом корпусе.",
         details: {
@@ -5174,7 +5216,7 @@
         }
       },
       {
-        id: 2, type: "event", date: "2026-10-11", read: false,
+        id: 2, targetRole: "student", type: "event", date: "2026-10-11", read: false,
         title: "Перенос занятия по физике",
         text: "Пара по физике переносится в аудиторию Lab-2.",
         details: {
@@ -5187,13 +5229,35 @@
           ]
         }
       },
-      { id: 3, type: "simple", date: "2026-10-09", read: true,
+      { id: 3, targetRole: "student", type: "simple", date: "2026-10-09", read: true,
         title: "Новый тест доступен",
         text: "Появился тест по программированию — пройдите до 20.10.2026." },
-      { id: 4, type: "simple", date: "2026-10-08", read: true,
+      { id: 4, targetRole: "student", type: "simple", date: "2026-10-08", read: true,
         title: "Результат теста",
         text: "Ваш тест по английскому проверен — оценка 4." }
     ];
+
+    // Глобальные уведомления для всех ролей (Промт №30).
+    // targetRole — роль, которой адресовано уведомление; текст берётся из
+    // переводов по ключам titleKey/textKey (ru/uz/en), поэтому язык
+    // переключается без изменения данных.
+    const mockGlobalNotifications = [
+      { id: "g_teacher_1", targetRole: "teacher", type: "simple", date: "2026-10-13", read: false,
+        titleKey: "gnTeacherTitle", textKey: "gnTeacherText" },
+      { id: "g_teacher_2", targetRole: "teacher", type: "simple", date: "2026-10-10", read: true,
+        titleKey: "gnTeacherSecondTitle", textKey: "gnTeacherSecondText" },
+      { id: "g_admin_1", targetRole: "admin", type: "simple", date: "2026-10-14", read: false,
+        titleKey: "gnAdminTitle", textKey: "gnAdminText" },
+      { id: "g_admin_2", targetRole: "admin", type: "simple", date: "2026-10-09", read: true,
+        titleKey: "gnAdminSecondTitle", textKey: "gnAdminSecondText" },
+      { id: "g_manager_1", targetRole: "manager", type: "simple", date: "2026-10-13", read: false,
+        titleKey: "gnManagerTitle", textKey: "gnManagerText" },
+      { id: "g_manager_2", targetRole: "manager", type: "simple", date: "2026-10-11", read: true,
+        titleKey: "gnManagerSecondTitle", textKey: "gnManagerSecondText" }
+    ];
+
+    // Прочитанные уведомления хранятся по id (общие для всех ролей).
+    const NOTIF_READ_KEY = "unitestreadnotifications";
 
     // Объявления раздела «Объявления» (role — ключ перевода role_teacher/role_manager)
     const ANNOUNCEMENTS_KEY = 'unitest_announcements';
@@ -5242,6 +5306,8 @@
 
     // Открытое уведомление с подробностями (Промт №9.1): id или null
     let currentNotifId = null;
+    // Прочитанные id уведомлений из localStorage (Промт №30)
+    let readNotificationIds = [];
 
     // Состояние прохождения теста
     let activeTest = null;             // открытый тест (объект из mockTests)
@@ -5367,6 +5433,11 @@
       // Строим меню и открываем первый раздел
       renderSidebar(role);
 
+      // Промт №30: колокольчик сразу перерисовывается под новую роль
+      closeNotifications();
+      renderNotifications();
+      updateBellDot();
+
       console.log("Выбрана роль:", currentRole);
     }
 
@@ -5455,6 +5526,7 @@
     function logout() {
       currentRole = null;
       currentSection = null;
+      closeNotifications();
       closeSidebar();
 
       // Скрываем панель, возвращаем экран входа
@@ -5950,11 +6022,49 @@
       return (parts[0][0] + parts[1][0]).toUpperCase();
     }
 
-    // Обновляет красную точку на колокольчике по числу непрочитанных
+    // Прочитанные id из localStorage (Промт №30)
+    function loadReadNotificationsFromStorage() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(NOTIF_READ_KEY));
+        readNotificationIds = Array.isArray(saved) ? saved.map(String) : [];
+      } catch (e) {
+        readNotificationIds = [];
+        console.error("Не удалось прочитать прочитанные уведомления:", e);
+      }
+    }
+
+    function saveReadNotifications() {
+      try {
+        localStorage.setItem(NOTIF_READ_KEY, JSON.stringify(readNotificationIds));
+      } catch (e) {
+        console.error("Не удалось сохранить прочитанные уведомления:", e);
+      }
+    }
+
+    // Уведомления только текущей роли (студенческие из №9 + глобальные №30)
+    function getRoleNotifications(role) {
+      if (!role) return [];
+      const own = mockNotifications.filter(n => (n.targetRole || "student") === role);
+      const global = mockGlobalNotifications.filter(n => n.targetRole === role);
+      return own.concat(global);
+    }
+
+    function isNotificationRead(n) {
+      return !!n.read || readNotificationIds.includes(String(n.id));
+    }
+
+    // Текст уведомления: сначала ключ перевода, потом обычный текст
+    function notifField(n, field) {
+      const dict = translations[currentLang];
+      const key = n[field + "Key"];
+      return (key && dict[key]) || n[field] || "";
+    }
+
+    // Обновляет красную точку на колокольчике по непрочитанным текущей роли
     function updateBellDot() {
       const dot = document.querySelector('#bellBtn .bell-dot');
       if (!dot) return;
-      const unread = mockNotifications.filter(n => !n.read).length;
+      const unread = getRoleNotifications(currentRole).filter(n => !isNotificationRead(n)).length;
       dot.style.display = unread > 0 ? 'block' : 'none';
     }
 
@@ -5966,13 +6076,13 @@
       const dict = translations[currentLang];
       const clickable = hasNotifDetails(n);
       return `
-        <div class="notif-item${n.read ? '' : ' unread'}${clickable ? ' notif-item--link' : ''}"
+        <div class="notif-item${isNotificationRead(n) ? '' : ' unread'}${clickable ? ' notif-item--link' : ''}"
              ${clickable ? `data-notif-id="${n.id}" role="button" tabindex="0"` : ''}>
           <div class="notif-item-top">
-            <span class="notif-item-title">${n.title}</span>
+            <span class="notif-item-title">${escapeHtml(notifField(n, "title"))}</span>
             <span class="notif-item-date">${formatDate(n.date)}</span>
           </div>
-          <p class="notif-item-text">${n.text}</p>
+          <p class="notif-item-text">${escapeHtml(notifField(n, "text"))}</p>
           ${clickable ? `<span class="notif-item-more">${dict.details} <i class="fas fa-chevron-right"></i></span>` : ''}
         </div>`;
     }
@@ -5980,8 +6090,8 @@
     // HTML «строки последних новостей» вверху панели
     function notifNewsLine(n) {
       return `
-        <button type="button" class="notif-news${n.read ? '' : ' unread'}" data-notif-id="${n.id}">
-          <span class="notif-news-text">${n.title}</span>
+        <button type="button" class="notif-news${isNotificationRead(n) ? '' : ' unread'}" data-notif-id="${n.id}">
+          <span class="notif-news-text">${escapeHtml(notifField(n, "title"))}</span>
           <i class="fas fa-chevron-right notif-news-arrow"></i>
         </button>`;
     }
@@ -5991,8 +6101,21 @@
       const dict = translations[currentLang];
       const list = document.getElementById('notifList');
       if (!list) return;
+      if (!currentRole) { list.innerHTML = ""; return; }
 
-      const sorted = mockNotifications.slice().sort((a, b) => b.date.localeCompare(a.date));
+      // Только уведомления текущей роли (Промт №30), новые сверху
+      const sorted = getRoleNotifications(currentRole)
+        .slice()
+        .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      const unread = sorted.filter(n => !isNotificationRead(n));
+
+      // Самопроверка №1: сколько уведомлений у текущей роли
+      console.log("Уведомления для роли", currentRole, ":", sorted.length);
+
+      // «Отметить все как прочитанные» показываем только при наличии непрочитанных
+      const readAllBtn = document.getElementById('notifReadAll');
+      if (readAllBtn) readAllBtn.classList.toggle('hidden', unread.length === 0);
+
       // Самое свежее уведомление с подробностями выносим в «строку новостей»
       const featured = sorted.find(hasNotifDetails) || null;
       const rest = sorted.filter(n => n !== featured).slice(0, 3);
@@ -6012,7 +6135,8 @@
 
     // Находит уведомление по id (id из dataset приходит строкой)
     function findNotification(id) {
-      return mockNotifications.find(n => String(n.id) === String(id)) || null;
+      return mockNotifications.concat(mockGlobalNotifications)
+        .find(n => String(n.id) === String(id)) || null;
     }
 
     // HTML содержимого модального окна: статья (news) или подробности (event)
@@ -6032,11 +6156,11 @@
         if (d.place) facts.push(`<div class="notif-fact"><span>${dict.place}</span><b>${d.place}</b></div>`);
       }
 
-      const body = (Array.isArray(d.body) && d.body.length ? d.body : [n.text])
+      const body = (Array.isArray(d.body) && d.body.length ? d.body : [notifField(n, "text")])
         .map(p => `<p>${p}</p>`).join("");
 
       return `
-        <h2 class="notif-article-title">${n.title}</h2>
+        <h2 class="notif-article-title">${escapeHtml(notifField(n, "title"))}</h2>
         <div class="notif-article-meta">${metaParts.join(" • ")}</div>
         ${facts.length ? `<div class="notif-facts">${facts.join("")}</div>` : ''}
         <div class="notif-article-text">${body}</div>
@@ -6054,7 +6178,7 @@
       modal.classList.remove('hidden');
       currentNotifId = n.id;
       closeNotifications();                          // закрываем выпадашку
-      console.log("Открыты подробности уведомления:", n.title);   // самопроверка №4
+      console.log("Открыты подробности уведомления:", notifField(n, "title"));   // самопроверка №4
     }
 
     // Закрывает модальное окно с подробностями
@@ -6064,24 +6188,35 @@
       currentNotifId = null;
     }
 
-    // Помечает все уведомления прочитанными
+    // Помечает все уведомления ТЕКУЩЕЙ роли прочитанными и запоминает id (Промт №30)
     function markAllRead() {
-      mockNotifications.forEach(n => { n.read = true; });
+      if (!currentRole) return;
+      const items = getRoleNotifications(currentRole);
+      const unreadIds = items.filter(n => !isNotificationRead(n)).map(n => n.id);
+
+      items.forEach(n => { n.read = true; });
+      const ids = new Set(readNotificationIds);
+      items.forEach(n => ids.add(String(n.id)));
+      readNotificationIds = Array.from(ids);
+      saveReadNotifications();
+
+      // Самопроверка №2: что именно отмечено и сохранилось
+      console.log("Отмечены прочитанными уведомления:", unreadIds);
       updateBellDot();
+      renderNotifications();
     }
 
     // Открывает/закрывает выпадающую панель уведомлений
     function toggleNotifications() {
       const dd = document.getElementById('notifDropdown');
+      if (!dd) return;
       const willOpen = dd.classList.contains('hidden');
 
       if (willOpen) {
-        const unreadCount = mockNotifications.filter(n => !n.read).length;
-        console.log("Уведомления открыты. Непрочитанных:", unreadCount);   // самопроверка №2
         renderNotifications();
+        const unreadCount = getRoleNotifications(currentRole).filter(n => !isNotificationRead(n)).length;
+        console.log("Уведомления открыты. Роль:", currentRole, "| Непрочитанных:", unreadCount);
         dd.classList.remove('hidden');
-        markAllRead();                       // при открытии точка гаснет
-        renderNotifications();
       } else {
         dd.classList.add('hidden');
       }
@@ -11623,6 +11758,8 @@
       loadManagersFromStorage();
       // Восстанавливаем журнал действий из unitest_audit (Промт №29)
       loadAuditLogsFromStorage();
+      // Восстанавливаем прочитанные уведомления из unitestreadnotifications (Промт №30)
+      loadReadNotificationsFromStorage();
       // Демо-тесты (формулы и схемы) — только при открытии через file://
       ensureFormulaDemoTest();
       ensureDiagramDemoTest();
@@ -11649,12 +11786,9 @@
       document.getElementById('burgerBtn').addEventListener('click', toggleSidebar);
       document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
 
-      // 6) Колокольчик уведомлений + выпадающая панель (Промт №9)
+      // 6) Колокольчик уведомлений + выпадающая панель (Промт №9, глобально — №30)
       document.getElementById('bellBtn').addEventListener('click', toggleNotifications);
-      document.getElementById('notifReadAll').addEventListener('click', () => {
-        markAllRead();
-        renderNotifications();
-      });
+      document.getElementById('notifReadAll').addEventListener('click', markAllRead);
 
       // 6.1) Клик по новости/событию открывает статью или подробности (Промт №9.1)
       const notifList = document.getElementById('notifList');

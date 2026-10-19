@@ -482,7 +482,74 @@
       "notes": "Единый колокольчик для всех ролей. Не сломать студенческие уведомления №9 и модальные новости №9.1. Учитывай роль и права.",
       "verify": {
         "role": "student",
-        "section": "profile"
+        "section": "profile",
+        "scenarios": [
+          {
+            "name": "student-notifications-desktop-light-ru",
+            "role": "student",
+            "section": "profile",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "click": "#bellBtn",
+            "expect": {
+              "selector": ".notif-dropdown:not(.hidden)",
+              "count": 1,
+              "hasText": "Открытие нового учебного корпуса",
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "teacher-notifications-desktop-dark-en",
+            "role": "teacher",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "click": "#bellBtn",
+            "expect": {
+              "selector": ".notif-dropdown:not(.hidden) .notif-item",
+              "count": 2,
+              "hasText": "Student completed a test",
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "admin-notifications-mobile-light-uz",
+            "role": "admin",
+            "section": "dashboard",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "light",
+            "mobile": true,
+            "click": "#bellBtn",
+            "expect": {
+              "selector": ".notif-dropdown:not(.hidden) .notif-item",
+              "count": 2,
+              "hasText": "Tizim yangilanishi",
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "manager-notifications-desktop-light-ru",
+            "role": "manager",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "click": "#bellBtn",
+            "expect": {
+              "selector": ".notif-dropdown:not(.hidden) .notif-item",
+              "count": 2,
+              "hasText": "Новый отчёт",
+              "minTextLength": 20
+            }
+          }
+        ]
       }
     },
     {
