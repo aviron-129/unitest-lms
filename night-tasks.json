@@ -579,7 +579,70 @@
       "notes": "Студент оспаривает оценку: причина, комментарий, статус. Ключ unitest_appeals, привязка к resultId. Не ломать зачётку и результаты.",
       "verify": {
         "role": "student",
-        "section": "announcements"
+        "section": "appeals",
+        "scenarios": [
+          {
+            "name": "student-appeals-desktop-light-ru",
+            "role": "student",
+            "section": "appeals",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "selector": ".appeal-card",
+              "count": 2,
+              "minTextLength": 80,
+              "hasText": "Апелляции"
+            }
+          },
+          {
+            "name": "student-appeals-modal-ru",
+            "role": "student",
+            "section": "appeals",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "click": ".appeal-btn",
+            "wait": 700,
+            "expect": {
+              "modal": true,
+              "minTextLength": 40,
+              "noStub": false
+            }
+          },
+          {
+            "name": "student-appeals-desktop-dark-en",
+            "role": "student",
+            "section": "appeals",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": {
+              "selector": ".appeal-card",
+              "count": 2,
+              "minTextLength": 80,
+              "hasText": "Appeals"
+            }
+          },
+          {
+            "name": "student-appeals-mobile-light-uz",
+            "role": "student",
+            "section": "appeals",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "light",
+            "mobile": true,
+            "expect": {
+              "selector": ".appeal-card",
+              "count": 2,
+              "minTextLength": 60
+            }
+          }
+        ]
       }
     },
     {

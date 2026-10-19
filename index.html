@@ -1285,8 +1285,93 @@
     .result-actions { display: flex; gap: 12px; margin-top: 26px; }
     .result-actions .nav-btn, .result-actions .finish-btn { flex: 1; }
 
+    /* Апелляции студента (Промт №33) */
+    .result-appeal-row { margin-top: 12px; }
+    .appeal-btn {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 13px 16px;
+      border-radius: 14px;
+      border: 1.5px dashed rgba(245, 158, 11, 0.75);
+      background: rgba(245, 158, 11, 0.10);
+      color: #b45309;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    }
+    .appeal-btn:hover { background: rgba(245, 158, 11, 0.18); border-color: #f59e0b; border-style: solid; }
+    .appeal-btn:active { transform: scale(0.99); }
+    [data-theme="dark"] .appeal-btn { color: #fbbf24; border-color: rgba(251, 191, 36, 0.55); background: rgba(245, 158, 11, 0.14); }
+    [data-theme="dark"] .appeal-btn:hover { background: rgba(245, 158, 11, 0.22); border-color: #fbbf24; }
+
+    .appeal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      line-height: 1.2;
+      border: 1px solid transparent;
+    }
+    .appeal-badge--pending { color: #b45309; background: rgba(245, 158, 11, 0.14); border-color: rgba(245, 158, 11, 0.45); }
+    .appeal-badge--approved { color: #047857; background: rgba(16, 185, 129, 0.14); border-color: rgba(16, 185, 129, 0.45); }
+    .appeal-badge--rejected { color: #b91c1c; background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.45); }
+    [data-theme="dark"] .appeal-badge--pending { color: #fbbf24; background: rgba(245, 158, 11, 0.18); border-color: rgba(251, 191, 36, 0.45); }
+    [data-theme="dark"] .appeal-badge--approved { color: #34d399; background: rgba(16, 185, 129, 0.18); border-color: rgba(52, 211, 153, 0.45); }
+    [data-theme="dark"] .appeal-badge--rejected { color: #f87171; background: rgba(239, 68, 68, 0.18); border-color: rgba(248, 113, 113, 0.45); }
+
+    .appeals-intro { margin: 0 0 18px; color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+    .appeals-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .appeal-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 18px;
+      border-radius: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .appeal-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .appeal-card-title { margin: 0; font-size: 1rem; font-weight: 700; line-height: 1.35; }
+    .appeal-card-grade { flex-shrink: 0; font-size: 0.78rem; color: var(--text-muted); white-space: nowrap; }
+    .appeal-card-grade b { color: var(--accent); font-size: 0.95rem; }
+    .appeal-card-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.78rem; color: var(--text-muted); }
+    .appeal-card-meta i { color: var(--accent); margin-right: 5px; }
+    .appeal-card .appeal-btn { margin-top: auto; }
+    .appeal-status-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .appeal-date { font-size: 0.75rem; color: var(--text-muted); }
+    .appeal-reason {
+      margin: 0;
+      padding: 8px 0 8px 12px;
+      border-left: 3px solid rgba(245, 158, 11, 0.55);
+      font-size: 0.84rem;
+      line-height: 1.45;
+      color: var(--text-muted);
+      overflow-wrap: anywhere;
+    }
+    /* Модалка подачи апелляции */
+    .pt-window.appeal-modal {
+      width: min(560px, 90%);
+      background: var(--surface-solid);            /* непрозрачная модалка — текст читаем */
+      border-color: var(--surface-border);
+    }
+    .appeal-intro { margin: 0 0 14px; color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+    .appeal-modal .field { margin-bottom: 12px; }
+    .appeal-modal .field-input { resize: vertical; min-height: 110px; }
+
     @media (max-width: 768px) {
       .result-hero { flex-direction: column; gap: 22px; padding: 22px 16px; }
+      .appeals-grid { grid-template-columns: 1fr; }
+      .pt-window.appeal-modal { width: 90%; }
     }
     @media (max-width: 480px) {
       .result-circle { width: 148px; height: 148px; }
@@ -3738,6 +3823,22 @@
         showOnlyWrong:  "Показать только ошибки",
         retryTest:      "Пройти заново",
         backToTests:    "Вернуться к тестам",
+        // Апелляции (Промт №33)
+        appeals:                  "Апелляции",
+        appealsIntro:             "Здесь можно оспорить результат теста. Преподаватель рассмотрит апелляцию и изменит оценку, если она была выставлена неверно.",
+        appealsEmpty:             "Вы ещё не проходили тесты — подавать апелляцию пока не на что",
+        appealSubmit:             "Подать апелляцию",
+        appealTitle:              "Оспорить результат",
+        appealIntro:              "Опишите, почему вы не согласны с результатом",
+        appealReason:             "Причина",
+        appealReasonPlaceholder:  "Опишите причину апелляции…",
+        appealSend:               "Отправить",
+        appealPending:            "Апелляция на рассмотрении",
+        appealApproved:           "Апелляция одобрена",
+        appealRejected:           "Апелляция отклонена",
+        appealErrReason:          "Опишите причину апелляции",
+        appealErrExists:          "Вы уже подали апелляцию на этот тест",
+        appealReasonLabel:        "Причина апелляции",
         // Расписание (Промт №8)
         scheduleTitle:  "Расписание занятий",
         noClasses:      "Нет занятий",
@@ -4168,6 +4269,22 @@
         showOnlyWrong:  "Faqat xatolarni ko'rsatish",
         retryTest:      "Qayta o'tish",
         backToTests:    "Testlarga qaytish",
+        // Апелляции (Промт №33)
+        appeals:                  "Apellyatsiyalar",
+        appealsIntro:             "Bu yerda test natijasiga shikoyat qilishingiz mumkin. O'qituvchi apellyatsiyani ko'rib chiqadi va baho noto'g'ri qo'yilgan bo'lsa, uni o'zgartiradi.",
+        appealsEmpty:             "Siz hali test topshirmagansiz — apellyatsiya berish uchun natija yo'q",
+        appealSubmit:             "Apellyatsiya berish",
+        appealTitle:              "Natijani shikoyat qilish",
+        appealIntro:              "Nima uchun natija bilan rozi emasligingizni yozing",
+        appealReason:             "Sabab",
+        appealReasonPlaceholder:  "Apellyatsiya sababini yozing…",
+        appealSend:               "Yuborish",
+        appealPending:            "Apellyatsiya ko'rib chiqilmoqda",
+        appealApproved:           "Apellyatsiya ma'qullandi",
+        appealRejected:           "Apellyatsiya rad etildi",
+        appealErrReason:          "Apellyatsiya sababini yozing",
+        appealErrExists:          "Siz bu test uchun allaqachon apellyatsiya bergansiz",
+        appealReasonLabel:        "Apellyatsiya sababi",
         // Расписание (Промт №8)
         scheduleTitle:  "Dars jadvali",
         noClasses:      "Darslar yo'q",
@@ -4598,6 +4715,22 @@
         showOnlyWrong:  "Show only mistakes",
         retryTest:      "Retry",
         backToTests:    "Back to tests",
+        // Апелляции (Промт №33)
+        appeals:                  "Appeals",
+        appealsIntro:             "Here you can challenge a test result. The teacher will review the appeal and change the grade if it was given incorrectly.",
+        appealsEmpty:             "You haven't taken any tests yet — there is nothing to appeal",
+        appealSubmit:             "Submit an appeal",
+        appealTitle:              "Challenge the result",
+        appealIntro:              "Describe why you disagree with the result",
+        appealReason:             "Reason",
+        appealReasonPlaceholder:  "Describe the reason for the appeal…",
+        appealSend:               "Send",
+        appealPending:            "Appeal under review",
+        appealApproved:           "Appeal approved",
+        appealRejected:           "Appeal rejected",
+        appealErrReason:          "Describe the reason for the appeal",
+        appealErrExists:          "You have already submitted an appeal for this test",
+        appealReasonLabel:        "Appeal reason",
         // Расписание (Промт №8)
         scheduleTitle:  "Class schedule",
         noClasses:      "No classes",
@@ -5004,7 +5137,8 @@
         { id: "availableTests", icon: "fa-file-circle-check",  label: "availableTests" },
         { id: "schedule",       icon: "fa-calendar-days",      label: "schedule" },
         { id: "announcements",  icon: "fa-bullhorn",           label: "announcements" },
-        { id: "gradebook",      icon: "fa-book-open-reader",   label: "gradebook" }
+        { id: "gradebook",      icon: "fa-book-open-reader",   label: "gradebook" },
+        { id: "appeals",        icon: "fa-triangle-exclamation", label: "appeals" }
       ]
     };
 
@@ -5059,6 +5193,8 @@
     ];
 
     const RESULTS_KEY = "unitest_results";
+    // Ключ апелляций студентов (Промт №33): каждая запись привязана к resultId
+    const APPEALS_KEY = "unitest_appeals";
     // Ключ базы тестов (Промт №14): весь mockTests пишется сюда при создании/удалении теста
     const ALL_TESTS_KEY = "unitestalltests";
     // Ключ справочника групп (Промт №25): сохранённые/созданные админом группы
@@ -5889,6 +6025,7 @@
       currentSection = null;
       closeNotifications();
       closeSidebar();
+      try { closeAppealModal(); } catch (e) {}
 
       // Скрываем панель, возвращаем экран входа
       document.getElementById('panelScreen').classList.add('hidden');
@@ -5941,6 +6078,13 @@
         box.innerHTML = renderStudentTranscript();
         const expBtn = document.getElementById('exportPdfBtn');
         if (expBtn) expBtn.addEventListener('click', () => alert("Экспорт в PDF в разработке"));
+        return;
+      }
+
+      // Раздел «Апелляции» — подача студентом (Промт №33)
+      if (currentRole === 'student' && currentSection === 'appeals') {
+        box.innerHTML = renderStudentAppeals();
+        bindStudentAppeals();
         return;
       }
 
@@ -10008,7 +10152,8 @@
       clearProgress();                                           // чистим автосохранение
 
       const res = calcResult();                                  // подсчёт результата
-      saveResult(res);                                           // сохранение в localStorage
+      const saved = saveResult(res);                             // сохранение в localStorage
+      if (saved && saved.id) res.id = saved.id;                  // id нужен для привязки апелляции
 
       // Прячем экран теста и показываем экран результата
       document.getElementById('testScreen').classList.add('hidden');
@@ -10184,6 +10329,8 @@
     function saveResult(res) {
       const results = getResults();
       const record = {
+        // Промт №33: стабильный id результата — к нему привязывается апелляция
+        id: "res_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
         testId: res.testId,
         testTitle: res.testTitle,
         score: res.correct,            // количество правильных (score)
@@ -10191,6 +10338,7 @@
         total: res.total,
         percent: res.percent,
         grade: res.grade,
+        timeSpent: res.timeSpent || 0,
         date: res.date,
         answers: userAnswers.slice()
       };
@@ -12366,6 +12514,10 @@
           <button id="resultRetry" class="nav-btn"><i class="fas fa-rotate-right"></i> ${dict.retryTest}</button>
           <button id="resultBack" class="finish-btn"><i class="fas fa-list"></i> ${dict.backToTests}</button>
         </div>
+
+        <div class="result-appeal-row" id="resultAppealBox">
+          ${appealActionHTML(res, "resultAppealBtn")}
+        </div>
       `;
 
       // Показываем экран результата
@@ -12376,6 +12528,10 @@
       document.getElementById('reviewToggle').addEventListener('click', toggleReviewFilter);
       document.getElementById('resultRetry').addEventListener('click', retryTest);
       document.getElementById('resultBack').addEventListener('click', backToTests);
+
+      // Апелляция: кнопка подачи (если апелляции ещё нет) — Промт №33
+      const appealBtn = document.getElementById('resultAppealBtn');
+      if (appealBtn) appealBtn.addEventListener('click', () => openAppealModal(res));
 
       // Анимация заполнения кольца (из 0 в целевой процент)
       const ring = document.getElementById('resultRing');
@@ -12417,6 +12573,282 @@
     }
 
     /* ============================================================
+       5.11 АПЕЛЛЯЦИИ (Промт №33): подача студентом
+       ============================================================ */
+    let mockAppeals = [];                 // копия базы апелляций в памяти
+    let currentAppealResultId = null;     // resultId, к которому привязана открытая модалка
+
+    // Безопасное чтение апелляций из localStorage
+    function getAppeals() {
+      try {
+        const list = JSON.parse(localStorage.getItem(APPEALS_KEY) || "[]");
+        return Array.isArray(list) ? list.filter(a => a && typeof a === "object") : [];
+      } catch (e) {
+        console.error("Не удалось прочитать апелляции:", e);
+        return [];
+      }
+    }
+
+    // Восстанавливает массив апелляций при старте (F5)
+    function loadAppealsFromStorage() {
+      const list = getAppeals();
+      mockAppeals.length = 0;
+      list.forEach(a => mockAppeals.push(a));
+      console.log("Апелляции восстановлены из localStorage:", mockAppeals.length);
+    }
+
+    // Сохраняет апелляции; переполнение localStorage не роняет экран
+    function saveAppealsToStorage(list) {
+      const dict = translations[currentLang];
+      try {
+        localStorage.setItem(APPEALS_KEY, JSON.stringify(list));
+        mockAppeals.length = 0;
+        (list || []).forEach(a => mockAppeals.push(a));
+        return true;
+      } catch (e) {
+        console.error("Не удалось сохранить апелляции:", e);
+        alert(dict.storageFull);
+        return false;
+      }
+    }
+
+    // Стабильный ключ результата: id (новый формат) или комбинация полей (старый)
+    function resultKey(res) {
+      if (!res) return "";
+      if (res.id != null && res.id !== "") return String(res.id);
+      return [
+        res.testId != null ? res.testId : "",
+        res.date || "",
+        res.percent != null ? res.percent : "",
+        res.correct != null ? res.correct : ""
+      ].join("|");
+    }
+
+    // Апелляция конкретного результата (привязка к resultId)
+    function getAppealForResult(res) {
+      const key = resultKey(res);
+      if (!key) return null;
+      return getAppeals().find(a => String(a.resultId) === key) || null;
+    }
+
+    // Апелляция по тесту (по промту №33: повторно на тот же тест подать нельзя)
+    function getAppealForTest(testId) {
+      if (testId == null) return null;
+      return getAppeals().find(a => String(a.testId) === String(testId)) || null;
+    }
+
+    // Для экрана результата: сначала ищем по resultId, затем по testId
+    function getStudentAppeal(res) {
+      if (!res) return null;
+      return getAppealForResult(res) || getAppealForTest(res.testId);
+    }
+
+    // Бейдж статуса апелляции (pending / approved / rejected)
+    function appealStatusBadge(status) {
+      const dict = translations[currentLang];
+      const map = {
+        pending:  { key: "appealPending",  icon: "fa-hourglass-half" },
+        approved: { key: "appealApproved", icon: "fa-circle-check" },
+        rejected: { key: "appealRejected", icon: "fa-circle-xmark" }
+      };
+      const state = map[status] ? status : "pending";
+      const item = map[state];
+      return `<span class="appeal-badge appeal-badge--${state}"><i class="fas ${item.icon}"></i> ${dict[item.key]}</span>`;
+    }
+
+    // Кнопка подачи или бейдж статуса (используется на результате и в разделе)
+    function appealActionHTML(res, btnId = "") {
+      const dict = translations[currentLang];
+      const existing = getStudentAppeal(res);
+      if (existing) return appealStatusBadge(existing.status);
+      const idAttr = btnId ? ` id="${btnId}"` : "";
+      return `<button type="button" class="appeal-btn"${idAttr} data-appeal-result="${escapeHtml(resultKey(res))}">
+        <i class="fas fa-triangle-exclamation"></i> ${dict.appealSubmit}
+      </button>`;
+    }
+
+    // Разметка модального окна «Оспорить результат»
+    function appealModalHTML() {
+      const dict = translations[currentLang];
+      return `
+        <div class="pt-overlay hidden" id="appealOverlay">
+          <div class="pt-window appeal-modal" role="dialog" aria-modal="true" aria-labelledby="appealModalTitle">
+            <div class="pt-head">
+              <div class="pt-title" id="appealModalTitle">${dict.appealTitle}</div>
+              <button type="button" class="pt-close" id="appealClose" aria-label="${dict.close}">✕</button>
+            </div>
+            <p class="appeal-intro">${dict.appealIntro}</p>
+            <label class="field">
+              <span class="field-label">${dict.appealReasonLabel} <b class="req">*</b></span>
+              <textarea class="field-input" id="appealReasonInput" rows="5" maxlength="600"
+                        placeholder="${dict.appealReasonPlaceholder}"></textarea>
+            </label>
+            <div class="form-actions">
+              <button type="button" class="btn-ghost" id="appealCancel">${dict.cancel}</button>
+              <button type="button" class="btn-primary" id="appealSend">${dict.appealSend}</button>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // Открывает модалку подачи (из результата теста или из раздела «Апелляции»)
+    function openAppealModal(res) {
+      const dict = translations[currentLang];
+      const target = res || lastResult;
+      if (!target) return;
+
+      // Повторная подача на этот тест запрещена
+      if (getStudentAppeal(target)) { alert(dict.appealErrExists); return; }
+
+      currentAppealResultId = resultKey(target);
+
+      let overlay = document.getElementById("appealOverlay");
+      if (!overlay) {
+        document.body.insertAdjacentHTML("beforeend", appealModalHTML());
+        overlay = document.getElementById("appealOverlay");
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay || e.target.closest("#appealClose") || e.target.closest("#appealCancel")) {
+            closeAppealModal();
+            return;
+          }
+          if (e.target.closest("#appealSend")) submitAppeal();
+        });
+        document.addEventListener("keydown", (e) => {
+          const o = document.getElementById("appealOverlay");
+          if (e.key === "Escape" && o && !o.classList.contains("hidden")) closeAppealModal();
+        });
+      }
+
+      const input = document.getElementById("appealReasonInput");
+      if (input) input.value = "";
+      overlay.classList.remove("hidden");
+      if (input) { try { input.focus(); } catch (e) {} }
+
+      console.log("Открыто окно апелляции для теста:", target.testId);
+      console.log("Апелляция привязана к результату:", currentAppealResultId);
+    }
+
+    // Закрывает модалку подачи
+    function closeAppealModal() {
+      const overlay = document.getElementById("appealOverlay");
+      if (overlay) overlay.classList.add("hidden");
+    }
+
+    // Отправка апелляции: валидация, сохранение в unitest_appeals, обновление UI
+    function submitAppeal() {
+      const dict = translations[currentLang];
+      const input = document.getElementById("appealReasonInput");
+      const reason = (input ? input.value : "").trim();
+
+      // Самопроверка №2: пустая причина
+      if (!reason) { alert(dict.appealErrReason); return; }
+
+      const results = getResults();
+      const stored = (Array.isArray(results) ? results : [])
+        .find(r => resultKey(r) === currentAppealResultId) || null;
+      const target = stored || lastResult || null;
+      const testId = target ? target.testId : null;
+
+      // Повторная апелляция на тот же тест
+      if (getAppealForResult({ id: currentAppealResultId }) || getAppealForTest(testId)) {
+        alert(dict.appealErrExists);
+        return;
+      }
+
+      const foundTest = mockTests.find(t => String(t.id) === String(testId));
+      const title = (target && target.testTitle)
+        || (foundTest ? testTitle(foundTest) : String(testId || ""));
+
+      const newAppeal = {
+        id: "app_" + Date.now(),
+        resultId: currentAppealResultId,          // привязка к конкретному результату
+        testId: testId,
+        testTitle: title,
+        studentName: `${mockStudent.lastName} ${mockStudent.firstName} ${mockStudent.middleName}`,
+        studentGroup: mockStudent.group,
+        reason: reason,
+        date: new Date().toISOString().slice(0, 10),
+        status: "pending"
+      };
+
+      const all = getAppeals();
+      all.unshift(newAppeal);
+      if (!saveAppealsToStorage(all)) return;
+
+      console.log("Апелляция сохранена:", newAppeal);
+      console.log("Всего апелляций в базе:", mockAppeals.length);
+
+      closeAppealModal();
+      currentAppealResultId = null;
+
+      // Обновляем экран результата (кнопка → бейдж) и/или раздел «Апелляции»
+      const rs = document.getElementById("resultScreen");
+      if (rs && !rs.classList.contains("hidden") && lastResult) renderResult(lastResult);
+      if (currentRole === "student" && currentSection === "appeals") renderSectionContent();
+    }
+
+    // Раздел «Апелляции»: результаты студента + статус/кнопка подачи
+    function renderStudentAppeals() {
+      const dict = translations[currentLang];
+      const rawResults = getResults();
+      const results = Array.isArray(rawResults) ? rawResults : [];
+
+      console.log("Апелляций в базе:", getAppeals().length);
+      console.log("Результатов студента:", results.length);
+
+      if (!results.length) {
+        return `
+          <div class="content-placeholder">
+            <i class="fas fa-triangle-exclamation"></i>
+            <span>${dict.appealsEmpty}</span>
+          </div>`;
+      }
+
+      const cards = results.slice().reverse().map(r => {
+        const norm = normalizeResult(r);
+        const appeal = getStudentAppeal(r);
+        const statusHTML = appeal
+          ? `<div class="appeal-status-row">
+               ${appealStatusBadge(appeal.status)}
+               <span class="appeal-date"><i class="fas fa-calendar-day"></i> ${formatDate(appeal.date)}</span>
+             </div>
+             <p class="appeal-reason">${escapeHtml(appeal.reason)}</p>`
+          : appealActionHTML(r);
+
+        return `
+          <article class="appeal-card" data-result-key="${escapeHtml(resultKey(r))}">
+            <div class="appeal-card-head">
+              <h3 class="appeal-card-title">${escapeHtml(norm.testTitle)}</h3>
+              <span class="appeal-card-grade">${dict.gradeWord}: <b>${norm.grade}</b></span>
+            </div>
+            <div class="appeal-card-meta">
+              <span><i class="fas fa-calendar-day"></i> ${norm.date}</span>
+              <span><i class="fas fa-percent"></i> ${norm.percent}%</span>
+              <span><i class="fas fa-check"></i> ${norm.correct} ${dict.qOf} ${norm.total}</span>
+            </div>
+            ${statusHTML}
+          </article>`;
+      }).join("");
+
+      return `<p class="appeals-intro">${dict.appealsIntro}</p>
+              <div class="appeals-grid">${cards}</div>`;
+    }
+
+    // Клики по кнопкам «Подать апелляцию» в разделе
+    function bindStudentAppeals() {
+      const box = document.getElementById("sectionContent");
+      if (!box) return;
+      box.querySelectorAll("[data-appeal-result]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.appealResult;
+          const list = getResults();
+          const result = (Array.isArray(list) ? list : []).find(r => resultKey(r) === key) || null;
+          if (result) openAppealModal(result);
+        });
+      });
+    }
+
+    /* ============================================================
        6. ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
        ============================================================ */
     function initApp() {
@@ -12445,6 +12877,8 @@
       loadAuditLogsFromStorage();
       // Восстанавливаем прочитанные уведомления из unitestreadnotifications (Промт №30)
       loadReadNotificationsFromStorage();
+      // Восстанавливаем апелляции студента из unitest_appeals (Промт №33)
+      loadAppealsFromStorage();
       // Демо-тесты (формулы и схемы) — только при открытии через file://
       ensureFormulaDemoTest();
       ensureDiagramDemoTest();
