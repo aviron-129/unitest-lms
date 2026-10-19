@@ -7255,6 +7255,10 @@
     let userAnswers = [];              // выбранные ответы по индексу вопроса
     let secondsLeft = 0;               // оставшееся время в секундах (Промт №6)
     let timerId = null;                // id интервала таймера (Промт №6; в промте №42 — activeTestTimerId)
+    // Аудит q2: метка последнего тика. Списываем реально прошедшее время,
+    // а не «1 тик = 1 секунда»: фоновая вкладка душит setInterval до 1 раза
+    // в минуту, и студент получал лишнее время на тест.
+    let timerLastTick = 0;
     let lastResult = null;             // последний результат теста (Промт №7)
     // Промт №42: защита от повторного завершения теста (двойной клик/таймаут).
     let testSessionFinished = false;
@@ -12281,8 +12285,15 @@
         handleTimeUp();
         return;
       }
+      timerLastTick = Date.now();
       timerId = setInterval(() => {
-        secondsLeft--;
+        const now = Date.now();
+        // Аудит q2: минимум 1 секунда за тик (защита от дребезга), но после
+        // «засыпания» вкладки/системы списываем всё прошедшее время сразу —
+        // иначе тест длился бы дольше лимита.
+        const elapsed = Math.max(1, Math.round((now - timerLastTick) / 1000));
+        timerLastTick = now;
+        secondsLeft = Math.max(0, secondsLeft - elapsed);
         updateTimerDisplay();
 
         // Автосохранение каждые 5 секунд работы таймера

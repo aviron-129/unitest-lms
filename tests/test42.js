@@ -58,6 +58,12 @@ T("секунды конечны", Number.isFinite(w.eval("secondsLeft")), w.eva
 const beforeTick = w.eval("secondsLeft");
 tick();
 T("тик уменьшает время", w.eval("secondsLeft") === beforeTick - 1, w.eval("secondsLeft"));
+// Аудит q2: в фоновой вкладке браузер режет setInterval до 1 раза в минуту.
+// Таймер обязан списать всё реально прошедшее время, а не один тик.
+const beforeStall = w.eval("secondsLeft");
+w.eval("timerLastTick -= 30000;");   // имитация 30 c простоя вкладки
+tick();
+T("долгий простой списывает реальные 30 c", w.eval("secondsLeft") === beforeStall - 30, w.eval("secondsLeft"));
 w.navigate("profile");
 T("navigate → timerId = null", w.eval("timerId") === null, w.eval("timerId"));
 T("navigate → clearInterval вызван", clearedIds.includes(timer1), clearedIds.join(","));
