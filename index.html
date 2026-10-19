@@ -7254,8 +7254,10 @@
     let currentQuestionIndex = 0;      // индекс текущего вопроса
     let userAnswers = [];              // выбранные ответы по индексу вопроса
     let secondsLeft = 0;               // оставшееся время в секундах (Промт №6)
-    let timerId = null;                // id интервала таймера (Промт №6)
+    let timerId = null;                // id интервала таймера (Промт №6; в промте №42 — activeTestTimerId)
     let lastResult = null;             // последний результат теста (Промт №7)
+    // Промт №42: защита от повторного завершения теста (двойной клик/таймаут).
+    let testSessionFinished = false;
 
     // Ключ localStorage для автосохранения незавершённого теста (Промт №6)
     const ACTIVE_TEST_KEY = "unitestactivetest";
@@ -7441,6 +7443,8 @@
         console.error("Неизвестная роль:", role);
         return;
       }
+      // Промт №42: при входе/смене роли не оставляем таймер прошлого теста.
+      if (typeof stopTimer === 'function') stopTimer();
       currentRole = role;
 
       // Скрываем экран входа, показываем каркас панели
@@ -12088,7 +12092,12 @@
       activeTest = test;
       currentQuestionIndex = 0;
       userAnswers = new Array(activeQuestions().length).fill(null);  // ответы пустые
-      secondsLeft = test.timeLimit * 60;                         // полное время теста
+      // Промт №42: битый/отсутствующий timeLimit (например, из импортированного
+      // JSON) не должен превращать таймер в NaN — берём безопасный минимум.
+      const limitMinutes = Math.max(1, Math.round(Number(test.timeLimit) || 1));
+      secondsLeft = limitMinutes * 60;                           // полное время теста
+      testSessionFinished = false;                               // новый проход теста
+      stopTimer();                                               // на случай зависшего таймера
 
       // Открываем полноэкранный экран теста (и прячем возможный экран прошлого результата)
       document.getElementById('resultScreen').classList.add('hidden');
@@ -12112,8 +12121,24 @@
     // Отрисовывает текущий вопрос, варианты, прогресс и состояние кнопок
     function renderQuestion() {
       const dict = translations[currentLang];
-      const total = activeQuestions().length;
-      const q = activeQuestions()[currentQuestionIndex];
+      const questions = activeQuestions();
+      const total = Array.isArray(questions) ? questions.length : 0;
+
+      // Промт №42: пустой массив вопросов и битый индекс не должны ронять экран
+      // (раньше деление на total давало NaN, а q.text — исключение).
+      if (!total) {
+        stopTimer();
+        clearProgress();
+        const screen = document.getElementById('testScreen');
+        if (screen) screen.classList.add('hidden');
+        document.body.style.overflow = '';
+        activeTest = null;
+        alert(dict.testNoQuestions);
+        return;
+      }
+      currentQuestionIndex = Math.min(Math.max(Number(currentQuestionIndex) || 0, 0), total - 1);
+      const q = questions[currentQuestionIndex] || { text: '', options: [], correct: -1 };
+      const options = Array.isArray(q.options) ? q.options : [];
 
       // Шапка: название теста и таймер (текст)
       document.getElementById('testTitle').textContent = testTitle(activeTest);
@@ -12128,12 +12153,12 @@
         `${dict.qWord} ${currentQuestionIndex + 1} ${dict.qOf} ${total}`;
 
       // Текст вопроса + схема (если есть)
-      document.getElementById('testQuestionText').textContent = q.text;
+      document.getElementById('testQuestionText').textContent = String(q.text == null ? '' : q.text);
       document.getElementById('testDiagram').innerHTML = renderQuestionDiagram(q);
 
       // Варианты ответа (A, B, C, D...). Уже выбранный — активен (самопроверка №3)
       const letters = ["A", "B", "C", "D", "E", "F"];
-      document.getElementById('testOptions').innerHTML = q.options.map((opt, i) => {
+      document.getElementById('testOptions').innerHTML = options.map((opt, i) => {
         const selected = userAnswers[currentQuestionIndex] === i;
         return `
           <button class="test-option${selected ? ' selected' : ''}" data-index="${i}">
@@ -12186,6 +12211,11 @@
 
     // «Завершить» — останавливаем таймер, считаем результат и показываем экран результата
     function finishTest() {
+      // Промт №42: повторный вызов (двойной клик, гонка с таймаутом) не должен
+      // сохранять один и тот же результат дважды.
+      if (!activeTest || testSessionFinished) return;
+      testSessionFinished = true;
+
       stopTimer();                                               // таймер просто останавливается
       clearProgress();                                           // чистим автосохранение
 
@@ -12200,6 +12230,7 @@
 
     // Закрыть экран теста и вернуться к списку
     function closeTestScreen() {
+      testSessionFinished = true;                                // проход прерван (Промт №42)
       stopTimer();                                               // глушим таймер (Промт №6)
       clearProgress();                                           // чистим сохранение (Промт №6)
       document.getElementById('testScreen').classList.add('hidden');
@@ -12215,7 +12246,9 @@
        ============================================================ */
     // Форматирует секунды в строку MM:SS
     function formatTime(totalSeconds) {
-      const safe = Math.max(0, Math.floor(totalSeconds));
+      // Промт №42: NaN/Infinity/отрицательное время не должны давать «NaN:NaN»
+      const num = Number(totalSeconds);
+      const safe = Number.isFinite(num) ? Math.max(0, Math.floor(num)) : 0;
       const m = Math.floor(safe / 60);
       const s = safe % 60;
       return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
@@ -12227,23 +12260,37 @@
       if (el) el.innerHTML = `<i class="fas fa-clock"></i> ${formatTime(secondsLeft)}`;
     }
 
+    // Время вышло: глушим интервал, сообщаем студенту и автоматически завершаем тест
+    // (Промт №42: раньше тест оставался открытым на 00:00 и ответы можно было менять).
+    function handleTimeUp() {
+      if (testSessionFinished || !activeTest) return;   // уже завершили / нет теста
+      secondsLeft = 0;
+      stopTimer();
+      updateTimerDisplay();
+      try { alert(trf('timeUp')); } catch (e) {}
+      finishTest();
+    }
+
     // Запускает обратный отсчёт на seconds секунд
     function startTimer(seconds) {
       stopTimer();                        // на случай повторного запуска
-      secondsLeft = seconds;
+      const num = Number(seconds);
+      secondsLeft = Number.isFinite(num) ? Math.max(0, Math.floor(num)) : 0;
       updateTimerDisplay();
+      if (secondsLeft <= 0) {             // нулевой/битый лимит — сразу результат
+        handleTimeUp();
+        return;
+      }
       timerId = setInterval(() => {
         secondsLeft--;
         updateTimerDisplay();
 
         // Автосохранение каждые 5 секунд работы таймера
-        if (secondsLeft % 5 === 0) saveProgress();
+        if (secondsLeft > 0 && secondsLeft % 5 === 0) saveProgress();
 
         // Не позволяем таймеру уйти в минус
         if (secondsLeft <= 0) {
-          secondsLeft = 0;
-          stopTimer();
-          alert(trf('timeUp'));
+          handleTimeUp();
         }
       }, 1000);
       dbg("Таймер запущен на", seconds, "секунд");
@@ -12254,17 +12301,18 @@
       if (timerId) {
         clearInterval(timerId);
         timerId = null;
+        dbg("Таймер теста успешно остановлен.");
       }
     }
 
     // Сохраняет прогресс незавершённого теста в localStorage
     function saveProgress() {
-      if (!activeTest) return;
+      if (!activeTest || testSessionFinished) return;
       const data = {
         testId: activeTest.id,
-        answers: userAnswers,
-        index: currentQuestionIndex,
-        timeLeft: secondsLeft
+        answers: Array.isArray(userAnswers) ? userAnswers.slice() : [],
+        index: Number.isInteger(currentQuestionIndex) ? currentQuestionIndex : 0,
+        timeLeft: Number.isFinite(secondsLeft) ? Math.max(0, Math.floor(secondsLeft)) : 0
       };
       try {
         localStorage.setItem(ACTIVE_TEST_KEY, JSON.stringify(data));
@@ -12282,13 +12330,23 @@
 
     // Пытается восстановить прогресс для теста testId. Возвращает true при успехе.
     function restoreProgress(testId) {
+      if (!activeTest) return false;                             // некуда восстанавливать
       const raw = storageGet(ACTIVE_TEST_KEY);
       if (!raw) return false;
 
       // Промт №39: битое сохранение не роняет экран — safeParse чистит ключ
       const data = safeParse(ACTIVE_TEST_KEY, null);
       if (!data) return false;
-      if (!data || data.testId !== testId) return false;         // сохранение от другого теста
+      // Промт №42: у старых записей id мог быть числом/строкой — сравниваем как строки
+      if (String(data.testId) !== String(testId)) return false;   // сохранение от другого теста
+
+      // Промт №42: просроченное сохранение (00:00) бессмысленно — начинаем заново
+      const savedTime = Number(data.timeLeft);
+      if (!Number.isFinite(savedTime) || savedTime <= 0) {
+        clearProgress();
+        dbg("Сохранение просрочено — начинаем заново.");
+        return false;
+      }
 
       // Спрашиваем пользователя, продолжать ли
       if (!confirm(trf('restoreConfirm'))) {
@@ -12298,14 +12356,16 @@
       }
 
       // Восстанавливаем ответы (выравниваем длину под текущий набор вопросов)
-      userAnswers = Array.isArray(data.answers) ? data.answers.slice() : [];
-      while (userAnswers.length < activeQuestions().length) userAnswers.push(null);
-      userAnswers.length = activeQuestions().length;
+      const total = activeQuestions().length;
+      userAnswers = Array.isArray(data.answers) ? data.answers.slice(0, total) : [];
+      while (userAnswers.length < total) userAnswers.push(null);
 
       currentQuestionIndex = Number.isInteger(data.index) ? data.index : 0;
-      if (currentQuestionIndex < 0 || currentQuestionIndex >= activeQuestions().length) currentQuestionIndex = 0;
+      if (currentQuestionIndex < 0 || currentQuestionIndex >= total) currentQuestionIndex = 0;
 
-      secondsLeft = Number.isFinite(data.timeLeft) ? data.timeLeft : activeTest.timeLimit * 60;
+      // Промт №42: не даём таймеру выйти за пределы лимита теста
+      const limit = Math.max(1, Math.round(Number(activeTest.timeLimit) || 1)) * 60;
+      secondsLeft = Math.min(Math.floor(savedTime), limit);
 
       dbg("Прогресс восстановлен. Ответы:", userAnswers);
       return true;
@@ -12328,13 +12388,17 @@
 
     // Считает результат: правильные ответы, процент, оценку
     function calcResult() {
-      const total = activeQuestions().length;
+      const questions = activeQuestions();
+      const total = Array.isArray(questions) ? questions.length : 0;
+      const answers = Array.isArray(userAnswers) ? userAnswers : [];
       let correctCount = 0;
 
       // Сравниваем ответы студента с правильными индексами
-      activeQuestions().forEach((q, i) => {
-        if (userAnswers[i] === q.correct) correctCount++;
-      });
+      if (total) {
+        questions.forEach((q, i) => {
+          if (q && answers[i] === q.correct) correctCount++;
+        });
+      }
 
       const percent = total ? Math.round((correctCount / total) * 100) : 0;
 
@@ -12344,9 +12408,11 @@
       else if (percent >= 75) grade = 4;
       else if (percent >= 60) grade = 3;
 
-      // Время прохождения = лимит минус оставшееся время
-      const limit = activeTest ? activeTest.timeLimit * 60 : 0;
-      const timeSpent = Math.max(0, limit - secondsLeft);
+      // Время прохождения = лимит минус оставшееся время (Промт №42: без NaN)
+      const limitMinutes = activeTest ? Number(activeTest.timeLimit) : 0;
+      const limit = (Number.isFinite(limitMinutes) && limitMinutes > 0 ? limitMinutes : 0) * 60;
+      const left = Number.isFinite(secondsLeft) ? secondsLeft : 0;
+      const timeSpent = Math.max(0, Math.floor(limit - left));
 
       // Самопроверка
       dbg("Подсчет результатов. Правильных:", correctCount, "из", total, "Процент:", percent, "Оценка:", grade);
@@ -12402,6 +12468,9 @@
     let currentDiagramDraft = null;
     let currentDiagramImage = null;
     let diagramEditingIndex = null;
+    // Промт №42: обработчик Esc для модалки схем навешиваем один раз,
+    // даже если модалка пересоздаётся при смене языка.
+    let diagramEscHandler = null;
 
     function svgEsc(s) {
       return String(s == null ? '' : s)
@@ -12968,10 +13037,13 @@
           };
           reader.readAsDataURL(file);
         });
-        document.addEventListener('keydown', (e) => {
-          const o = document.getElementById('diagramOverlay');
-          if (e.key === 'Escape' && o && !o.classList.contains('hidden')) closeDiagramModal();
-        });
+        if (!diagramEscHandler) {
+          diagramEscHandler = (e) => {
+            const o = document.getElementById('diagramOverlay');
+            if (e.key === 'Escape' && o && !o.classList.contains('hidden')) closeDiagramModal();
+          };
+          document.addEventListener('keydown', diagramEscHandler);
+        }
       }
 
       // Сброс полей к значениям по умолчанию
@@ -15548,6 +15620,8 @@
          №33, Math Pad, таблица Менделеева), здесь его не дублируем.
        ============================================================ */
     let modalA11yReady = false;
+    // Промт №42: признак того, что initApp уже навесил глобальные обработчики
+    let appInitialized = false;
 
     // Верхняя (последняя в DOM) видимая модалка. Класс .hidden — единый
     // признак закрытого состояния у .pt-overlay / .notif-modal;
@@ -15625,6 +15699,15 @@
     }
 
     function initApp() {
+      // Промт №42: защита от повторной инициализации (DOMContentLoaded + ручной
+      // вызов в тестах/при повторном монтировании) — глобальные обработчики
+      // (keydown, storage, resize, pagehide) не должны дублироваться.
+      if (appInitialized) {
+        dbg("Повторная инициализация пропущена — обработчики уже навешены.");
+        return;
+      }
+      appInitialized = true;
+
       // Промт №40: при первом запуске заполняем localStorage демо-данными
       initDefaultData();
 

@@ -45,6 +45,7 @@ node tests/test32.js
 node tests/test36.js
 node tests/test38.js
 node tests/test41.js
+node tests/test42.js
 node tests/test43.js
 node tests/static.js
 node tests/smoke.js
