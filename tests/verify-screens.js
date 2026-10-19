@@ -230,6 +230,16 @@ function runChecks(task, scenario, metrics, shotSize) {
   if (scenario.click) {
     add(`клик по «${scenario.click}» сработал`, metrics.clicked, metrics.clickResult);
   }
+  // Аудит q10: сетка расписания должна помещаться по ширине (без внутреннего
+  // горизонтального скролла) и не переносить одну букву на вторую строку.
+  if (metrics.scheduleGrid) {
+    add("сетка расписания без внутреннего скролла",
+      metrics.scheduleGrid.scrollWidth <= metrics.scheduleGrid.clientWidth + 2,
+      `${metrics.scheduleGrid.scrollWidth}/${metrics.scheduleGrid.clientWidth}`);
+    add("нет переноса одной буквы в карточке расписания",
+      metrics.scheduleOrphans.length === 0,
+      metrics.scheduleOrphans.slice(0, 3).join(" | "));
+  }
 
   return checks;
 }
@@ -281,6 +291,18 @@ async function runScenario(cdp, task, scenario, taskDir) {
     const stub = (typeof translations !== 'undefined' && translations[currentLang])
       ? (translations[currentLang].placeholderHint || '') : '';
     const sel = ${selectorJson};
+    const schedule = document.querySelector('.schedule-grid');
+    const scheduleOrphans = [];
+    if (schedule) {
+      [...schedule.querySelectorAll('.schedule-subject')].forEach(el => {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const lines = [...range.getClientRects()];
+        if (lines.length > 1 && lines[lines.length - 1].width < 24) {
+          scheduleOrphans.push(el.innerText.trim());
+        }
+      });
+    }
     return {
       hasBox: !!box,
       textLength: text.length,
@@ -290,6 +312,10 @@ async function runScenario(cdp, task, scenario, taskDir) {
       innerWidth: window.innerWidth,
       stubText: stub,
       selectorCount: sel ? document.querySelectorAll(sel).length : -1,
+      scheduleGrid: schedule
+        ? { clientWidth: schedule.clientWidth, scrollWidth: schedule.scrollWidth }
+        : null,
+      scheduleOrphans,
       modalVisible: [...document.querySelectorAll('.pt-overlay, .notif-modal, [class*="modal"], dialog[open]')]
         .some(el => !el.classList.contains('hidden') && el.getBoundingClientRect().width > 0)
     };

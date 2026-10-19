@@ -77,6 +77,12 @@ T(`все статические dict.<key> (${new Set(staticDictRefs).size}) е
 console.log("\n[6] Ошибки загрузки");
 T("console.error при инициализации пуст", app.errors.length === 0, app.errors.slice(0, 3).join(" | "));
 
+console.log("\n[7] Расписание: 6 колонок без внутреннего скролла (аудит q10)");
+T("сетка расписания — 6 равных колонок", /\.schedule-grid\s*\{[^}]*grid-template-columns:\s*repeat\(6,\s*minmax\(0,\s*1fr\)\)/s.test(html));
+T("у колонок нет жёсткого min-width", /\.schedule-day\s*\{[^}]*min-width:\s*0/s.test(html));
+T("3 колонки до 1440px", /@media\s*\(max-width:\s*1439\.98px\)\s*\{[^}]*\.schedule-grid[^}]*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s.test(html));
+T("длинный предмет не рвётся одной буквой (0.85rem)", /\.schedule-subject\s*\{[^}]*font-size:\s*0\.85rem/s.test(html));
+
 console.log(`\n=== STATIC: пройдено ${pass}, провалено ${fail} ===`);
 app.close();
 process.exit(fail === 0 ? 0 : 1);

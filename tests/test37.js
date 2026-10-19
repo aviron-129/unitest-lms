@@ -65,7 +65,7 @@ T("длинные имена переносятся", cssHas(/\.group-name\s*\{[
 T("карточка группы не растягивает grid", cssHas(/\.group-card\s*\{[^}]*min-width:\s*0/));
 T("заголовок раздела переносится", cssHas(/#sectionHeading[\s\S]{0,500}overflow-wrap:\s*anywhere/));
 T("шапка ужимается на 320px", /@media\s*\(max-width:\s*380px\)\s*\{[\s\S]*?\.burger-btn,[\s\S]*?\.icon-btn\s*\{[\s\S]*?width:\s*36px/.test(css));
-T("расписание на 1024px — 3 колонки", cssHas(/@media\s*\(max-width:\s*1199\.98px\)\s*\{[\s\S]*?\.schedule-grid\s*\{[^}]*repeat\(3,\s*minmax\(0,\s*1fr\)\)/));
+T("расписание до 1440px — 3 колонки", cssHas(/@media\s*\(max-width:\s*1439\.98px\)\s*\{[\s\S]*?\.schedule-grid\s*\{[^}]*repeat\(3,\s*minmax\(0,\s*1fr\)\)/));
 
 console.log("\n[6.1] Названия тестов менеджера не обрезаются на узком экране");
 T("CSS: карточка теста менеджера переносит название",

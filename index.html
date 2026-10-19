@@ -1555,12 +1555,17 @@
     .schedule-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 16px; }
     .schedule-grid {
       display: grid;
-      grid-template-columns: repeat(6, minmax(180px, 1fr));  /* десктоп: 6 дней в ряд */
-      gap: 14px;
-      overflow-x: auto;                                       /* горизонтальный скролл, если не влезает */
+      /* Аудит q10: 6 колонок делят ширину контента поровну. Раньше min-width:180px
+         требовал 1150px при доступных 1078px — сетка получала внутренний
+         горизонтальный скролл на 1440px, а «Программирование» переносилось
+         одной буквой «е» на вторую строку. */
+      grid-template-columns: repeat(6, minmax(0, 1fr));       /* десктоп: 6 дней в ряд */
+      gap: 10px;
+      overflow-x: visible;                                    /* сетка всегда влезает по ширине */
       padding-bottom: 6px;
+      min-width: 0;
     }
-    .schedule-day { display: flex; flex-direction: column; gap: 10px; min-width: 180px; }
+    .schedule-day { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
     .schedule-day-name {
       font-size: 0.78rem;
       font-weight: 700;
@@ -1571,7 +1576,7 @@
     .schedule-day-body { display: flex; flex-direction: column; gap: 10px; }
 
     .schedule-card {
-      padding: 12px 14px;
+      padding: 12px;                                          /* аудит q10: место под длинные предметы */
       border-radius: 14px;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -1590,7 +1595,9 @@
       font-weight: 700;
       color: var(--text-muted);
     }
-    .schedule-subject { font-size: 0.95rem; font-weight: 700; margin: 0 0 8px; line-height: 1.3; }
+    /* Аудит q10: 0.85rem — «Программирование» помещается в одну строку
+       в 6-колоночной сетке на 1440px без переноса одной буквы. */
+    .schedule-subject { font-size: 0.85rem; font-weight: 700; margin: 0 0 8px; line-height: 1.3; }
     .schedule-type {
       display: inline-block;
       margin-bottom: 10px;
@@ -1623,8 +1630,10 @@
     [data-theme="dark"] .type-practice .schedule-type { color: #6ee7b7; }
     [data-theme="dark"] .type-lab      .schedule-type { color: #fbbf24; }
 
-    /* Планшет: 3 колонки в ряд (до 1200px — на 1024 с sidebar 6 колонок не влезают) */
-    @media (max-width: 1199.98px) {
+    /* Планшет/узкий десктоп: 3 колонки в ряд.
+       Аудит q10: до 1440px 6 колонок были слишком тесными (внутренний скролл
+       и рваные переносы), поэтому 6 колонок включаются только с 1440px. */
+    @media (max-width: 1439.98px) {
       .schedule-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); overflow-x: visible; }
       .schedule-day { min-width: 0; }
     }
