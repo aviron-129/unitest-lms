@@ -14,6 +14,7 @@ const cyr = /[\u0400-\u04FF]/;
 
 let pass = 0, fail = 0;
 function T(n, c, e) { if (c) { pass++; console.log("  ok | " + n); } else { fail++; console.log("  FAIL | " + n + (e !== undefined ? "  -> " + e : "")); } }
+const txt = el => (el ? (el.textContent || "") : "");
 
 console.log("\n[1] Словарь: новые ключи ×3");
 const newKeys = [
@@ -87,6 +88,44 @@ for (const role of Object.keys(menuConfig)) {
   w.logout();
 }
 T("в EN не осталось кириллицы в контенте и атрибутах", leftovers.length === 0, leftovers.slice(0, 6).join(" | "));
+
+console.log("\n[4.1] Уведомления студента переведены (аудит q13)");
+// До аудита q13 mockNotifications хранили только русские title/text/details,
+// и в uz/en панель колокольчика и статья новости оставались русскими.
+// Теперь тексты берутся из translations по ключам (titleKey/textKey/bodyKeys…).
+w.selectRole("student");
+const notifCyr = {};
+for (const lang of ["ru", "uz", "en"]) {
+  w.changeLanguage(lang);
+  w.renderNotifications();
+  notifCyr[lang] = cyr.test(txt(D.getElementById("notifList")));
+}
+T("RU-уведомления не пустые", txt(D.getElementById("notifList")).length > 20);
+T("UZ-уведомления без кириллицы", !notifCyr.uz);
+T("EN-уведомления без кириллицы", !notifCyr.en);
+w.changeLanguage("uz");
+w.renderNotifications();
+const uzNotif = txt(D.getElementById("notifList"));
+T("UZ: заголовок новости из словаря", uzNotif.includes(translations.uz.snNewsTitle), uzNotif.slice(0, 120));
+T("UZ: текст события из словаря", uzNotif.includes(translations.uz.snEventText), uzNotif.slice(0, 160));
+w.changeLanguage("en");
+w.renderNotifications();
+const enNotif = txt(D.getElementById("notifList"));
+T("EN: заголовок новости из словаря", enNotif.includes(translations.en.snNewsTitle), enNotif.slice(0, 120));
+T("EN: простое уведомление переведено", enNotif.includes(translations.en.snTestText), enNotif.slice(0, 200));
+w.openNotifDetail(1);
+const enArticle = txt(D.getElementById("notifModalBody"));
+T("EN: статья новости без кириллицы", !cyr.test(enArticle), enArticle.slice(0, 160));
+T("EN: тело статьи из словаря", enArticle.includes(translations.en.snNewsBody1));
+T("EN: источник переведён", enArticle.includes(translations.en.snNewsSource), enArticle.slice(-100));
+w.closeNotifDetail();
+w.changeLanguage("uz");
+w.openNotifDetail(2);
+const uzArticle = txt(D.getElementById("notifModalBody"));
+T("UZ: подробности события без кириллицы", !cyr.test(uzArticle), uzArticle.slice(0, 160));
+T("UZ: место события переведено", uzArticle.includes(translations.uz.snEventPlace));
+w.closeNotifDetail();
+w.logout();
 
 console.log("\n[5] Заголовок вкладки и подстановка значений");
 w.changeLanguage("en");

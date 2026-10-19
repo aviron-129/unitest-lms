@@ -4985,6 +4985,23 @@
         gnManagerText:         "Сформирован отчёт по направлению «Программирование».",
         gnManagerSecondTitle:  "Расписание обновлено",
         gnManagerSecondText:   "Расписание группы 101-PR на неделю обновлено.",
+        // Уведомления студента (Промт №9): тексты через ключи, чтобы панель
+        // и статья переводились на uz/en (аудит q13).
+        snNewsTitle:    "Открытие нового учебного корпуса",
+        snNewsText:     "С 15 октября занятия части факультетов пройдут в новом корпусе.",
+        snNewsBody1:    "С 15 октября 2026 года открывает двери новый учебный корпус университета. В нём разместятся аудитории, компьютерные классы и лаборатории для инженерных направлений.",
+        snNewsBody2:    "Студенты 1–2 курсов направления «Программирование» будут заниматься в новом корпусе по уже обновлённому расписанию (раздел «Расписание»).",
+        snNewsBody3:    "Пропуск в корпус — по студенческому билету. По вопросам размещения обращайтесь в деканат.",
+        snNewsSource:   "Пресс-служба UniTest",
+        snEventTitle:   "Перенос занятия по физике",
+        snEventText:    "Пара по физике переносится в аудиторию Lab-2.",
+        snEventPlace:   "Корпус B, ауд. Lab-2",
+        snEventBody1:   "Занятие по физике (практика) переносится из аудитории 204 в лабораторию Lab-2.",
+        snEventBody2:   "Возьмите с собой рабочие тетради и калькуляторы. Отсутствие по уважительной причине подтверждайте в деканате.",
+        snTestTitle:    "Новый тест доступен",
+        snTestText:     "Появился тест по программированию — пройдите до 20.10.2026.",
+        snResultTitle:  "Результат теста",
+        snResultText:   "Ваш тест по английскому проверен — оценка 4.",
         // Уведомления с подробностями: новости/события (Промт №9.1)
         latestNews:      "Последние новости",
         newsTag:         "Новость",
@@ -5522,6 +5539,22 @@
         gnManagerText:         "«Programmalash» yo'nalishi bo'yicha hisobot shakllantirildi.",
         gnManagerSecondTitle:  "Jadval yangilandi",
         gnManagerSecondText:   "101-PR guruhining haftalik jadvali yangilandi.",
+        // Talaba bildirishnomalari (Промт №9): matnlar kalitlar orqali.
+        snNewsTitle:    "Yangi o'quv binosi ochilishi",
+        snNewsText:     "15 oktyabrdan boshlab ayrim fakultetlar darslari yangi binoda o'tkaziladi.",
+        snNewsBody1:    "2026-yil 15-oktyabrdan universitetning yangi o'quv binosi eshiklarini ochadi. Unda muhandislik yo'nalishlari uchun auditoriyalar, kompyuter sinflari va laboratoriyalar joylashadi.",
+        snNewsBody2:    "«Programmalash» yo'nalishining 1–2-kurs talabalari yangi binoda yangilangan jadval (\"Jadval\" bo'limi) asosida dars o'tishadi.",
+        snNewsBody3:    "Binoga kirish talaba bileti orqali amalga oshiriladi. Joylashuv bo'yicha savollar uchun dekanatga murojaat qiling.",
+        snNewsSource:   "UniTest matbuot xizmati",
+        snEventTitle:   "Fizika darsining ko'chirilishi",
+        snEventText:    "Fizika darsi Lab-2 auditoriyasiga ko'chirildi.",
+        snEventPlace:   "B bino, Lab-2 xonasi",
+        snEventBody1:   "Fizika (amaliy) darsi 204-auditoriyadan Lab-2 laboratoriyasiga ko'chirildi.",
+        snEventBody2:   "Ish daftarlari va kalkulyatorlarni o'zingiz bilan olib keling. Uzrli sabab bilan kelmaganligingizni dekanatda tasdiqlang.",
+        snTestTitle:    "Yangi test mavjud",
+        snTestText:     "Programmalash bo'yicha test paydo bo'ldi — 20.10.2026 gacha topshiring.",
+        snResultTitle:  "Test natijasi",
+        snResultText:   "Ingliz tili testi tekshirildi — baho 4.",
         // Уведомления с подробностями: новости/события (Промт №9.1)
         latestNews:      "So'nggi yangiliklar",
         newsTag:         "Yangilik",
@@ -6059,6 +6092,23 @@
         gnManagerText:         "A report for the Programming direction has been generated.",
         gnManagerSecondTitle:  "Schedule updated",
         gnManagerSecondText:   "The weekly schedule for group 101-PR has been updated.",
+        // Student notifications (Промт №9): texts via keys so the panel and
+        // the article follow ru/uz/en (q13 audit).
+        snNewsTitle:    "New academic building opens",
+        snNewsText:     "From 15 October, classes of some faculties will be held in the new building.",
+        snNewsBody1:    "On 15 October 2026, the university's new academic building opens its doors. It will house classrooms, computer labs and laboratories for engineering programmes.",
+        snNewsBody2:    "First- and second-year students of the Programming direction will study in the new building according to the updated schedule (the Schedule section).",
+        snNewsBody3:    "Entry to the building is by student ID. For accommodation questions, please contact the dean's office.",
+        snNewsSource:   "UniTest Press Service",
+        snEventTitle:   "Physics class moved",
+        snEventText:    "The physics class is moved to room Lab-2.",
+        snEventPlace:   "Building B, room Lab-2",
+        snEventBody1:   "The physics class (practice) is moved from room 204 to laboratory Lab-2.",
+        snEventBody2:   "Bring your workbooks and calculators. Confirm absences for valid reasons at the dean's office.",
+        snTestTitle:    "New test available",
+        snTestText:     "A programming test is now available — complete it by 20.10.2026.",
+        snResultTitle:  "Test result",
+        snResultText:   "Your English test has been checked — grade 4.",
         // Уведомления с подробностями: новости/события (Промт №9.1)
         latestNews:      "Latest news",
         newsTag:         "News",
@@ -7226,39 +7276,28 @@
     const mockNotifications = [
       {
         id: 1, targetRole: "student", type: "news", date: "2026-10-12", read: false,
-        title: "Открытие нового учебного корпуса",
-        text: "С 15 октября занятия части факультетов пройдут в новом корпусе.",
+        titleKey: "snNewsTitle", textKey: "snNewsText",
         details: {
           tag: "news",
           author: "Dilnoza Yusupova", role: "manager",
-          body: [
-            "С 15 октября 2026 года открывает двери новый учебный корпус университета. В нём разместятся аудитории, компьютерные классы и лаборатории для инженерных направлений.",
-            "Студенты 1–2 курсов направления «Программирование» будут заниматься в новом корпусе по уже обновлённому расписанию (раздел «Расписание»).",
-            "Пропуск в корпус — по студенческому билету. По вопросам размещения обращайтесь в деканат."
-          ],
-          source: "Пресс-служба UniTest"
+          bodyKeys: ["snNewsBody1", "snNewsBody2", "snNewsBody3"],
+          sourceKey: "snNewsSource"
         }
       },
       {
         id: 2, targetRole: "student", type: "event", date: "2026-10-11", read: false,
-        title: "Перенос занятия по физике",
-        text: "Пара по физике переносится в аудиторию Lab-2.",
+        titleKey: "snEventTitle", textKey: "snEventText",
         details: {
           tag: "event",
           when: "13.10.2026, 09:00",
-          place: "Корпус B, ауд. Lab-2",
-          body: [
-            "Занятие по физике (практика) переносится из аудитории 204 в лабораторию Lab-2.",
-            "Возьмите с собой рабочие тетради и калькуляторы. Отсутствие по уважительной причине подтверждайте в деканате."
-          ]
+          placeKey: "snEventPlace",
+          bodyKeys: ["snEventBody1", "snEventBody2"]
         }
       },
       { id: 3, targetRole: "student", type: "simple", date: "2026-10-09", read: true,
-        title: "Новый тест доступен",
-        text: "Появился тест по программированию — пройдите до 20.10.2026." },
+        titleKey: "snTestTitle", textKey: "snTestText" },
       { id: 4, targetRole: "student", type: "simple", date: "2026-10-08", read: true,
-        title: "Результат теста",
-        text: "Ваш тест по английскому проверен — оценка 4." }
+        titleKey: "snResultTitle", textKey: "snResultText" }
     ];
 
     // Глобальные уведомления для всех ролей (Промт №30).
@@ -8505,12 +8544,20 @@
       metaParts.push(formatDate(n.date));
 
       const facts = [];
+      // Тексты подробностей тоже могут храниться ключами (аудит q13):
+      // whenKey/placeKey/sourceKey/bodyKeys переводятся вместе с интерфейсом.
+      const whenText  = d.whenKey  ? (dict[d.whenKey]  || "") : d.when;
+      const placeText = d.placeKey ? (dict[d.placeKey] || "") : d.place;
+      const sourceText = d.sourceKey ? (dict[d.sourceKey] || "") : d.source;
       if (isEvent) {
-        if (d.when)  facts.push(`<div class="notif-fact"><span>${dict.when}</span><b>${escapeHtml(d.when)}</b></div>`);
-        if (d.place) facts.push(`<div class="notif-fact"><span>${dict.place}</span><b>${escapeHtml(d.place)}</b></div>`);
+        if (whenText)  facts.push(`<div class="notif-fact"><span>${dict.when}</span><b>${escapeHtml(whenText)}</b></div>`);
+        if (placeText) facts.push(`<div class="notif-fact"><span>${dict.place}</span><b>${escapeHtml(placeText)}</b></div>`);
       }
 
-      const body = (Array.isArray(d.body) && d.body.length ? d.body : [notifField(n, "text")])
+      const bodyList = (Array.isArray(d.bodyKeys) && d.bodyKeys.length)
+        ? d.bodyKeys.map(key => dict[key] || "").filter(Boolean)
+        : (Array.isArray(d.body) && d.body.length ? d.body : [notifField(n, "text")]);
+      const body = bodyList
         .map(p => `<p>${escapeHtml(p)}</p>`).join("");
 
       return `
@@ -8518,7 +8565,7 @@
         <div class="notif-article-meta">${metaParts.join(" • ")}</div>
         ${facts.length ? `<div class="notif-facts">${facts.join("")}</div>` : ''}
         <div class="notif-article-text">${body}</div>
-        ${d.source ? `<div class="notif-source">${dict.sourceLabel}: ${escapeHtml(d.source)}</div>` : ''}`;
+        ${sourceText ? `<div class="notif-source">${dict.sourceLabel}: ${escapeHtml(sourceText)}</div>` : ''}`;
     }
 
     // Открывает модальное окно с подробностями (только news/event — у них есть details)

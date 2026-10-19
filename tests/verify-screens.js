@@ -167,11 +167,19 @@ async function launchBrowser(width = 1440, height = 900) {
   await cdp.send("Runtime.enable");
   await cdp.send("Log.enable");
 
+  // Аудит q13: Page.navigate запускает новую загрузку поверх уже открытой
+  // страницы. Раньше цикл готовности мог увидеть readyState старого документа
+  // и выполнить сценарий до коммита новой навигации — первый сценарий изредка
+  // снимал экран входа. Ждём документ с новым performance.timeOrigin.
+  let prevTimeOrigin = 0;
+  try { prevTimeOrigin = await cdp.eval("performance.timeOrigin") || 0; } catch (e) {}
   await cdp.send("Page.navigate", { url });
   for (let i = 0; i < 50; i++) {
     try {
-      const ready = await cdp.eval("document.readyState === 'complete' && typeof selectRole === 'function'");
-      if (ready) break;
+      const state = await cdp.eval(
+        "({ t: performance.timeOrigin, ready: document.readyState === 'complete' && typeof selectRole === 'function' })"
+      );
+      if (state && state.ready && state.t !== prevTimeOrigin) break;
     } catch (e) {}
     await sleep(300);
   }
