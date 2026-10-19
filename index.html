@@ -6554,11 +6554,38 @@
       category: "archer"          // ключ перевода catArcher
     };
 
-    const studentStats = {
-      available: 4,
-      passed: 2,
-      averageGrade: 4.5
-    };
+    /* Аудит q12: раньше статистика профиля была захардкожена (4 / 2 / 4.5)
+       и не менялась после прохождения теста: студент сдавал новый тест, а в
+       профиле по-прежнему «Пройдено: 2». Считаем её по актуальным данным:
+       «Доступно» — подходящие студенту тесты, «Пройдено» — уникальные из них
+       с результатом, средний балл — по оценкам результатов этих тестов. */
+    function computeStudentStats() {
+      const tests = Array.isArray(mockTests) ? mockTests.filter(isTestMatch) : [];
+      const availableIds = new Set(tests.map(t => String(t.id)));
+      const passedIds = new Set();
+      const grades = [];
+
+      getResults().forEach(r => {
+        if (!r || !availableIds.has(String(r.testId))) return;   // чужой/удалённый тест
+        passedIds.add(String(r.testId));
+
+        const total = Number(r.total || r.maxScore || 0);
+        const correct = Number(r.correct != null ? r.correct : 0);
+        const percent = r.percent != null
+          ? Number(r.percent)
+          : (total ? Math.round((correct / total) * 100) : 0);
+        let grade;
+        if (r.grade != null) grade = Number(r.grade);
+        else if (total > 0) grade = gradeFromPercent(percent);
+        else grade = Number(r.score);                              // старый формат: score = оценка
+        if (Number.isFinite(grade)) grades.push(grade);
+      });
+
+      const averageGrade = grades.length
+        ? Math.round((grades.reduce((sum, g) => sum + g, 0) / grades.length) * 100) / 100
+        : null;
+      return { available: tests.length, passed: passedIds.size, averageGrade };
+    }
 
     /* ============================================================
        2.2 MOCK-ТЕСТЫ + ФИЛЬТРАЦИЯ (Промт №4)
@@ -8015,11 +8042,16 @@
                            : s.form === "full" ? dict.formFull : "—";
       const courseValue    = (s.course != null && s.course !== "") ? s.course : "—";
       const groupValue     = s.group || "—";
+      // Аудит q12: статистика пересчитывается при каждом открытии профиля,
+      // поэтому новый результат сразу виден в «Пройдено» и среднем балле.
+      const computedStats = computeStudentStats();
       const stats = {
-        available: Number(studentStats && studentStats.available) || 0,
-        passed: Number(studentStats && studentStats.passed) || 0,
-        averageGrade: (studentStats && studentStats.averageGrade != null) ? studentStats.averageGrade : "—"
+        available: Number(computedStats.available) || 0,
+        passed: Number(computedStats.passed) || 0,
+        averageGrade: computedStats.averageGrade != null ? computedStats.averageGrade : "—"
       };
+      dbg("Статистика студента. Доступно:", stats.available,
+        "Пройдено:", stats.passed, "Средний балл:", stats.averageGrade);
 
       return `
         <div class="profile-card">

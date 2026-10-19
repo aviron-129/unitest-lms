@@ -257,7 +257,36 @@ T("слушатель обновляет актуальную ƒx, а не уд�
   && D.getElementById("mpFab").getAttribute("aria-expanded") === "true");
 w.eval("document.getElementById('sectionContent').innerHTML = '';");
 
-console.log("\n[10] Консоль");
+console.log("\n[10] Статистика профиля считается по результатам (аудит q12)");
+// Аудит q12: раньше «Доступно / Пройдено / Средний балл» были захардкожены
+// (4 / 2 / 4.5) и не менялись после прохождения нового теста.
+const profileStats = () => [...D.querySelectorAll("#sectionContent .stats-row .stat-value")]
+  .map(e => e.textContent.trim());
+w.localStorage.setItem("unitest_results", JSON.stringify([
+  { testId: 1, correct: 18, total: 20, percent: 90, grade: 5, date: "2026-10-01" },
+  { testId: 3, correct: 15, total: 18, percent: 83, grade: 4, date: "2026-10-05" }
+]));
+w.navigate("profile");
+T("демо: доступно 4 / пройдено 2 / средний 4.5",
+  profileStats().join(",") === "4,2,4.5", profileStats().join(","));
+w.localStorage.setItem("unitest_results", JSON.stringify([
+  { testId: 1, correct: 18, total: 20, percent: 90, grade: 5, date: "2026-10-01" },
+  { testId: 3, correct: 15, total: 18, percent: 83, grade: 4, date: "2026-10-05" },
+  { testId: 2, correct: 5, total: 5, percent: 100, grade: 5, date: "2026-10-20" },
+  { testId: 2, correct: 3, total: 5, percent: 60, grade: 3, date: "2026-10-21" },
+  { testId: 6, correct: 5, total: 5, percent: 100, grade: 5, date: "2026-10-22" }
+]));
+w.navigate("profile");
+T("новый результат увеличивает «Пройдено» (уникальные тесты)",
+  profileStats()[1] === "3", profileStats().join(","));
+T("повторная попытка не увеличивает «Пройдено»",
+  profileStats()[1] === "3", profileStats().join(","));
+T("чужой тест (id 6) не учитывается",
+  profileStats()[1] === "3", profileStats().join(","));
+T("средний балл пересчитан по своим результатам",
+  profileStats()[2] === "4.25", profileStats().join(","));
+
+console.log("\n[11] Консоль");
 T("console.error пуст", app.errors.length === 0, app.errors.slice(0, 3).join(" | "));
 
 console.log(`\n=== TEST42: пройдено ${pass}, провалено ${fail} ===`);
