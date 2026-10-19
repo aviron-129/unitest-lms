@@ -230,6 +230,33 @@ const escHandler2 = w.eval("diagramEscHandler");
 T("diagramEscHandler навешен один раз", typeof escHandler1 === "function" && escHandler1 === escHandler2);
 w.eval("closeDiagramModal(); currentLang = 'ru'; applyLanguage();");
 
+console.log("\n[9.2] MathLive: глобальный слушатель клавиатуры не дублируется");
+// Аудит q9: раньше каждый вход в конструктор добавлял ещё одну подписку на
+// глобальную виртуальную клавиатуру MathLive и держал ссылку на удалённую ƒx.
+w.eval(`
+  window.mathVirtualKeyboard = {
+    layouts: [], visible: false, listeners: [],
+    addEventListener(type, cb) { this.listeners.push({ type: type, cb: cb }); },
+    show() { this.visible = true; }, hide() { this.visible = false; }
+  };
+  if (!customElements.get('math-field')) customElements.define('math-field', class extends HTMLElement {});
+  window.__mountQ9Builder = function () {
+    document.getElementById('sectionContent').innerHTML =
+      '<div id="q9root"><math-field id="qTextLive"></math-field>' +
+      '<textarea id="qText"></textarea><button id="mpFab"></button></div>';
+    bindMathLiveEditor(document.getElementById('q9root'));
+  };
+  __mountQ9Builder(); __mountQ9Builder(); __mountQ9Builder();
+`);
+T("3 перерисовки конструктора → 1 подписка на клавиатуру",
+  w.eval("window.mathVirtualKeyboard.listeners.length") === 1,
+  w.eval("window.mathVirtualKeyboard.listeners.length"));
+w.eval("window.mathVirtualKeyboard.visible = true; window.mathVirtualKeyboard.listeners[0].cb({ type: 'virtual-keyboard-toggle' });");
+T("слушатель обновляет актуальную ƒx, а не удалённую",
+  D.getElementById("mpFab").classList.contains("mp-fab--active")
+  && D.getElementById("mpFab").getAttribute("aria-expanded") === "true");
+w.eval("document.getElementById('sectionContent').innerHTML = '';");
+
 console.log("\n[10] Консоль");
 T("console.error пуст", app.errors.length === 0, app.errors.slice(0, 3).join(" | "));
 

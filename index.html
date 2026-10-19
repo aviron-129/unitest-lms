@@ -14112,6 +14112,10 @@
        Значение зеркалится в скрытую #qText, чтобы валидации, черновик
        и сохранение теста продолжали работать без переделки.
        ============================================================ */
+    // Аудит q9: виртуальная клавиатура MathLive — глобальный объект, поэтому
+    // подписка на её toggle должна быть ровно одна на сеанс (флаг ниже).
+    let mathKeyboardToggleBound = false;
+
     function isMathLiveReady() {
       return !!(window.customElements && customElements.get("math-field")
         && window.mathVirtualKeyboard && typeof window.mathVirtualKeyboard.show === "function");
@@ -14245,16 +14249,27 @@
           else window.mathVirtualKeyboard.show();
         });
       }
-      // Клавиатура — только по кнопке ƒx (не выскакивает при каждом фокусе)
-      try {
-        window.mathVirtualKeyboard.addEventListener("virtual-keyboard-toggle", () => {
-          const visible = !!window.mathVirtualKeyboard.visible;
-          if (fab) {
-            fab.classList.toggle("mp-fab--active", visible);
-            fab.setAttribute("aria-expanded", String(visible));
-          }
-        });
-      } catch (e) { /* старые версии MathLive без события */ }
+      // Клавиатура — только по кнопке ƒx (не выскакивает при каждом фокусе).
+      // Аудит q9: клавиатура MathLive живёт глобально, а форма конструктора
+      // перерисовывается при каждом входе. Раньше на каждый показ вешался новый
+      // слушатель, который держал ссылку на уже удалённую кнопку ƒx: после
+      // нескольких заходов в конструктор в памяти копились десятки подписок.
+      // Теперь подписка одна, а кнопка каждый раз берётся из актуального DOM.
+      if (!mathKeyboardToggleBound) {
+        try {
+          mathKeyboardToggleBound = true;
+          window.mathVirtualKeyboard.addEventListener("virtual-keyboard-toggle", () => {
+            const visible = !!window.mathVirtualKeyboard.visible;
+            const currentFab = document.getElementById("mpFab");
+            if (currentFab) {
+              currentFab.classList.toggle("mp-fab--active", visible);
+              currentFab.setAttribute("aria-expanded", String(visible));
+            }
+          });
+        } catch (e) {
+          mathKeyboardToggleBound = false;   // старые версии MathLive без события
+        }
+      }
       return true;
     }
 
