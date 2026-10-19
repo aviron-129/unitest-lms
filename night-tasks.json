@@ -1,0 +1,380 @@
+{
+  "settings": {
+    "model": "deepseek/deepseek-flash#high",
+    "maxTasks": 6,
+    "maxHours": 8,
+    "taskTimeoutMinutes": 90,
+    "stopOnFailure": true,
+    "deadline": "07:00"
+  },
+  "tasks": [
+    {
+      "id": "22",
+      "title": "Расписание направления (менеджер)",
+      "promptFile": "Промты/Промт-22-Панель-менеджера-Расписание-направления.md",
+      "notes": "Менеджер направления programming видит только группы 101-PR и 201-PR. В mockSchedule 11 пар: должно остаться 10, пара 102-PR (Дизайн) скрыта. Переиспользуй .schedule-grid/.schedule-day/.schedule-card, добавь группу в карточку. Заглушка при пустом списке. Логи: всего пар / группы менеджера / пар направления.",
+      "verify": {
+        "role": "manager",
+        "section": "schedule",
+        "scenarios": [
+          {
+            "name": "manager-schedule-desktop-light-ru",
+            "role": "manager",
+            "section": "schedule",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": { "selector": ".schedule-card", "count": 10, "noText": "102-PR", "minTextLength": 80 }
+          },
+          {
+            "name": "manager-schedule-desktop-dark-en",
+            "role": "manager",
+            "section": "schedule",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": { "selector": ".schedule-card", "count": 10, "noText": "102-PR", "minTextLength": 80 }
+          },
+          {
+            "name": "manager-schedule-mobile-light-uz",
+            "role": "manager",
+            "section": "schedule",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "light",
+            "mobile": true,
+            "expect": { "selector": ".schedule-card", "count": 10, "noText": "102-PR", "minTextLength": 80 }
+          },
+          {
+            "name": "manager-dashboard-regression",
+            "role": "manager",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": { "selector": ".stat-card", "count": 3, "minTextLength": 60 }
+          }
+        ]
+      }
+    },
+    {
+      "id": "23",
+      "title": "Панель администратора: дашборд",
+      "promptFile": "Промты/Промт-23-Панель-Администратора-Дашборд.md",
+      "notes": "Используй существующие mockAllStudents/mockAllTeachers/mockTeacherGroups/mockTests и MOCK_USERS.admin (не выдумывай второго админа). Направления — ключи programming/design + dict, как в панели менеджера. 4 карточки статистики, лента событий, направления с числом групп.",
+      "verify": {
+        "role": "admin",
+        "section": "dashboard",
+        "scenarios": [
+          {
+            "name": "admin-dashboard-desktop-light-ru",
+            "role": "admin",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": { "selector": ".stat-card", "count": 4, "minTextLength": 80 }
+          },
+          {
+            "name": "admin-dashboard-desktop-dark-en",
+            "role": "admin",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": { "selector": ".stat-card", "count": 4, "minTextLength": 80 }
+          },
+          {
+            "name": "admin-dashboard-mobile-light-uz",
+            "role": "admin",
+            "section": "dashboard",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "light",
+            "mobile": true,
+            "expect": { "selector": ".stat-card", "count": 4, "minTextLength": 80 }
+          }
+        ]
+      }
+    },
+    {
+      "id": "24",
+      "title": "Панель администратора: список пользователей",
+      "promptFile": "Промты/Промт-24-Панель-Администратора-Список-пользователей.md",
+      "notes": "Собери allUsers из студентов, преподавателей и менеджеров. Поиск + фильтр по роли работают вместе. Таблица на десктопе, карточки на мобильном. Кнопке «Добавить пользователя» добавь data-admin-action=\"add-user\" (её заменит №26).",
+      "verify": {
+        "role": "admin",
+        "section": "users",
+        "scenarios": [
+          {
+            "name": "admin-users-desktop-light-ru",
+            "role": "admin",
+            "section": "users",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": { "selector": "table tbody tr", "count": 1, "minTextLength": 80 }
+          },
+          {
+            "name": "admin-users-desktop-dark-en",
+            "role": "admin",
+            "section": "users",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": { "selector": "table tbody tr", "count": 1, "minTextLength": 80 }
+          },
+          {
+            "name": "admin-users-mobile-light-uz",
+            "role": "admin",
+            "section": "users",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "light",
+            "mobile": true,
+            "expect": { "selector": "table tbody tr", "count": 1, "minTextLength": 80 }
+          }
+        ]
+      }
+    },
+    {
+      "id": "25",
+      "title": "Панель администратора: управление группами",
+      "promptFile": "Промты/Промт-25-Панель-Администратора-Управление-группами.md",
+      "notes": "Создание группы + сохранение в unitest_groups + перерисовка. Кнопка «Редактировать» должна открывать реальную форму (не alert). Пункты меню faculties/courses: сделай минимальные справочники (факультеты и курсы) в этом же разделе или отдельными подразделами — НЕ оставляй пункты меню, ведущие в заглушку.",
+      "verify": {
+        "role": "admin",
+        "section": "groups",
+        "scenarios": [
+          {
+            "name": "admin-groups-desktop-light-ru",
+            "role": "admin",
+            "section": "groups",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": { "hasText": "101-PR", "minTextLength": 80 }
+          },
+          {
+            "name": "admin-groups-desktop-dark-en",
+            "role": "admin",
+            "section": "groups",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": { "hasText": "101-PR", "minTextLength": 80 }
+          },
+          {
+            "name": "admin-groups-mobile-light-uz",
+            "role": "admin",
+            "section": "groups",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "light",
+            "mobile": true,
+            "expect": { "hasText": "101-PR", "minTextLength": 80 }
+          }
+        ]
+      }
+    },
+    {
+      "id": "26",
+      "title": "Панель администратора: добавление пользователя",
+      "promptFile": "Промты/Промт-26-Панель-Администратора-Добавление-пользователя.md",
+      "notes": "Замени alert на модалку. Кнопка открытия — обязательно [data-admin-action=\"add-user\"]. Динамические поля по роли, валидация, сохранение, перерисовка таблицы. Новый пользователь должен появиться в №24 и сохраниться после F5.",
+      "verify": {
+        "role": "admin",
+        "section": "users",
+        "scenarios": [
+          {
+            "name": "admin-users-desktop-light-ru",
+            "role": "admin",
+            "section": "users",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": { "selector": "table tbody tr", "count": 1, "minTextLength": 80 }
+          },
+          {
+            "name": "admin-add-user-modal-ru",
+            "role": "admin",
+            "section": "users",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "click": "[data-admin-action=\"add-user\"]",
+            "wait": 700,
+            "expect": { "modal": true, "minTextLength": 40, "noStub": false }
+          },
+          {
+            "name": "admin-users-desktop-dark-en",
+            "role": "admin",
+            "section": "users",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": { "selector": "table tbody tr", "count": 1, "minTextLength": 80 }
+          },
+          {
+            "name": "admin-add-user-mobile-uz",
+            "role": "admin",
+            "section": "users",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "light",
+            "mobile": true,
+            "click": "[data-admin-action=\"add-user\"]",
+            "wait": 700,
+            "expect": { "modal": true, "minTextLength": 40, "noStub": false }
+          }
+        ]
+      }
+    },
+    {
+      "id": "27",
+      "title": "Панель администратора: назначение менеджеров",
+      "promptFile": "Промты/Промт-27-Панель-Администратора-Назначение-менеджеров.md",
+      "notes": "Направления — из mockTeacherGroups (ключи programming/design + dict). Один менеджер не может вести два направления. Сохранение в unitest_managers, перерисовка. Модалка назначения/освобождения.",
+      "verify": {
+        "role": "admin",
+        "section": "managers",
+        "scenarios": [
+          {
+            "name": "admin-managers-desktop-light-ru",
+            "role": "admin",
+            "section": "managers",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": { "minTextLength": 80 }
+          },
+          {
+            "name": "admin-managers-desktop-dark-en",
+            "role": "admin",
+            "section": "managers",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": { "minTextLength": 80 }
+          },
+          {
+            "name": "admin-managers-mobile-light-uz",
+            "role": "admin",
+            "section": "managers",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "light",
+            "mobile": true,
+            "expect": { "minTextLength": 80 }
+          }
+        ]
+      }
+    },
+    {
+      "id": "28",
+      "title": "Панель администратора: глобальные отчёты",
+      "promptFile": "Промты/Промт-28-Панель-Администратора-Глобальные-Отчёты.md",
+      "notes": "Используй существующие mockHistoricalResults и результаты из localStorage (unitest_results), нормализацию как в панели менеджера. Фильтры курс+направление пересчитывают карточки и таблицу. Без Chart.js — CSS progress bar. Экспорт можно оставить заглушкой, но текст через dict.",
+      "verify": {
+        "role": "admin",
+        "section": "reports",
+        "scenarios": [
+          {
+            "name": "admin-reports-desktop-light-ru",
+            "role": "admin",
+            "section": "reports",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": { "selector": ".progress-track", "count": 1, "minTextLength": 100 }
+          },
+          {
+            "name": "admin-reports-desktop-dark-en",
+            "role": "admin",
+            "section": "reports",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": { "selector": ".progress-track", "count": 1, "minTextLength": 100 }
+          },
+          {
+            "name": "admin-reports-mobile-light-uz",
+            "role": "admin",
+            "section": "reports",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "light",
+            "mobile": true,
+            "expect": { "selector": ".progress-track", "count": 1, "minTextLength": 100 }
+          }
+        ]
+      }
+    },
+    {
+      "id": "29",
+      "title": "Панель администратора: настройки и журнал",
+      "promptFile": "Промты/Промт-29-Панель-Администратора-Настройки-и-Журнал-действий.md",
+      "notes": "Журнал действий + системные настройки. Резервную копию сделай реальным скачиванием JSON (это проще, чем alert). Сброс базы: confirm + очистка данных, но сохрани unitest_lang и unitest_theme. После сброса — reload. Все тексты через dict.",
+      "verify": {
+        "role": "admin",
+        "section": "settings",
+        "scenarios": [
+          {
+            "name": "admin-settings-desktop-light-ru",
+            "role": "admin",
+            "section": "settings",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": { "minTextLength": 80 }
+          },
+          {
+            "name": "admin-settings-desktop-dark-en",
+            "role": "admin",
+            "section": "settings",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": { "minTextLength": 80 }
+          },
+          {
+            "name": "admin-settings-mobile-light-uz",
+            "role": "admin",
+            "section": "settings",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "light",
+            "mobile": true,
+            "expect": { "minTextLength": 80 }
+          }
+        ]
+      }
+    }
+  ]
+}

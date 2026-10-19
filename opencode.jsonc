@@ -1,0 +1,34 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "deepseek/deepseek-flash",
+  "compaction": {
+    "auto": true,
+    "keep": { "tokens": 30000 },
+    "buffer": 20000
+  },
+  "permissions": [
+    { "action": "read", "resource": "*.env", "effect": "deny" },
+    { "action": "read", "resource": "*.env.*", "effect": "deny" },
+    { "action": "read", "resource": "C:/Users/aliev/.ssh/*", "effect": "deny" },
+
+    { "action": "shell", "resource": "git push *", "effect": "deny" },
+    { "action": "shell", "resource": "git reset --hard *", "effect": "deny" },
+    { "action": "shell", "resource": "git clean -fd *", "effect": "deny" },
+    { "action": "shell", "resource": "shutdown *", "effect": "deny" },
+    { "action": "shell", "resource": "Restart-Computer *", "effect": "deny" },
+    { "action": "shell", "resource": "Stop-Computer *", "effect": "deny" },
+    { "action": "shell", "resource": "Format-Volume *", "effect": "deny" },
+    { "action": "shell", "resource": "Clear-Disk *", "effect": "deny" },
+    { "action": "shell", "resource": "Initialize-Disk *", "effect": "deny" },
+    { "action": "shell", "resource": "Remove-Item * -Recurse *", "effect": "deny" },
+    { "action": "shell", "resource": "rm -rf *", "effect": "deny" },
+    { "action": "shell", "resource": "rd /s *", "effect": "deny" },
+    { "action": "shell", "resource": "del /s *", "effect": "deny" },
+    { "action": "shell", "resource": "Set-ExecutionPolicy *", "effect": "deny" },
+    { "action": "shell", "resource": "reg delete *", "effect": "deny" },
+    { "action": "shell", "resource": "schtasks /delete *", "effect": "deny" },
+
+    { "action": "edit", "resource": "C:/Windows/*", "effect": "deny" },
+    { "action": "edit", "resource": "C:/Users/aliev/.ssh/*", "effect": "deny" }
+  ]
+}

@@ -1,0 +1,16 @@
+# --- UniTest: служебные файлы ночного раннера ---
+backups/
+logs/
+night-state.json
+night-prompts/
+night-cmd/
+screenshots/task*/
+tests/node_modules/
+НОЧНОЙ-ОТЧЁТ.md
+night-blockers.md
+
+# --- ОС / редакторы ---
+Thumbs.db
+desktop.ini
+.DS_Store
+*.log
