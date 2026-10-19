@@ -254,6 +254,7 @@ $qualityDelay = 300
 if ($s.qualityDelaySeconds) { $qualityDelay = [int]$s.qualityDelaySeconds }
 $deadline = ""
 if ($s.deadline) { $deadline = [string]$s.deadline }
+if ($Only) { $qualityMode = $false }
 
 $stateTasks = @{}
 $oldState = $null
