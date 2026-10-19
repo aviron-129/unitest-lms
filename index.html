@@ -13576,12 +13576,29 @@
         const root = doc && doc.documentElement;
         if (!root || String(root.tagName || '').toLowerCase() !== 'svg') return '';
         if (doc.querySelector('parsererror')) return '';
-        doc.querySelectorAll('script, foreignObject, iframe, object, embed, link, style').forEach(node => node.remove());
+        // Промт q11: убираем не только script/on*-атрибуты, но и элементы,
+        // способные менять ссылки/обработчики во время показа (SMIL, <a>, <handler>).
+        // Сгенерированные приложением схемы статичны, поэтому они не нужны.
+        doc.querySelectorAll('script, foreignObject, iframe, object, embed, link, style, animate, animateTransform, animateMotion, set, discard, handler')
+          .forEach(node => node.remove());
+        // Ссылку-обёртку разворачиваем: текст/фигура остаются, но href больше нет.
+        doc.querySelectorAll('a').forEach(link => {
+          while (link.firstChild) link.parentNode.insertBefore(link.firstChild, link);
+          link.remove();
+        });
+        // Схема URL в атрибуте может быть замаскирована переводами строк/табами:
+        // браузер вырезает их и выполняет "java" + перевод строки + "script:...".
+        // Поэтому проверяем компактный вариант (без пробельных и управляющих символов).
+        const compactUrl = value => String(value || '').replace(/[\u0000-\u0020]+/g, '').toLowerCase();
         [root].concat(Array.prototype.slice.call(root.querySelectorAll('*'))).forEach(el => {
           Array.prototype.slice.call(el.attributes || []).forEach(attr => {
             const name = String(attr.name || '').toLowerCase();
-            const value = String(attr.value || '').toLowerCase();
-            if (name.indexOf('on') === 0 || value.indexOf('javascript:') !== -1 ||
+            const value = compactUrl(attr.value);
+            const isLink = name === 'href' || name === 'xlink:href' || name === 'src';
+            // В схеме разрешаем только внутренние ссылки (#id) и растровые data:-картинки.
+            const safeLink = /^#/.test(value) || /^data:image\/(png|jpe?g|gif|webp);base64,/.test(value);
+            if (name.indexOf('on') === 0 || (isLink && !safeLink) ||
+                value.indexOf('javascript:') !== -1 || value.indexOf('vbscript:') !== -1 ||
                 value.indexOf('data:text/html') !== -1) {
               el.removeAttribute(attr.name);
             }

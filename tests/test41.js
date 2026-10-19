@@ -96,6 +96,16 @@ T("sanitizeSvgMarkup убрал script и onload", !/script|onload/i.test(cleanS
 const diagramHtml = w.renderQuestionDiagram({ diagram: { type: "svg", svg: dirtySvg, caption: evil } });
 T("renderQuestionDiagram не пропускает script/onload", !/script|onload/i.test(diagramHtml));
 T("renderQuestionDiagram экранировал caption", diagramHtml.includes("&lt;img"));
+
+// Промт q11: javascript:-схема, замаскированная переводом строки/табом,
+// обходила проверку value.indexOf('javascript:'). Браузер такие символы вырезает.
+const maskedSvg = `<svg xmlns="http://www.w3.org/2000/svg"><a href="java&#10;script:window.__xss=1"><circle cx="1" cy="1" r="1"/></a><animate attributeName="href" values="java&#9;script:window.__xss=1"/><text>safe</text></svg>`;
+const cleanedMasked = w.sanitizeSvgMarkup(maskedSvg);
+T("sanitizeSvgMarkup убирает замаскированный javascript:-href", !/javascript:|href=|animate/i.test(cleanedMasked), cleanedMasked);
+T("sanitizeSvgMarkup сохраняет содержимое безопасной схемы", /<circle/.test(cleanedMasked) && /safe/.test(cleanedMasked), cleanedMasked);
+const safeRefSvg = w.sanitizeSvgMarkup(`<svg xmlns="http://www.w3.org/2000/svg"><use href="#icon"/></svg>`);
+T("sanitizeSvgMarkup оставляет внутренние #-ссылки", /href="#icon"/.test(safeRefSvg), safeRefSvg);
+T("renderQuestionDiagram не пропускает замаскированный javascript:", !/javascript:/i.test(w.renderQuestionDiagram({ diagram: { type: "svg", svg: maskedSvg, caption: "x" } })));
 const imgDiagram = w.renderQuestionDiagram({ diagram: { type: "image", dataUrl: "data:image/svg+xml;base64,PHN2Zz4=", caption: "x" } });
 T("SVG-картинка не рендерится как img", !/<img/i.test(imgDiagram));
 w.eval(`currentTestDraft = { questions: [{ text: "Q", options: ["a","b","c","d"], correct: 0, diagram: { type: "svg", svg: ${JSON.stringify(dirtySvg)}, caption: "" } }], questionsCount: 1 }; diagramEditingIndex = 0; openDiagramModal(0);`);
