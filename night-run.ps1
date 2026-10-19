@@ -98,10 +98,16 @@ function New-QualityScenarios([string]$Focus) {
   if ($Focus -match "тёмн|dark") { $theme = "dark"; $lang = "en" }
   $roles = @(
     @("student", "profile"),
-    @("teacher", "dashboard"),
-    @("manager", "dashboard"),
-    @("admin", "dashboard")
+    @("teacher", "dashboard")
   )
+  $managerSection = "dashboard"
+  if ($stateTasks -and $stateTasks.ContainsKey("22") -and $stateTasks["22"].status -eq "done") {
+    $managerSection = "schedule"
+  }
+  $roles += ,@("manager", $managerSection)
+  if ($stateTasks -and $stateTasks.ContainsKey("23") -and $stateTasks["23"].status -eq "done") {
+    $roles += ,@("admin", "dashboard")
+  }
   $list = @()
   foreach ($r in $roles) {
     $list += @{
