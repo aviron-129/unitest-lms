@@ -706,6 +706,94 @@
     .stat-value { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; }
     .stat-label { font-size: 0.82rem; color: var(--text-muted); margin-top: 4px; }
 
+    /* Блок «Мои достижения» (Промт №32): бейджи студента.
+       Считаются из результатов, ничего не храним отдельно. */
+    .badges-section {
+      margin-top: 28px;
+      padding: 22px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .badges-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .badges-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+    .badges-title i { color: var(--role, var(--accent)); }
+    .badges-count {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: rgba(99, 102, 241, 0.12);
+      color: var(--accent);
+    }
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    @media (min-width: 768px) {
+      .badges-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    .badge-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 18px 14px;
+      border-radius: 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+    .badge-card--unlocked {
+      border-color: var(--badge-color);
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    }
+    .badge-card--unlocked::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 4px;
+      border-radius: 14px 14px 0 0;
+      background: var(--badge-color);
+    }
+    .badge-card--unlocked:hover { transform: translateY(-4px); }
+    .badge-card--locked { opacity: 0.4; filter: grayscale(1); }
+    .badge-icon {
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      border-radius: 13px;
+      font-size: 1.15rem;
+      background: var(--card-border);
+      color: var(--text-muted);
+    }
+    .badge-card--unlocked .badge-icon {
+      background: var(--badge-color);
+      color: #ffffff;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
+    }
+    .badge-name { font-size: 0.92rem; font-weight: 700; margin-bottom: 4px; }
+    .badge-desc { font-size: 0.76rem; line-height: 1.35; color: var(--text-muted); }
+
     /* ============================================================
        6.2 СПИСОК ТЕСТОВ СТУДЕНТА (Промт №4)
        ============================================================ */
@@ -3604,6 +3692,16 @@
         lblAvailable:   "Доступно тестов",
         lblPassed:      "Пройдено",
         lblAverage:     "Средний балл",
+        // Геймификация: бейджи студента (Промт №32)
+        badgesTitle:          "Мои достижения",
+        badgeFirstTest:       "Первый шаг",
+        badgeFirstTestDesc:   "Пройдите 1 тест",
+        badgeExcellent:       "Отличник",
+        badgeExcellentDesc:   "Получите оценку 5",
+        badgeActive:          "Активист",
+        badgeActiveDesc:      "Пройдите 3 теста",
+        badgePerfect:         "Максимальный балл",
+        badgePerfectDesc:     "Сдайте тест на 100%",
         courseSuffix:   "курс",
         catArcher:      "Лучник",
         formFull:       "Очное",
@@ -4025,6 +4123,16 @@
         lblAvailable:   "Mavjud testlar",
         lblPassed:      "Topshirilgan",
         lblAverage:     "O'rtacha ball",
+        // Геймификация: бейджи студента (Промт №32)
+        badgesTitle:          "Mening yutuqlarim",
+        badgeFirstTest:       "Birinchi qadam",
+        badgeFirstTestDesc:   "1 ta testni topshiring",
+        badgeExcellent:       "A'lochi",
+        badgeExcellentDesc:   "5 baho oling",
+        badgeActive:          "Faol talaba",
+        badgeActiveDesc:      "3 ta testni topshiring",
+        badgePerfect:         "Eng yuqori ball",
+        badgePerfectDesc:     "Testni 100% ga topshiring",
         courseSuffix:   "kurs",
         catArcher:      "Mergan",
         formFull:       "Kunduzgi",
@@ -4445,6 +4553,16 @@
         lblAvailable:   "Available tests",
         lblPassed:      "Passed",
         lblAverage:     "Average score",
+        // Геймификация: бейджи студента (Промт №32)
+        badgesTitle:          "My achievements",
+        badgeFirstTest:       "First step",
+        badgeFirstTestDesc:   "Pass 1 test",
+        badgeExcellent:       "Honor student",
+        badgeExcellentDesc:   "Get a grade of 5",
+        badgeActive:          "Activist",
+        badgeActiveDesc:      "Pass 3 tests",
+        badgePerfect:         "Perfect score",
+        badgePerfectDesc:     "Score 100% on a test",
         courseSuffix:   "course",
         catArcher:      "Archer",
         formFull:       "Full-time",
@@ -5968,6 +6086,96 @@
         </div>`;
     }
 
+    /* ============================================================
+       5.1.1 ГЕЙМИФИКАЦИЯ: БЕЙДЖИ СТУДЕНТА (Промт №32)
+       Бейджи не хранятся отдельно — флаги isUnlocked считаются
+       из результатов (unitest_results + mockHistoricalResults).
+       ============================================================ */
+    const mockBadges = [
+      { id: "first_test", icon: "fa-flag-checkered", color: "#6366f1",
+        titleKey: "badgeFirstTest", descKey: "badgeFirstTestDesc",
+        isUnlocked: (results) => results.length >= 1 },
+      { id: "excellent", icon: "fa-star", color: "#f59e0b",
+        titleKey: "badgeExcellent", descKey: "badgeExcellentDesc",
+        isUnlocked: (results) => results.some(r => Number(r.grade) === 5) },
+      { id: "active", icon: "fa-fire", color: "#10b981",
+        titleKey: "badgeActive", descKey: "badgeActiveDesc",
+        isUnlocked: (results) => results.length >= 3 },
+      { id: "perfect", icon: "fa-trophy", color: "#ec4899",
+        titleKey: "badgePerfect", descKey: "badgePerfectDesc",
+        isUnlocked: (results) => results.some(r => Number(r.percent) === 100) }
+    ];
+
+    // Исторические результаты принадлежат разным студентам, поэтому
+    // к текущему студенту относим только записи с его ФИО.
+    function isCurrentStudentResult(result) {
+      const name = String((result && result.studentName) || "").toLowerCase();
+      if (!name) return false;
+      const lastName = String(mockStudent.lastName || "").toLowerCase();
+      const firstName = String(mockStudent.firstName || "").toLowerCase();
+      return (!!lastName && name.includes(lastName)) || (!!firstName && name.includes(firstName));
+    }
+
+    // Результаты текущего студента в едином формате:
+    // unitest_results + подходящие записи mockHistoricalResults.
+    function getStudentBadgeResults() {
+      const saved = getResults();
+      const own = (Array.isArray(saved) ? saved : []).map(normalizeResult);
+      const historical = (Array.isArray(mockHistoricalResults) ? mockHistoricalResults : [])
+        .filter(isCurrentStudentResult)
+        .map(normalizeResult);
+      return own.concat(historical);
+    }
+
+    // Проверяет условия бейджей. Возвращает массив объектов
+    // { id, icon, color, titleKey, descKey, isUnlocked }.
+    function checkBadges(results) {
+      const list = Array.isArray(results) ? results : [];
+      const badges = mockBadges.map(badge => {
+        let isUnlocked = false;
+        try { isUnlocked = !!badge.isUnlocked(list); }
+        catch (e) { console.error("Не удалось проверить бейдж:", badge.id, e); }
+        console.log("Бейдж", badge.id, "разблокирован?", isUnlocked);
+        return {
+          id: badge.id, icon: badge.icon, color: badge.color,
+          titleKey: badge.titleKey, descKey: badge.descKey, isUnlocked
+        };
+      });
+      if (!list.length) console.log("У студента пока нет достижений");
+      return badges;
+    }
+
+    // Отрисовывает сетку карточек-бейджей: полученные — цветные,
+    // заблокированные — полупрозрачные с замком и подсказкой.
+    function renderBadges(results) {
+      const dict = translations[currentLang];
+      const badges = checkBadges(results);
+      const unlockedCount = badges.filter(b => b.isUnlocked).length;
+
+      const cards = badges.map(badge => {
+        const title = dict[badge.titleKey] || badge.titleKey;
+        const desc = dict[badge.descKey] || badge.descKey;
+        const icon = badge.isUnlocked ? badge.icon : "fa-lock";
+        const stateClass = badge.isUnlocked ? "badge-card--unlocked" : "badge-card--locked";
+        return `
+          <article class="badge-card ${stateClass}" data-badge-id="${badge.id}"
+                   data-unlocked="${badge.isUnlocked}" style="--badge-color:${badge.color}">
+            <div class="badge-icon"><i class="fas ${icon}"></i></div>
+            <div class="badge-name">${escapeHtml(title)}</div>
+            <div class="badge-desc">${escapeHtml(desc)}</div>
+          </article>`;
+      }).join("");
+
+      return `
+        <section class="badges-section" aria-label="${escapeHtml(dict.badgesTitle)}">
+          <div class="badges-head">
+            <div class="badges-title"><i class="fas fa-award"></i> ${escapeHtml(dict.badgesTitle)}</div>
+            <span class="badges-count">${unlockedCount}/${badges.length}</span>
+          </div>
+          <div class="badges-grid">${cards}</div>
+        </section>`;
+    }
+
     // Возвращает HTML-строку карточки профиля студента.
     // При отсутствии данных — сообщает об ошибке и отдаёт заглушку.
     function renderStudentProfile() {
@@ -6038,7 +6246,9 @@
             <div class="stat-value">${studentStats.averageGrade}</div>
             <div class="stat-label">${dict.lblAverage}</div>
           </div>
-        </div>`;
+        </div>
+
+        ${renderBadges(getStudentBadgeResults())}`;
     }
 
     // Вспомогательная: первая буква заглавная (programming → Programming)
