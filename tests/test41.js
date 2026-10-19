@@ -98,6 +98,11 @@ T("renderQuestionDiagram не пропускает script/onload", !/script|onlo
 T("renderQuestionDiagram экранировал caption", diagramHtml.includes("&lt;img"));
 const imgDiagram = w.renderQuestionDiagram({ diagram: { type: "image", dataUrl: "data:image/svg+xml;base64,PHN2Zz4=", caption: "x" } });
 T("SVG-картинка не рендерится как img", !/<img/i.test(imgDiagram));
+w.eval(`currentTestDraft = { questions: [{ text: "Q", options: ["a","b","c","d"], correct: 0, diagram: { type: "svg", svg: ${JSON.stringify(dirtySvg)}, caption: "" } }], questionsCount: 1 }; diagramEditingIndex = 0; openDiagramModal(0);`);
+const dgPreview = D.getElementById("dgPreview");
+T("openDiagramModal санитизирует старую SVG-схему", !!dgPreview && !/script|onload/i.test(dgPreview.innerHTML), dgPreview && dgPreview.innerHTML);
+T("openDiagramModal не сохраняет опасный SVG в черновик", !!w.eval("currentDiagramDraft") && !/script|onload/i.test(w.eval("currentDiagramDraft.svg")));
+w.eval(`currentTestDraft = null; diagramEditingIndex = null; closeDiagramModal();`);
 
 console.log("\n[6] Проверка ролей в действиях");
 w.eval(`selectRole('teacher'); activeTest = null; document.getElementById('testScreen').classList.add('hidden'); startTest(1);`);

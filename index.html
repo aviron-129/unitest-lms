@@ -13097,11 +13097,14 @@
 
       updateDiagramFields();
 
-      // Старая схема без params: показываем ровно её, пока пользователь не изменит параметры
+      // Старая схема без params: показываем ровно её, пока пользователь не изменит параметры.
+      // Как и при рендере вопроса, старый SVG проходит через санитайзер:
+      // подменённый unitestalltests/импорт не должен выполнить onload/script.
       if (existing && existing.svg && !existing.params && existing.diagramType !== 'image') {
         const preview = document.getElementById('dgPreview');
-        if (preview) preview.innerHTML = existing.svg;
-        currentDiagramDraft = { ...existing };
+        const safeSvg = sanitizeSvgMarkup(existing.svg);
+        if (preview) preview.innerHTML = safeSvg;
+        currentDiagramDraft = safeSvg ? { ...existing, svg: safeSvg } : null;
       }
 
       overlay.classList.remove('hidden');
