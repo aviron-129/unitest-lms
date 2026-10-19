@@ -64,6 +64,10 @@
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
       color: var(--text);
+      /* Промт №37: широкие таблицы/схемы не должны растягивать страницу.
+         overflow-x:hidden на body гасит случайный горизонтальный скролл,
+         при этом sticky-шапка и sidebar продолжают работать. */
+      overflow-x: hidden;
       /* Плавный переход при смене темы */
       transition: color 0.3s ease, background-color 0.3s ease;
     }
@@ -1533,8 +1537,8 @@
     .type-practice .schedule-type { background: rgba(16, 185, 129, 0.14); color: #10b981; }
     .type-lab      .schedule-type { background: rgba(245, 158, 11, 0.16); color: #d97706; }
 
-    /* Планшет: 3 колонки в ряд */
-    @media (max-width: 1023.98px) {
+    /* Планшет: 3 колонки в ряд (до 1200px — на 1024 с sidebar 6 колонок не влезают) */
+    @media (max-width: 1199.98px) {
       .schedule-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); overflow-x: visible; }
       .schedule-day { min-width: 0; }
     }
@@ -2014,8 +2018,13 @@
     .stat-label { margin-top: 4px; font-size: 0.78rem; color: var(--text-muted); }
 
     /* Таблица оценок (десктоп) */
-    .transcript-table-wrap {
+    /* Обёртка таблицы: широкие таблицы скроллятся ВНУТРИ себя (Промт №37).
+       .table-responsive — универсальный класс-алиас для новых таблиц. */
+    .transcript-table-wrap,
+    .table-responsive {
       overflow-x: auto;              /* не ломает верстку при большом числе предметов */
+      max-width: 100%;
+      -webkit-overflow-scrolling: touch;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
@@ -2110,6 +2119,7 @@
     .group-card {
       display: flex;
       flex-direction: column;
+      min-width: 0;                   /* длинные названия не растягивают grid-колонку */
       gap: 12px;
       padding: 22px 20px;
       background: var(--card-bg);
@@ -2124,8 +2134,13 @@
       transform: translateY(-4px);
       box-shadow: 0 12px 28px var(--role-soft, rgba(99, 102, 241, 0.25));
     }
-    .group-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    .group-name { font-size: 1.1rem; font-weight: 800; }
+    .group-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; }
+    .group-name {
+      min-width: 0;
+      font-size: 1.1rem;
+      font-weight: 800;
+      overflow-wrap: anywhere;         /* длинные ФИО/названия тестов переносятся */
+    }
     .course-badge {
       padding: 4px 10px;
       border-radius: 999px;
@@ -2136,8 +2151,8 @@
       background: var(--role, var(--accent));
       white-space: nowrap;
     }
-    .group-meta { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 0.82rem; color: var(--text-muted); }
-    .group-meta span { display: inline-flex; align-items: center; gap: 7px; }
+    .group-meta { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 0.82rem; color: var(--text-muted); min-width: 0; }
+    .group-meta span { display: inline-flex; align-items: center; gap: 7px; min-width: 0; overflow-wrap: anywhere; }
     .group-meta i { color: var(--role, var(--accent)); }
     .group-students {
       display: inline-flex;
@@ -3026,6 +3041,9 @@
     /* Таблица результатов (структура — как у .transcript-table из зачётки) */
     .results-table-wrap {
       overflow-x: auto;                /* не ломает верстку при широком контенте */
+      width: 100%;
+      max-width: 100%;
+      -webkit-overflow-scrolling: touch;
       margin-top: 18px;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -3947,6 +3965,97 @@
       .chat-send-btn span { display: none; }
       .chat-composer-hint { display: none; }
     }
+    /* ============================================================
+       7.1 МОБИЛЬНАЯ АДАПТИВНОСТЬ И UI-ФИКСЫ (Промт №37)
+       ============================================================ */
+
+    /* Длинные ФИО/названия тестов/групп не должны вылезать за карточку */
+    #sectionHeading,
+    .results-card-name,
+    .admin-user-name,
+    .admin-manager-name,
+    .admin-modal-title,
+    .admin-group-name,
+    .notif-article-title,
+    .announce-name,
+    .schedule-subject,
+    .test-title,
+    .test-top-title,
+    .dash-welcome {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    /* Мобильные выпадающие панели шапки (уведомления/поиск):
+       растягиваем по ширине экрана с отступами, чтобы не вылезали за край.
+       .app-header имеет backdrop-filter → он становится containing block
+       для position:fixed, поэтому top считаем от высоты шапки. */
+    @media (max-width: 767.98px) {
+      .notif-dropdown,
+      .search-dropdown {
+        position: fixed;
+        top: calc(100% + 8px);
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-width: none;
+        max-height: calc(100dvh - 90px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      /* Скроллится сама панель, а не отдельный список внутри неё */
+      .notif-dropdown .notif-list,
+      .search-dropdown .search-results {
+        max-height: none;
+        overflow-y: visible;
+      }
+
+      /* Модалки: не выше экрана, контент прокручивается, кнопки не уходят вниз */
+      .notif-modal,
+      .pt-overlay {
+        padding: 10px;
+      }
+      .notif-article,
+      .pt-window,
+      .ann-modal {
+        max-height: calc(100dvh - 20px);
+        overflow-y: auto;
+      }
+    }
+
+    /* Очень узкие экраны (320–380px): ужимаем шапку, чтобы бургер и кнопки
+       не сжимались и не выталкивали контент за край. */
+    @media (max-width: 380px) {
+      .app-header {
+        gap: 8px;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .app-header-actions { gap: 6px; }
+      .burger-btn,
+      .bell-btn,
+      .icon-btn {
+        width: 36px;
+        height: 36px;
+        flex: 0 0 auto;
+        border-radius: 10px;
+        font-size: 0.9rem;
+      }
+      .app-header .lang-switcher { padding: 3px; gap: 2px; }
+      .app-header .lang-btn { padding: 5px 6px; font-size: 0.72rem; }
+      .main-content { padding-left: 14px; padding-right: 14px; }
+      .notif-dropdown,
+      .search-dropdown { left: 8px; right: 8px; }
+    }
+
+    /* Уменьшаем отступы карточек на телефоне: больше полезной ширины */
+    @media (max-width: 480px) {
+      .results-card,
+      .grade-card,
+      .group-card,
+      .admin-group-card { padding: 14px; }
+      .app-header { padding-top: 10px; padding-bottom: 10px; }
+    }
   </style>
   <!-- KaTeX: рендер математических формул ($...$ / $$...$$) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
@@ -4213,6 +4322,7 @@
         notifications:  "Уведомления",
         sectionStub:    "Содержимое раздела появится на следующих этапах разработки.",
         placeholderHint:"Этот раздел пока в разработке.",
+        overflowWarning: "ВНИМАНИЕ: обнаружен горизонтальный скролл! Ширина страницы:",
         // Пункты меню
         dashboard:      "Дашборд",
         faculties:      "Факультеты",
@@ -4720,6 +4830,7 @@
         notifications:  "Bildirishnomalar",
         sectionStub:    "Bo'lim mazmuni keyingi bosqichlarda qo'shiladi.",
         placeholderHint:"Bu bo'lim hozircha ishlab chiqilmoqda.",
+        overflowWarning: "DIQQAT: gorizontal skroll aniqlandi! Sahifa kengligi:",
         dashboard:      "Boshqaruv paneli",
         faculties:      "Fakultetlar",
         courses:        "Kurslar",
@@ -5225,6 +5336,7 @@
         notifications:  "Notifications",
         sectionStub:    "Section content will be added in the upcoming development stages.",
         placeholderHint:"This section is under development.",
+        overflowWarning: "WARNING: horizontal scroll detected! Page width:",
         dashboard:      "Dashboard",
         faculties:      "Faculties",
         courses:        "Courses",
@@ -8149,7 +8261,7 @@
           </div>
         </div>
 
-        <div class="transcript-table-wrap">
+        <div class="transcript-table-wrap table-responsive">
           <table class="transcript-table">
             <thead>
               <tr>
@@ -8618,7 +8730,7 @@
           </button>
         </div>
 
-        <div class="results-table-wrap admin-users-table-wrap">
+        <div class="results-table-wrap table-responsive admin-users-table-wrap">
           <table class="results-table admin-users-table">
             <thead>
               <tr>
@@ -8981,7 +9093,7 @@
 
       return `
         <p class="admin-ref-subtitle">${escapeHtml(dict.adminManagersSubtitle)}</p>
-        <div class="results-table-wrap admin-managers-table-wrap">
+        <div class="results-table-wrap table-responsive admin-managers-table-wrap">
           <table class="results-table admin-managers-table">
             <thead>
               <tr>
@@ -9321,7 +9433,7 @@
       });
 
       tableBox.innerHTML = `
-        <div class="results-table-wrap admin-reports-table-wrap">
+        <div class="results-table-wrap table-responsive admin-reports-table-wrap">
           <table class="results-table admin-reports-table">
             <thead>
               <tr>
@@ -9429,7 +9541,7 @@
         : '';
 
       const logsHTML = logs.length
-        ? `<div class="results-table-wrap admin-logs-table-wrap">
+        ? `<div class="results-table-wrap table-responsive admin-logs-table-wrap">
              <table class="results-table admin-logs-table">
                <thead>
                  <tr>
@@ -10293,7 +10405,7 @@
             <i class="fas fa-plus"></i> ${dict.addStudent}
           </button>
         </div>
-        <div class="results-table-wrap">
+        <div class="results-table-wrap table-responsive">
           <table class="results-table manager-table">
             <thead>
               <tr>
@@ -13189,7 +13301,7 @@
       const badge = g => `<span class="grade-badge grade-badge-${g}">${g}</span>`;
 
       return `
-        <div class="results-table-wrap">
+        <div class="results-table-wrap table-responsive">
           <table class="results-table">
             <thead>
               <tr>
@@ -14240,6 +14352,20 @@
     /* ============================================================
        6. ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
        ============================================================ */
+    /* Промт №37: самопроверка горизонтального переполнения.
+       Возвращает true и пишет предупреждение в консоль, если страница шире окна.
+       Вызывается при загрузке (через 1 с) и при изменении размера окна. */
+    function checkOverflow() {
+      const doc = document.documentElement;
+      const viewport = window.innerWidth || doc.clientWidth || 0;
+      if (doc.scrollWidth > viewport + 1) {
+        const dict = translations[currentLang] || translations.ru;
+        console.warn(dict.overflowWarning, doc.scrollWidth, viewport);
+        return true;
+      }
+      return false;
+    }
+
     function initApp() {
       // Системные настройки админки (Промт №29): загружаем до применения темы/языка,
       // чтобы значения по умолчанию работали при первом открытии.
@@ -14379,6 +14505,14 @@
       document.getElementById('testNextBtn').addEventListener('click', () => goToQuestion(1));
       document.getElementById('testFinishBtn').addEventListener('click', finishTest);
       document.getElementById('testCloseBtn').addEventListener('click', closeTestScreen);
+
+      // 8) Промт №37: контроль горизонтального переполнения и сброс мобильного меню
+      //    при переходе на десктопную ширину.
+      window.addEventListener('resize', checkOverflow);
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 1024) closeSidebar();
+      });
+      setTimeout(checkOverflow, 1000); // проверка при загрузке
 
       console.log("Приложение инициализировано. Язык:", currentLang, "| Тема:", currentTheme);
     }
