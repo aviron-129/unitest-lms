@@ -4779,8 +4779,10 @@
        ============================================================ -->
   <div id="notifModal" class="notif-modal hidden">
     <div class="notif-modal-backdrop" data-notif-close="1"></div>
-    <article id="notifArticle" class="notif-article" role="dialog" aria-modal="true">
-      <button id="notifModalClose" class="notif-modal-close" data-i18n-title="close" title="">
+    <article id="notifArticle" class="notif-article" role="dialog" aria-modal="true"
+             aria-labelledby="notifArticleTitle">
+      <button id="notifModalClose" class="notif-modal-close" data-i18n-title="close"
+              data-i18n-aria-label="close" aria-label="" title="">
         <i class="fas fa-xmark"></i>
       </button>
       <div id="notifModalBody"></div>
@@ -8446,7 +8448,7 @@
         .map(p => `<p>${escapeHtml(p)}</p>`).join("");
 
       return `
-        <h2 class="notif-article-title">${escapeHtml(notifField(n, "title"))}</h2>
+        <h2 class="notif-article-title" id="notifArticleTitle">${escapeHtml(notifField(n, "title"))}</h2>
         <div class="notif-article-meta">${metaParts.join(" • ")}</div>
         ${facts.length ? `<div class="notif-facts">${facts.join("")}</div>` : ''}
         <div class="notif-article-text">${body}</div>
@@ -8464,14 +8466,25 @@
       modal.classList.remove('hidden');
       currentNotifId = n.id;
       closeNotifications();                          // закрываем выпадашку
+      // Доступность: переводим фокус в модалку — иначе он остаётся
+      // на скрытом элементе выпадающей панели и уходит из диалога.
+      const closeBtn = document.getElementById('notifModalClose');
+      if (closeBtn) { try { closeBtn.focus(); } catch (e) {} }
       dbg("Открыты подробности уведомления:", notifField(n, "title"));   // самопроверка №4
     }
 
     // Закрывает модальное окно с подробностями
     function closeNotifDetail() {
       const modal = document.getElementById('notifModal');
+      const wasOpen = !!(modal && !modal.classList.contains('hidden'));
       if (modal) modal.classList.add('hidden');
       currentNotifId = null;
+      // Доступность: возвращаем фокус на колокольчик, открывший окно
+      // (элемент в скрытой выпадашке фокусировать нельзя).
+      if (wasOpen && currentRole) {
+        const bell = document.getElementById('bellBtn');
+        if (bell) { try { bell.focus(); } catch (e) {} }
+      }
     }
 
     // Помечает все уведомления ТЕКУЩЕЙ роли прочитанными и запоминает id (Промт №30)

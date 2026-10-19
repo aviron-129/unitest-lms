@@ -4,6 +4,7 @@
      - обрезку однострочных заголовков;
      - мобильные таблицы (.table-responsive) и модалки (85vh + прокрутка);
      - видимый фокус, Tab-ловушку, Esc и aria у модалок;
+     - доступное имя и возврат фокуса в модалке уведомления;
      - 150-символьное название теста, 100 вопросов, 0 вопросов;
      - большую таблицу пользователей, длинное сообщение в чате;
      - переводы ru/uz/en и чистую консоль.
@@ -217,6 +218,33 @@ T("фокус в поле причины", d.activeElement && d.activeElement.id
 T("у модалки апелляции role=dialog", !!appealOverlay.querySelector('[role="dialog"][aria-modal="true"]'));
 d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
 T("Esc закрывает апелляцию", appealOverlay.classList.contains("hidden"));
+
+console.log("\n[8.1] Модалка уведомления: доступное имя и фокус");
+w.toggleNotifications();
+const notifLink = d.querySelector('#notifList [data-notif-id][role="button"]');
+T("в панели есть уведомление с подробностями", !!notifLink);
+if (notifLink) {
+  notifLink.focus();
+  notifLink.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }));
+  const notifModal = d.getElementById("notifModal");
+  const notifArticle = d.getElementById("notifArticle");
+  const notifTitle = d.getElementById("notifArticleTitle");
+  T("Enter по уведомлению открывает модалку", !notifModal.classList.contains("hidden"));
+  T("фокус переведён в модалку (кнопка закрытия)",
+    d.activeElement && d.activeElement.id === "notifModalClose",
+    d.activeElement && (d.activeElement.id || d.activeElement.className));
+  T("у модалки есть доступное имя через aria-labelledby",
+    notifArticle.getAttribute("aria-labelledby") === "notifArticleTitle" &&
+    !!notifTitle && txt(notifTitle).length > 0,
+    notifArticle.getAttribute("aria-labelledby"));
+  T("у кнопки закрытия модалки есть aria-label",
+    d.getElementById("notifModalClose").getAttribute("aria-label") === translations.ru.close,
+    d.getElementById("notifModalClose").getAttribute("aria-label"));
+  d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+  T("Esc закрывает модалку уведомления", notifModal.classList.contains("hidden"));
+  T("фокус возвращается на колокольчик", d.activeElement === d.getElementById("bellBtn"),
+    d.activeElement && (d.activeElement.id || d.activeElement.className));
+}
 
 console.log("\n[9] Переводы и консоль");
 for (const lang of ["ru", "uz", "en"]) {
