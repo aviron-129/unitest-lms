@@ -33,6 +33,22 @@ for (const key of newKeys) {
 }
 T(`все ${newKeys.length} новых ключей есть в ru/uz/en`, missing.length === 0, missing.join(", "));
 
+console.log("\n[1.1] Нет битых «?» вместо кавычек/тире в переводах");
+// Аудит q3: в uz/en часть типографских кавычек и тире была испорчена в «?»
+// («?PDF sifatida saqlash?ni», «choose ?Save as PDF?», «demo ? results»).
+// Ловим ? внутри слова и одинокий ? между словами; настоящие вопросы
+// («Продолжить?», «Вы уверены? Все данные…») не подсвечиваются.
+const mojibake = [];
+for (const lang of ["ru", "uz", "en"]) {
+  for (const [key, value] of Object.entries(translations[lang] || {})) {
+    const text = String(value);
+    if (/\?[A-Za-zА-Яа-яЁё0-9]/.test(text) || / \? [a-zа-яё]/.test(text)) {
+      mojibake.push(`${lang}.${key}: ${text}`);
+    }
+  }
+}
+T("в переводах нет битых ?", mojibake.length === 0, mojibake.slice(0, 5).join(" | "));
+
 console.log("\n[2] Нет русских строк в alert/confirm");
 const alertMatches = [...html.matchAll(/\b(?:alert|confirm)\(\s*(["'`])((?:\\.|(?!\1)[^\\])*)\1/g)]
   .map(m => m[2]).filter(s => cyr.test(s));
