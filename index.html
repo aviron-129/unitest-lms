@@ -2195,6 +2195,139 @@
     .admin-ref-total strong { font-size: 0.9rem; }
 
     /* ============================================================
+       6.8.4 ПАНЕЛЬ АДМИНИСТРАТОРА: НАСТРОЙКИ И ЖУРНАЛ (Промт №29)
+       ============================================================ */
+    /* Десктоп: журнал слева, настройки справа; мобильный — друг под другом */
+    .admin-settings-grid { display: grid; gap: 16px; margin-top: 20px; }
+    @media (min-width: 1024px) {
+      .admin-settings-grid { grid-template-columns: 1.2fr 1fr; align-items: start; }
+    }
+
+    /* Заголовок блока с кнопкой «Очистить журнал» */
+    .admin-settings-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .admin-log-clear { padding: 8px 12px; font-size: 0.78rem; white-space: nowrap; }
+    .admin-settings-note {
+      margin: 8px 0 0;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Таблица журнала (десктоп) */
+    .admin-logs-table-wrap { margin-top: 16px; }
+    .admin-logs-table td { vertical-align: top; }
+    .admin-log-time {
+      color: var(--text-muted);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .admin-log-user { font-weight: 600; overflow-wrap: anywhere; }
+    .admin-log-action { line-height: 1.45; overflow-wrap: anywhere; }
+
+    /* Карточки журнала (мобильный) */
+    .admin-log-cards { display: grid; gap: 10px; margin-top: 16px; }
+    .admin-log-card {
+      padding: 14px;
+      background: var(--surface-solid);
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+    }
+    .admin-log-card-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    .admin-log-card-user {
+      font-weight: 700;
+      color: var(--text);
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+    .admin-log-card-action { margin-top: 8px; font-size: 0.86rem; line-height: 1.45; overflow-wrap: anywhere; }
+    @media (min-width: 768px) { .admin-log-cards { display: none; } }
+    @media (max-width: 767.98px) { .admin-logs-table-wrap { display: none; } }
+
+    /* Системные настройки */
+    .admin-settings-form { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+    .admin-settings-form .field-input { width: 100%; }
+    .admin-settings-status {
+      min-height: 18px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      overflow-wrap: anywhere;
+    }
+    .admin-settings-status--ok { color: #10b981; }
+    .admin-settings-status--error { color: #ef4444; }
+    [data-theme="dark"] .admin-settings-status--ok { color: #34d399; }
+    [data-theme="dark"] .admin-settings-status--error { color: #f87171; }
+
+    /* Резервная копия */
+    .admin-backup-card { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--card-border); }
+    .admin-backup-card h4,
+    .admin-danger h4 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 6px;
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+    .admin-backup-card p,
+    .admin-danger p {
+      margin: 0 0 12px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Опасная зона: красная рамка и кнопка */
+    .admin-danger {
+      margin-top: 18px;
+      padding: 16px;
+      border: 1.5px solid rgba(239, 68, 68, 0.45);
+      border-radius: 14px;
+      background: rgba(239, 68, 68, 0.06);
+    }
+    .admin-danger h4 { color: #dc2626; }
+    [data-theme="dark"] .admin-danger h4 { color: #f87171; }
+    .btn-danger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 12px 20px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+    .btn-danger:hover { filter: brightness(1.07); box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35); }
+    .btn-danger:active { transform: scale(0.98); }
+
+    /* На мобильном кнопки — на всю ширину */
+    @media (max-width: 767.98px) {
+      .admin-settings-form .btn-primary,
+      .admin-backup-card .btn-ghost,
+      .admin-danger .btn-danger { width: 100%; }
+    }
+
+    /* ============================================================
        6.9 СОЗДАНИЕ ТЕСТА. ШАГ 1: ОСНОВНЫЕ НАСТРОЙКИ (Промт №12)
        ============================================================ */
     /* Форма: на мобильном 1 колонка, на десктопе — max-width 800px по центру */
@@ -3592,7 +3725,52 @@
         adminRefStudents:      "Студенты",
         facultyIt:             "Факультет информационных технологий",
         facultyEconomics:      "Экономический факультет",
-        adminNoCourses:        "Курсы пока не заданы"
+        adminNoCourses:        "Курсы пока не заданы",
+        // Панель администратора: настройки и журнал действий (Промт №29)
+        adminLogTitle:          "Журнал действий",
+        adminLogSubtitle:       "Последние изменения в системе",
+        adminLogTime:           "Время",
+        adminLogUser:           "Пользователь",
+        adminLogAction:         "Действие",
+        adminClearLog:          "Очистить журнал",
+        adminClearLogConfirm:   "Очистить журнал действий? Это действие нельзя отменить.",
+        adminNoLogs:            "Журнал пока пуст",
+        adminLogTestMath:       "Математика. Контрольная №3",
+        adminLogTestCreated:    "Создан тест «{0}»",
+        adminLogUserAdded:      "Добавлен новый пользователь: {0}",
+        adminLogGroupCreated:   "Создана группа {0}",
+        adminLogGroupUpdated:   "Обновлена группа {0}",
+        adminLogResultAdded:    "Результат теста по предмету {0}: оценка {1}",
+        adminLogManagerAssigned:"Менеджер {0} назначен на направление «{1}»",
+        adminLogManagerFreed:   "Освобождена должность менеджера направления «{0}»",
+        adminLogSettingsChanged:"Изменены системные настройки",
+        adminLogBackup:         "Скачана резервная копия: {0}",
+        adminLogReset:          "Выполнен сброс базы данных",
+        adminLogScheduleUpdated:"Обновлено расписание группы {0}",
+        adminSystemTitle:       "Системные настройки",
+        adminSettingsSubtitle:  "Основные параметры вуза и значения по умолчанию",
+        adminSettingsUniversity:"Название вуза",
+        adminSettingsUniversityPh:"Например, UniTest University",
+        adminSettingsYear:      "Учебный год",
+        adminSettingsYearPh:    "2026/2027",
+        adminSettingsLang:      "Язык по умолчанию",
+        adminSettingsTheme:     "Тема по умолчанию",
+        adminThemeLight:        "Светлая",
+        adminThemeDark:         "Тёмная",
+        adminSettingsSave:      "Сохранить настройки",
+        adminSettingsSaved:     "Настройки сохранены",
+        adminErrSettingsName:   "Введите название вуза",
+        adminErrSettingsYear:   "Введите учебный год",
+        adminBackupTitle:       "Резервное копирование",
+        adminBackupHint:        "Скачайте JSON-файл со всеми данными системы.",
+        adminBackupBtn:         "Скачать резервную копию",
+        adminBackupDone:        "Резервная копия скачана:",
+        adminBackupError:       "Не удалось создать резервную копию",
+        adminDangerZone:        "Опасная зона",
+        adminResetDb:           "Сбросить базу данных",
+        adminResetHint:         "Удаляет тесты, пользователей, результаты и настройки. Язык и тема сохраняются.",
+        adminResetConfirm:      "Вы уверены? Все данные (тесты, пользователи, результаты) будут удалены!",
+        adminResetDone:         "База данных очищена. Страница будет перезагружена."
       },
       uz: {
         welcome:        "Xush kelibsiz",
@@ -3941,7 +4119,52 @@
         adminRefStudents:      "Talabalar",
         facultyIt:             "Axborot texnologiyalari fakulteti",
         facultyEconomics:      "Iqtisodiyot fakulteti",
-        adminNoCourses:        "Hozircha kurslar yo'q"
+        adminNoCourses:        "Hozircha kurslar yo'q",
+        // Панель администратора: настройки и журнал действий (Промт №29)
+        adminLogTitle:          "Harakatlar jurnali",
+        adminLogSubtitle:       "Tizimdagi so'nggi o'zgarishlar",
+        adminLogTime:           "Vaqt",
+        adminLogUser:           "Foydalanuvchi",
+        adminLogAction:         "Harakat",
+        adminClearLog:          "Jurnalni tozalash",
+        adminClearLogConfirm:   "Harakatlar jurnalini tozalaysizmi? Bu amalni bekor qilib bo'lmaydi.",
+        adminNoLogs:            "Jurnal hozircha bo'sh",
+        adminLogTestMath:       "Matematika. Nazorat ishi №3",
+        adminLogTestCreated:    "Test yaratildi: «{0}»",
+        adminLogUserAdded:      "Yangi foydalanuvchi qo'shildi: {0}",
+        adminLogGroupCreated:   "Guruh yaratildi: {0}",
+        adminLogGroupUpdated:   "Guruh yangilandi: {0}",
+        adminLogResultAdded:    "{0} fanidan test natijasi: baho {1}",
+        adminLogManagerAssigned:"{0} menejer «{1}» yo'nalishiga tayinlandi",
+        adminLogManagerFreed:   "«{0}» yo'nalishi menejer lavozimi bo'shatildi",
+        adminLogSettingsChanged:"Tizim sozlamalari o'zgartirildi",
+        adminLogBackup:         "Zaxira nusxa yuklab olindi: {0}",
+        adminLogReset:          "Ma'lumotlar bazasi tozalandi",
+        adminLogScheduleUpdated:"{0} guruhi jadvali yangilandi",
+        adminSystemTitle:       "Tizim sozlamalari",
+        adminSettingsSubtitle:  "Universitetning asosiy parametrlari va standart qiymatlar",
+        adminSettingsUniversity:"Universitet nomi",
+        adminSettingsUniversityPh:"Masalan, UniTest University",
+        adminSettingsYear:      "O'quv yili",
+        adminSettingsYearPh:    "2026/2027",
+        adminSettingsLang:      "Standart til",
+        adminSettingsTheme:     "Standart mavzu",
+        adminThemeLight:        "Yorug'",
+        adminThemeDark:         "Tungi",
+        adminSettingsSave:      "Sozlamalarni saqlash",
+        adminSettingsSaved:     "Sozlamalar saqlandi",
+        adminErrSettingsName:   "Universitet nomini kiriting",
+        adminErrSettingsYear:   "O'quv yilini kiriting",
+        adminBackupTitle:       "Zaxira nusxa",
+        adminBackupHint:        "Tizimning barcha ma'lumotlari bilan JSON faylni yuklab oling.",
+        adminBackupBtn:         "Zaxira nusxasini yuklab olish",
+        adminBackupDone:        "Zaxira nusxa yuklab olindi:",
+        adminBackupError:       "Zaxira nusxasini yaratib bo'lmadi",
+        adminDangerZone:        "Xavfli zona",
+        adminResetDb:           "Ma'lumotlar bazasini tozalash",
+        adminResetHint:         "Testlar, foydalanuvchilar, natijalar va sozlamalar o'chiriladi. Til va mavzu saqlanadi.",
+        adminResetConfirm:      "Ishonchingiz komilmi? Barcha ma'lumotlar (testlar, foydalanuvchilar, natijalar) o'chiriladi!",
+        adminResetDone:         "Ma'lumotlar bazasi tozalandi. Sahifa qayta yuklanadi."
       },
       en: {
         welcome:        "Welcome",
@@ -4290,7 +4513,52 @@
         adminRefStudents:      "Students",
         facultyIt:             "Faculty of Information Technology",
         facultyEconomics:      "Faculty of Economics",
-        adminNoCourses:        "No courses configured yet"
+        adminNoCourses:        "No courses configured yet",
+        // Панель администратора: настройки и журнал действий (Промт №29)
+        adminLogTitle:          "Action log",
+        adminLogSubtitle:       "Recent changes in the system",
+        adminLogTime:           "Time",
+        adminLogUser:           "User",
+        adminLogAction:         "Action",
+        adminClearLog:          "Clear log",
+        adminClearLogConfirm:   "Clear the action log? This cannot be undone.",
+        adminNoLogs:            "The log is empty",
+        adminLogTestMath:       "Mathematics. Test #3",
+        adminLogTestCreated:    "Test created: “{0}”",
+        adminLogUserAdded:      "New user added: {0}",
+        adminLogGroupCreated:   "Group created: {0}",
+        adminLogGroupUpdated:   "Group updated: {0}",
+        adminLogResultAdded:    "Test result in {0}: grade {1}",
+        adminLogManagerAssigned:"Manager {0} assigned to the direction “{1}”",
+        adminLogManagerFreed:   "Manager position freed for the direction “{0}”",
+        adminLogSettingsChanged:"System settings changed",
+        adminLogBackup:         "Backup downloaded: {0}",
+        adminLogReset:          "Database reset completed",
+        adminLogScheduleUpdated:"Schedule updated for group {0}",
+        adminSystemTitle:       "System settings",
+        adminSettingsSubtitle:  "Main university parameters and defaults",
+        adminSettingsUniversity:"University name",
+        adminSettingsUniversityPh:"For example, UniTest University",
+        adminSettingsYear:      "Academic year",
+        adminSettingsYearPh:    "2026/2027",
+        adminSettingsLang:      "Default language",
+        adminSettingsTheme:     "Default theme",
+        adminThemeLight:        "Light",
+        adminThemeDark:         "Dark",
+        adminSettingsSave:      "Save settings",
+        adminSettingsSaved:     "Settings saved",
+        adminErrSettingsName:   "Enter the university name",
+        adminErrSettingsYear:   "Enter the academic year",
+        adminBackupTitle:       "Backup",
+        adminBackupHint:        "Download a JSON file with all system data.",
+        adminBackupBtn:         "Download backup",
+        adminBackupDone:        "Backup downloaded:",
+        adminBackupError:       "Could not create a backup",
+        adminDangerZone:        "Danger zone",
+        adminResetDb:           "Reset database",
+        adminResetHint:         "Deletes tests, users, results and settings. Language and theme are kept.",
+        adminResetConfirm:      "Are you sure? All data (tests, users, results) will be deleted!",
+        adminResetDone:         "The database has been cleared. The page will reload."
       }
     };
 
@@ -4419,6 +4687,9 @@
     const ADMIN_TEACHERS_KEY = "unitestteachers";
     // Ключ менеджеров (Промт №27): назначение на направления.
     const MANAGERS_KEY = "unitest_managers";
+    // Ключи админки (Промт №29): системные настройки и журнал действий.
+    const SETTINGS_KEY = "unitest_settings";
+    const AUDIT_KEY = "unitest_audit";
 
     // Исторические результаты (Промт №15): прошлые прохождения из других систем.
     // К ним при слиянии добавляются записи из localStorage unitest_results.
@@ -5327,6 +5598,13 @@
         return;
       }
 
+      // Панель администратора: настройки и журнал действий (Промт №29)
+      if (currentRole === 'admin' && currentSection === 'settings') {
+        box.innerHTML = renderAdminSettings();
+        bindAdminSettings();
+        return;
+      }
+
       // Панель менеджера: Дашборд / Группы / Преподаватели / Студенты (Промты №18–20)
       if (currentRole === 'manager' && currentSection === 'dashboard') {
         box.innerHTML = renderManagerDashboard();
@@ -6186,6 +6464,130 @@
       { id: 'ae3', type: 'testPassed',  actor: mockStudent.firstName + ' ' + mockStudent.lastName, grade: 5, timeKey: 'adminTimeYesterday' }
     ];
 
+    /* ============================================================
+       ПАНЕЛЬ АДМИНИСТРАТОРА: НАСТРОЙКИ И ЖУРНАЛ (Промт №29)
+       ============================================================ */
+    // Демо-записи журнала. actionKey — ключ перевода шаблона,
+    // args — подстановки; строка, начинающаяся с «@», переводится
+    // через dict (например, '@dirDesign' → «Дизайн»).
+    const mockSystemLogs = [
+      { id: 'sl1', time: '10:45', user: mockTeacher.name,
+        actionKey: 'adminLogTestCreated', args: ['@adminLogTestMath'] },
+      { id: 'sl2', time: '09:30', user: mockAdmin.name,
+        actionKey: 'adminLogUserAdded', args: [mockStudent.firstName + ' ' + mockStudent.lastName] },
+      { id: 'sl3', time: '09:05', user: mockManager.name,
+        actionKey: 'adminLogGroupCreated', args: ['202-DZ'] },
+      { id: 'sl4', time: '08:40', user: mockStudent.firstName + ' ' + mockStudent.lastName,
+        actionKey: 'adminLogResultAdded', args: ['@subj_math', '5'] },
+      { id: 'sl5', time: '17:20', user: mockAdmin.name,
+        actionKey: 'adminLogManagerAssigned', args: ['Sidorova A.A.', '@dirDesign'] },
+      { id: 'sl6', time: '16:05', user: mockTeacher.name,
+        actionKey: 'adminLogScheduleUpdated', args: ['101-PR'] }
+    ];
+
+    // Системные настройки (название вуза, учебный год, язык/тема по умолчанию).
+    const DEFAULT_SYSTEM_SETTINGS = {
+      university: 'UniTest University',
+      academicYear: '2026/2027',
+      language: 'ru',
+      theme: 'light'
+    };
+    let systemSettings = { ...DEFAULT_SYSTEM_SETTINGS };
+    // Журнал в памяти: при первом запуске — демо-записи, дальше — из localStorage.
+    let systemLogs = [];
+
+    // Загружает настройки из localStorage (вызывается в initApp до применения темы/языка).
+    function loadAdminSettingsFromStorage() {
+      try {
+        const raw = localStorage.getItem(SETTINGS_KEY);
+        if (raw == null) return;
+        const saved = JSON.parse(raw);
+        if (!saved || typeof saved !== 'object') return;
+        systemSettings = {
+          university: typeof saved.university === 'string' && saved.university.trim()
+            ? saved.university : DEFAULT_SYSTEM_SETTINGS.university,
+          academicYear: typeof saved.academicYear === 'string' && saved.academicYear.trim()
+            ? saved.academicYear : DEFAULT_SYSTEM_SETTINGS.academicYear,
+          language: ['ru', 'uz', 'en'].includes(saved.language) ? saved.language : DEFAULT_SYSTEM_SETTINGS.language,
+          theme: saved.theme === 'dark' ? 'dark' : 'light'
+        };
+        console.log("Системные настройки восстановлены:", systemSettings);
+      } catch (e) {
+        console.error("Не удалось прочитать системные настройки:", e);
+        systemSettings = { ...DEFAULT_SYSTEM_SETTINGS };
+      }
+    }
+
+    function saveAdminSettingsToStorage() {
+      const dict = translations[currentLang];
+      try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(systemSettings));
+        return true;
+      } catch (e) {
+        console.error("Не удалось сохранить системные настройки:", e);
+        alert(dict.storageFull || "Не хватает места в localStorage");
+        return false;
+      }
+    }
+
+    // Загружает журнал: если ключа нет — показываем демо-записи,
+    // если сохранён пустой массив — журнал остаётся пустым.
+    function loadAuditLogsFromStorage() {
+      try {
+        const raw = localStorage.getItem(AUDIT_KEY);
+        if (raw == null) {
+          systemLogs = mockSystemLogs.map(entry => ({ ...entry, args: (entry.args || []).slice() }));
+          return;
+        }
+        const saved = JSON.parse(raw);
+        systemLogs = Array.isArray(saved) ? saved.filter(e => e && typeof e === 'object') : [];
+      } catch (e) {
+        console.error("Не удалось прочитать журнал действий:", e);
+        systemLogs = mockSystemLogs.map(entry => ({ ...entry, args: (entry.args || []).slice() }));
+      }
+    }
+
+    function saveAuditLogsToStorage() {
+      try {
+        localStorage.setItem(AUDIT_KEY, JSON.stringify(systemLogs));
+        return true;
+      } catch (e) {
+        console.error("Не удалось сохранить журнал действий:", e);
+        return false;
+      }
+    }
+
+    // Дописывает запись в журнал (новые — сверху) и сохраняет его.
+    function addSystemLog(user, actionKey, args = []) {
+      const now = new Date();
+      const time = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+      const entry = {
+        id: 'log_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+        time,
+        user: user || mockAdmin.name,
+        actionKey,
+        args: args.slice()
+      };
+      systemLogs.unshift(entry);
+      if (systemLogs.length > 50) systemLogs.length = 50;
+      saveAuditLogsToStorage();
+      return entry;
+    }
+
+    // Текст записи журнала: шаблон из dict + подстановки (с поддержкой @-ключей).
+    function systemLogText(entry) {
+      const dict = translations[currentLang];
+      const template = dict[entry.actionKey] || entry.actionKey || '';
+      const args = (Array.isArray(entry.args) ? entry.args : []).map(arg => {
+        const value = String(arg == null ? '' : arg);
+        return value.charAt(0) === '@' ? (dict[value.slice(1)] || value.slice(1)) : value;
+      });
+      return template.replace(/\{(\d+)\}/g, (match, index) => {
+        const value = args[Number(index)];
+        return value != null ? value : '';
+      });
+    }
+
     // Название направления по ключу (programming → dirProgramming)
     function adminDirectionLabel(direction) {
       const dict = translations[currentLang];
@@ -6660,6 +7062,7 @@
       saveAdminUsersToStorage();                       // uniteststudents + unitestteachers
       // Логи самопроверки — как в промте (не UI, поэтому без перевода).
       console.log("Пользователь создан:", newUser);
+      addSystemLog(mockAdmin.name, 'adminLogUserAdded', [newUser.name]);
       if (role === 'student') {
         console.log("Всего студентов теперь:", mockAllStudents.length);
       } else {
@@ -6894,6 +7297,7 @@
         });
         if (freed) {
           console.log("Должность освобождена:", adminDirectionLabel(direction), "—", freed.name);
+          addSystemLog(mockAdmin.name, 'adminLogManagerFreed', ['@dir' + capitalize(direction)]);
         } else {
           console.log("Должность уже свободна:", adminDirectionLabel(direction));
         }
@@ -6911,6 +7315,8 @@
         });
         manager.direction = direction;
         console.log("Менеджер", manager.name, "назначен на", adminDirectionLabel(direction));
+        addSystemLog(mockAdmin.name, 'adminLogManagerAssigned',
+          [manager.name, '@dir' + capitalize(direction)]);
       }
 
       syncMockManagerFromList();
@@ -7175,6 +7581,329 @@
       }
 
       applyAdminReportFilters();
+    }
+
+    /* ============================================================
+       ПАНЕЛЬ АДМИНИСТРАТОРА: НАСТРОЙКИ И ЖУРНАЛ (Промт №29)
+       ============================================================ */
+    // HTML строки журнала (десктопная таблица).
+    function adminLogRowHTML(entry) {
+      return `
+        <tr data-admin-log="${escapeHtml(String(entry.id || ''))}">
+          <td class="admin-log-time">${escapeHtml(entry.time || '')}</td>
+          <td class="admin-log-user">${escapeHtml(entry.user || '')}</td>
+          <td class="admin-log-action">${escapeHtml(systemLogText(entry))}</td>
+        </tr>`;
+    }
+
+    // HTML карточки журнала (мобильный).
+    function adminLogCardHTML(entry) {
+      return `
+        <article class="admin-log-card" data-admin-log="${escapeHtml(String(entry.id || ''))}">
+          <div class="admin-log-card-top">
+            <span class="admin-log-time">${escapeHtml(entry.time || '')}</span>
+            <span class="admin-log-card-user">${escapeHtml(entry.user || '')}</span>
+          </div>
+          <div class="admin-log-card-action">${escapeHtml(systemLogText(entry))}</div>
+        </article>`;
+    }
+
+    // Раздел «Настройки»: журнал действий слева, системные настройки справа.
+    function renderAdminSettings() {
+      const dict = translations[currentLang];
+      const logs = Array.isArray(systemLogs) ? systemLogs : [];
+      console.log("Отрисовка настроек. Загружено логов:", logs.length);
+
+      // Кнопка «Очистить журнал» не нужна при пустом журнале
+      const clearBtn = logs.length
+        ? `<button type="button" class="btn-ghost admin-log-clear" id="adminClearLogs">
+             <i class="fas fa-broom"></i> ${escapeHtml(dict.adminClearLog)}
+           </button>`
+        : '';
+
+      const logsHTML = logs.length
+        ? `<div class="results-table-wrap admin-logs-table-wrap">
+             <table class="results-table admin-logs-table">
+               <thead>
+                 <tr>
+                   <th>${escapeHtml(dict.adminLogTime)}</th>
+                   <th>${escapeHtml(dict.adminLogUser)}</th>
+                   <th>${escapeHtml(dict.adminLogAction)}</th>
+                 </tr>
+               </thead>
+               <tbody>${logs.map(adminLogRowHTML).join('')}</tbody>
+             </table>
+           </div>
+           <div class="admin-log-cards">${logs.map(adminLogCardHTML).join('')}</div>`
+        : `<div class="admin-empty">${escapeHtml(dict.adminNoLogs)}</div>`;
+
+      const langOption = (code, label) =>
+        `<option value="${code}"${systemSettings.language === code ? ' selected' : ''}>${label}</option>`;
+
+      return `
+        <p class="admin-ref-subtitle">${escapeHtml(dict.adminSettingsSubtitle)}</p>
+        <div class="admin-settings-grid">
+          <section class="admin-panel admin-logs-panel" id="adminLogsPanel">
+            <div class="admin-settings-head">
+              <h3><i class="fas fa-clock-rotate-left"></i> ${escapeHtml(dict.adminLogTitle)}</h3>
+              ${clearBtn}
+            </div>
+            <p class="admin-settings-note">${escapeHtml(dict.adminLogSubtitle)}</p>
+            ${logsHTML}
+          </section>
+
+          <section class="admin-panel admin-settings-panel" id="adminSystemPanel">
+            <h3><i class="fas fa-sliders"></i> ${escapeHtml(dict.adminSystemTitle)}</h3>
+
+            <div class="admin-settings-form">
+              <label class="field">
+                <span class="field-label">${escapeHtml(dict.adminSettingsUniversity)}</span>
+                <input type="text" class="field-input" id="adminSettingsName"
+                       value="${escapeHtml(systemSettings.university)}"
+                       placeholder="${escapeHtml(dict.adminSettingsUniversityPh)}">
+              </label>
+
+              <label class="field">
+                <span class="field-label">${escapeHtml(dict.adminSettingsYear)}</span>
+                <input type="text" class="field-input" id="adminSettingsYear"
+                       value="${escapeHtml(systemSettings.academicYear)}"
+                       placeholder="${escapeHtml(dict.adminSettingsYearPh)}">
+              </label>
+
+              <div class="form-grid">
+                <label class="field">
+                  <span class="field-label">${escapeHtml(dict.adminSettingsLang)}</span>
+                  <select class="field-input" id="adminSettingsLang">
+                    ${langOption('ru', 'RU')}
+                    ${langOption('uz', 'UZ')}
+                    ${langOption('en', 'EN')}
+                  </select>
+                </label>
+                <label class="field">
+                  <span class="field-label">${escapeHtml(dict.adminSettingsTheme)}</span>
+                  <select class="field-input" id="adminSettingsTheme">
+                    <option value="light"${systemSettings.theme === 'light' ? ' selected' : ''}>${escapeHtml(dict.adminThemeLight)}</option>
+                    <option value="dark"${systemSettings.theme === 'dark' ? ' selected' : ''}>${escapeHtml(dict.adminThemeDark)}</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="admin-settings-status" id="adminSettingsStatus" role="status" aria-live="polite"></div>
+              <button type="button" class="btn-primary" id="adminSettingsSave">
+                <i class="fas fa-floppy-disk"></i> ${escapeHtml(dict.adminSettingsSave)}
+              </button>
+            </div>
+
+            <div class="admin-backup-card">
+              <h4><i class="fas fa-download"></i> ${escapeHtml(dict.adminBackupTitle)}</h4>
+              <p>${escapeHtml(dict.adminBackupHint)}</p>
+              <button type="button" class="btn-ghost" id="adminBackupBtn">
+                <i class="fas fa-file-arrow-down"></i> ${escapeHtml(dict.adminBackupBtn)}
+              </button>
+              <div class="admin-settings-status" id="adminBackupStatus" role="status" aria-live="polite"></div>
+            </div>
+
+            <div class="admin-danger">
+              <h4><i class="fas fa-triangle-exclamation"></i> ${escapeHtml(dict.adminDangerZone)}</h4>
+              <p>${escapeHtml(dict.adminResetHint)}</p>
+              <button type="button" class="btn-danger" id="adminResetDb">
+                <i class="fas fa-trash-can"></i> ${escapeHtml(dict.adminResetDb)}
+              </button>
+            </div>
+          </section>
+        </div>`;
+    }
+
+    // Обработчики раздела «Настройки».
+    function bindAdminSettings() {
+      const saveBtn = document.getElementById('adminSettingsSave');
+      const backupBtn = document.getElementById('adminBackupBtn');
+      const resetBtn = document.getElementById('adminResetDb');
+      const clearBtn = document.getElementById('adminClearLogs');
+
+      if (saveBtn) saveBtn.addEventListener('click', saveAdminSettings);
+      if (backupBtn) backupBtn.addEventListener('click', downloadAdminBackup);
+      if (resetBtn) resetBtn.addEventListener('click', resetAdminDatabase);
+      if (clearBtn) clearBtn.addEventListener('click', clearAdminLogs);
+    }
+
+    // Сохранение системных настроек + применение выбранных языка/темы.
+    function saveAdminSettings() {
+      const dict = translations[currentLang];
+      const nameEl = document.getElementById('adminSettingsName');
+      const yearEl = document.getElementById('adminSettingsYear');
+      const langEl = document.getElementById('adminSettingsLang');
+      const themeEl = document.getElementById('adminSettingsTheme');
+      const statusEl = document.getElementById('adminSettingsStatus');
+      if (!nameEl || !yearEl) return;
+
+      const university = (nameEl.value || '').trim();
+      const academicYear = (yearEl.value || '').trim();
+      const setStatus = (text, isError) => {
+        if (!statusEl) return;
+        statusEl.textContent = text;
+        statusEl.classList.toggle('admin-settings-status--error', !!isError);
+        statusEl.classList.toggle('admin-settings-status--ok', !isError);
+      };
+
+      if (!university) { setStatus(dict.adminErrSettingsName, true); nameEl.focus(); return; }
+      if (!academicYear) { setStatus(dict.adminErrSettingsYear, true); yearEl.focus(); return; }
+
+      const language = langEl && ['ru', 'uz', 'en'].includes(langEl.value) ? langEl.value : currentLang;
+      const theme = themeEl && themeEl.value === 'dark' ? 'dark' : 'light';
+      const langChanged = language !== currentLang;
+      const themeChanged = theme !== currentTheme;
+
+      systemSettings = { university, academicYear, language, theme };
+      if (!saveAdminSettingsToStorage()) {
+        setStatus(dict.storageFull || dict.adminBackupError, true);
+        return;
+      }
+
+      addSystemLog(mockAdmin.name, 'adminLogSettingsChanged', []);
+      console.log("Системные настройки сохранены:", systemSettings);
+
+      // Применяем выбранные язык/тему сразу (они же станут значениями по умолчанию).
+      if (langChanged) changeLanguage(language);
+      if (themeChanged) switchTheme();
+      if (currentRole === 'admin' && currentSection === 'settings') navigate('settings', false);
+
+      const freshStatus = document.getElementById('adminSettingsStatus');
+      const freshDict = translations[currentLang];
+      if (freshStatus) {
+        freshStatus.textContent = freshDict.adminSettingsSaved;
+        freshStatus.classList.remove('admin-settings-status--error');
+        freshStatus.classList.add('admin-settings-status--ok');
+      }
+    }
+
+    // Полный набор данных для резервной копии: все ключи unitest* + настройки и журнал.
+    function adminBackupData() {
+      const data = {
+        app: 'UniTest',
+        schemaVersion: 1,
+        exportedAt: new Date().toISOString(),
+        settings: { ...systemSettings },
+        logs: systemLogs.map(entry => ({ ...entry, args: (entry.args || []).slice() })),
+        storage: {}
+      };
+      try {
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (!key || key.indexOf('unitest') !== 0) continue;
+          const raw = localStorage.getItem(key);
+          try { data.storage[key] = JSON.parse(raw); }
+          catch (e) { data.storage[key] = raw; }
+        }
+      } catch (e) {
+        console.error("Не удалось собрать данные для резервной копии:", e);
+      }
+      return data;
+    }
+
+    // Реальное скачивание файла (Blob → ссылка; data URI — фолбэк для jsdom).
+    function triggerAdminDownload(filename, text) {
+      let url = '';
+      try {
+        if (typeof Blob !== 'undefined' && typeof URL !== 'undefined' &&
+            typeof URL.createObjectURL === 'function') {
+          url = URL.createObjectURL(new Blob([text], { type: 'application/json;charset=utf-8' }));
+        }
+      } catch (e) {
+        url = '';
+      }
+      if (!url) {
+        url = 'data:application/json;charset=utf-8,' + encodeURIComponent(text);
+      }
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.rel = 'noopener';
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      if (link.parentNode) link.parentNode.removeChild(link);
+
+      if (url.indexOf('blob:') === 0 && typeof URL !== 'undefined' &&
+          typeof URL.revokeObjectURL === 'function') {
+        setTimeout(() => { try { URL.revokeObjectURL(url); } catch (e) {} }, 1000);
+      }
+    }
+
+    // Скачивание резервной копии в JSON.
+    function downloadAdminBackup() {
+      const dict = translations[currentLang];
+      const statusEl = document.getElementById('adminBackupStatus');
+      let json = '';
+      try {
+        json = JSON.stringify(adminBackupData(), null, 2);
+      } catch (e) {
+        console.error("Не удалось сериализовать резервную копию:", e);
+        if (statusEl) {
+          statusEl.textContent = dict.adminBackupError;
+          statusEl.className = 'admin-settings-status admin-settings-status--error';
+        }
+        return;
+      }
+
+      const date = new Date().toISOString().slice(0, 10);
+      const filename = 'unitest-backup-' + date + '.json';
+      try {
+        triggerAdminDownload(filename, json);
+      } catch (e) {
+        console.error("Не удалось скачать резервную копию:", e);
+        if (statusEl) {
+          statusEl.textContent = dict.adminBackupError;
+          statusEl.className = 'admin-settings-status admin-settings-status--error';
+        }
+        return;
+      }
+
+      addSystemLog(mockAdmin.name, 'adminLogBackup', [filename]);
+      console.log("Резервная копия сформирована:", filename);
+      if (statusEl) {
+        statusEl.textContent = dict.adminBackupDone + ' ' + filename;
+        statusEl.className = 'admin-settings-status admin-settings-status--ok';
+      }
+    }
+
+    // Очистка журнала действий (кнопка в блоке журнала).
+    function clearAdminLogs() {
+      const dict = translations[currentLang];
+      if (!confirm(dict.adminClearLogConfirm)) return;
+      systemLogs = [];
+      saveAuditLogsToStorage();
+      console.log("Журнал действий очищен");
+      if (currentRole === 'admin' && currentSection === 'settings') navigate('settings', false);
+    }
+
+    // Перезагрузка страницы после сброса (вынесена, чтобы тесты могли её подменить).
+    function reloadAdminPage() {
+      try { location.reload(); } catch (e) { /* jsdom не умеет перезагружать страницу */ }
+    }
+
+    // Сброс базы: confirm → очистка localStorage → reload.
+    // Язык и тему сохраняем, чтобы после перезагрузки не сбрасывался интерфейс.
+    function resetAdminDatabase() {
+      const dict = translations[currentLang];
+      console.log("Пользователь запросил сброс БД");
+      if (!confirm(dict.adminResetConfirm)) return;
+
+      const savedLang = localStorage.getItem('unitest_lang');
+      const savedTheme = localStorage.getItem('unitest_theme');
+
+      try {
+        localStorage.clear();
+        if (savedLang != null) localStorage.setItem('unitest_lang', savedLang);
+        if (savedTheme != null) localStorage.setItem('unitest_theme', savedTheme);
+        console.log("localStorage очищен");
+      } catch (e) {
+        console.error("Не удалось очистить localStorage:", e);
+      }
+
+      alert(dict.adminResetDone);
+      reloadAdminPage();
     }
 
     /* ============================================================
@@ -7492,6 +8221,7 @@
           group.direction = direction;
           group.form = form;
           console.log("Группа обновлена:", group.name, "Направление:", group.direction);
+          addSystemLog(mockAdmin.name, 'adminLogGroupUpdated', [group.name]);
         }
       } else {
         const newGroup = {
@@ -7505,6 +8235,7 @@
         };
         mockTeacherGroups.push(newGroup);
         console.log("Группа создана:", newGroup.name, "Направление:", newGroup.direction);
+        addSystemLog(mockAdmin.name, 'adminLogGroupCreated', [newGroup.name]);
       }
 
       saveGroupsToStorage();                            // ключ unitest_groups
@@ -10869,6 +11600,12 @@
        6. ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
        ============================================================ */
     function initApp() {
+      // Системные настройки админки (Промт №29): загружаем до применения темы/языка,
+      // чтобы значения по умолчанию работали при первом открытии.
+      loadAdminSettingsFromStorage();
+      if (!localStorage.getItem('unitest_lang') && systemSettings.language) currentLang = systemSettings.language;
+      if (!localStorage.getItem('unitest_theme') && systemSettings.theme) currentTheme = systemSettings.theme;
+
       // Восстанавливаем сохранённые настройки темы и языка
       applyTheme();
       applyLanguage();
@@ -10884,6 +11621,8 @@
       loadAdminUsersFromStorage();
       // Восстанавливаем назначения менеджеров из unitest_managers (Промт №27)
       loadManagersFromStorage();
+      // Восстанавливаем журнал действий из unitest_audit (Промт №29)
+      loadAuditLogsFromStorage();
       // Демо-тесты (формулы и схемы) — только при открытии через file://
       ensureFormulaDemoTest();
       ensureDiagramDemoTest();
