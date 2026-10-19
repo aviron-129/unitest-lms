@@ -361,8 +361,24 @@ node tests/verify-screens.js --task $id
   }
 
   Step "Запускаю opencode (таймаут $timeoutMin мин)..."
-  $proc = Start-Process -FilePath $OpenCodeExe -ArgumentList $argString -WorkingDirectory $Root `
-    -RedirectStandardOutput $logPath -RedirectStandardError $errPath -PassThru -WindowStyle Hidden
+  $proc = $null
+  try {
+    $proc = Start-Process -FilePath $OpenCodeExe -ArgumentList $argString -WorkingDirectory $Root `
+      -RedirectStandardOutput $logPath -RedirectStandardError $errPath -PassThru -WindowStyle Hidden
+  } catch {
+    Err "Не удалось запустить opencode: $($_.Exception.Message)"
+  }
+  if (-not $proc) {
+    $stateTasks[$id] = @{
+      status = "failed"; attempts = $attempt; finished = (Get-Date).ToString("o");
+      tests = 1; screens = 1; commit = $null; log = (Rel $logPath)
+    }
+    $failed++
+    Append-Text $BlockersPath ("`r`n## ❌ Задача #$id — $title`r`n`r`n- opencode не запустился`r`n")
+    $state.tasks = $stateTasks
+    Write-Text $StatePath ($state | ConvertTo-Json -Depth 10)
+    break
+  }
 
   $proc | Wait-Process -Timeout ($timeoutMin * 60) -ErrorAction SilentlyContinue
   Start-Sleep -Milliseconds 700
