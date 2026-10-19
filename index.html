@@ -629,6 +629,66 @@
       color: var(--role, var(--accent));
     }
 
+    /* Промт №39: единое пустое состояние и заглушка ошибки рендера.
+       Используется renderEmptyState(); центрируется и в разделе, и в таблице. */
+    .content-placeholder.empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 220px;
+    }
+    .empty-state-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      margin-bottom: 6px;
+      border-radius: 50%;
+      background: var(--role-soft, rgba(99, 102, 241, 0.14));
+      color: var(--role, var(--accent));
+    }
+    .empty-state-icon i {
+      margin: 0;
+      font-size: 1.55rem;
+      color: inherit;
+    }
+    .empty-state-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .empty-state-text {
+      max-width: 520px;
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+    .empty-state--compact {
+      min-height: 0;
+      margin-top: 0;
+      padding: 20px 12px;
+      border: 0;
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    .empty-state--compact .empty-state-icon {
+      width: 44px;
+      height: 44px;
+    }
+    .empty-state--compact .empty-state-icon i { font-size: 1.1rem; }
+    .empty-state--compact .empty-state-title { font-size: 0.92rem; }
+    .empty-state--compact .empty-state-text { font-size: 0.8rem; }
+    .empty-state--error .empty-state-icon {
+      background: rgba(239, 68, 68, 0.14);
+      color: #ef4444;
+    }
+
     /* ============================================================
        6.1 КАРТОЧКА ПРОФИЛЯ СТУДЕНТА (Промт №3)
        ============================================================ */
@@ -4424,6 +4484,16 @@
         formPart:       "Заочное",
         dirProgramming: "Программирование",
         dataNotLoaded:  "Данные студента не загружены!",
+        // Промт №39: пустые состояния и ошибки рендера
+        emptyTestsDesc:        "Когда преподаватель назначит тест, он появится в этом списке.",
+        emptyUsersDesc:        "Попробуйте изменить поисковый запрос или фильтр по роли.",
+        emptyGroupsDesc:       "Обратитесь к администратору, чтобы вас добавили в группу.",
+        emptyAppealsDesc:      "Подать апелляцию можно с экрана результата теста.",
+        emptyNotificationsDesc:"Здесь появятся новости, результаты тестов и объявления.",
+        renderErrorTitle:      "Произошла ошибка при загрузке раздела",
+        renderErrorDesc:       "Попробуйте обновить страницу. Если ошибка повторяется, обратитесь к администратору.",
+        dataNotFoundTitle:     "Данные не найдены",
+        dataNotFoundDesc:      "Не удалось загрузить данные. Обновите страницу или войдите заново.",
         // Список тестов (Промт №4)
         startTest:      "Начать тест",
         questionsWord:  "вопросов",
@@ -4931,6 +5001,16 @@
         formPart:       "Sirtqi",
         dirProgramming: "Dasturlash",
         dataNotLoaded:  "Talaba ma'lumotlari yuklanmagan!",
+        // Промт №39: пустые состояния и ошибки рендера
+        emptyTestsDesc:        "O'qituvchi test tayinlaganda, u shu ro'yxatda paydo bo'ladi.",
+        emptyUsersDesc:        "Qidiruv so'rovini yoki rol filtrini o'zgartirib ko'ring.",
+        emptyGroupsDesc:       "Sizni guruhga qo'shish uchun administratorga murojaat qiling.",
+        emptyAppealsDesc:      "Apellyatsiyani test natijasi ekranidan yuborish mumkin.",
+        emptyNotificationsDesc:"Bu yerda yangiliklar, test natijalari va e'lonlar paydo bo'ladi.",
+        renderErrorTitle:      "Bo'limni yuklashda xatolik yuz berdi",
+        renderErrorDesc:       "Sahifani yangilab ko'ring. Xatolik takrorlansa, administratorga murojaat qiling.",
+        dataNotFoundTitle:     "Ma'lumotlar topilmadi",
+        dataNotFoundDesc:      "Ma'lumotlarni yuklab bo'lmadi. Sahifani yangilang yoki qayta kiring.",
         startTest:      "Testni boshlash",
         questionsWord:  "savol",
         minWord:        "daq",
@@ -5437,6 +5517,16 @@
         formPart:       "Part-time",
         dirProgramming: "Programming",
         dataNotLoaded:  "Student data not loaded!",
+        // Промт №39: пустые состояния и ошибки рендера
+        emptyTestsDesc:        "When a teacher assigns a test, it will appear in this list.",
+        emptyUsersDesc:        "Try changing the search query or the role filter.",
+        emptyGroupsDesc:       "Contact the administrator to be added to a group.",
+        emptyAppealsDesc:      "You can submit an appeal from the test result screen.",
+        emptyNotificationsDesc:"News, test results and announcements will appear here.",
+        renderErrorTitle:      "An error occurred while loading the section",
+        renderErrorDesc:       "Try refreshing the page. If the error persists, contact the administrator.",
+        dataNotFoundTitle:     "Data not found",
+        dataNotFoundDesc:      "Failed to load data. Refresh the page or sign in again.",
         startTest:      "Start test",
         questionsWord:  "questions",
         minWord:        "min",
@@ -5886,8 +5976,8 @@
        ============================================================ */
     let currentRole = null;                                   // выбранная роль
     let currentSection = null;                                // текущий раздел панели
-    let currentLang = localStorage.getItem('unitest_lang') || 'ru';
-    let currentTheme = localStorage.getItem('unitest_theme') || 'light';
+    let currentLang = storageGet('unitest_lang') || 'ru';
+    let currentTheme = storageGet('unitest_theme') || 'light';
 
     // Возвращает перевод текущего языка с подстановкой {0}, {1}, …
     function trf(key, ...args) {
@@ -6037,28 +6127,82 @@
         studentGroup: '101-ПР', score: 12, maxScore: 20, percent: 60, grade: 3, date: '11.10.2026' }
     ];
 
+    /* ---- Промт №39: безопасное чтение localStorage и пустые состояния ---- */
+    // Безопасное чтение: даже запрещённый localStorage не должен ронять приложение.
+    function storageGet(key) {
+      try { return localStorage.getItem(key); } catch (e) { return null; }
+    }
+
+    // Безопасный JSON.parse: битый JSON не роняет приложение, ключ очищается,
+    // а вызывающий код получает fallback. Отсутствие ключа — тоже fallback.
+    function safeParse(key, fallback) {
+      let isValid = false;
+      try {
+        const raw = storageGet(key);
+        if (raw == null || raw === '') {
+          isValid = true;                       // данных нет — это не ошибка
+          return fallback;
+        }
+        const parsed = JSON.parse(raw);
+        isValid = true;
+        return parsed;
+      } catch (e) {
+        // Битый JSON или недоступный localStorage: чистим ключ и не падаем.
+        console.warn("Ошибка чтения localStorage:", key);
+        try { localStorage.removeItem(key); } catch (e2) {}
+        return fallback;
+      } finally {
+        console.log("Безопасный парсинг ключа:", key, "Успешно:", isValid);
+      }
+    }
+
+    // Единый HTML-блок «нет данных»: иконка + заголовок + пояснение.
+    // variant: 'compact' — для выпадающих панелей, 'error' — для ошибки рендера.
+    function renderEmptyState(iconClass, title, description, variant) {
+      const icon = iconClass || 'fa-circle-info';
+      const mod = variant ? ' empty-state--' + variant : '';
+      return `
+        <div class="content-placeholder empty-state${mod}" role="status">
+          <span class="empty-state-icon" aria-hidden="true"><i class="fas ${icon}"></i></span>
+          <div class="empty-state-title">${escapeHtml(title || '')}</div>
+          ${description ? `<p class="empty-state-text">${escapeHtml(description)}</p>` : ''}
+        </div>`;
+    }
+
+    // Заглушка ошибки рендера раздела: вместо белого экрана — понятное сообщение.
+    function renderRenderError(sectionName) {
+      const box = document.getElementById('sectionContent');
+      const dict = translations[currentLang] || translations.ru;
+      if (!box) return;
+      box.innerHTML = renderEmptyState('fa-triangle-exclamation',
+        dict.renderErrorTitle, dict.renderErrorDesc, 'error');
+      console.warn("Раздел не отрисован из-за ошибки:", sectionName || currentSection);
+    }
+
     // Первичное заполнение результатов (демо): 2 теста уже пройдены
     function ensureMockResults() {
-      if (!localStorage.getItem(RESULTS_KEY)) {
-        localStorage.setItem(RESULTS_KEY, JSON.stringify([
-          { testId: 1, score: 5, correct: 18, total: 20, date: "2026-10-01" },
-          { testId: 3, score: 4, correct: 15, total: 18, date: "2026-10-05" }
-        ]));
+      try {
+        if (!localStorage.getItem(RESULTS_KEY)) {
+          localStorage.setItem(RESULTS_KEY, JSON.stringify([
+            { testId: 1, score: 5, correct: 18, total: 20, date: "2026-10-01" },
+            { testId: 3, score: 4, correct: 15, total: 18, date: "2026-10-05" }
+          ]));
+        }
+      } catch (e) {
+        // Промт №39: QuotaExceededError/запрет localStorage не мешают работе приложения
+        console.warn("Не удалось записать демо-результаты в localStorage:", e && e.name);
       }
     }
 
     // Восстанавливает базу тестов из localStorage (Промт №14).
     // Если сохранённой версии нет — остаются демо-тесты mockTests.
     function loadTestsFromStorage() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(ALL_TESTS_KEY));
-        if (Array.isArray(saved) && saved.length) {
-          mockTests.length = 0;                       // mockTests — const, меняем содержимое
-          saved.forEach(t => mockTests.push(t));
-          console.log("Тесты восстановлены из localStorage:", mockTests.length);
-        }
-      } catch (e) {
-        console.error("Не удалось прочитать базу тестов:", e);
+      // Промт №39: битый JSON не роняет приложение — safeParse вернёт fallback
+      const saved = safeParse(ALL_TESTS_KEY, null);
+      if (Array.isArray(saved) && saved.length) {
+        mockTests.length = 0;                       // mockTests — const, меняем содержимое
+        saved.forEach(t => { if (t && typeof t === 'object') mockTests.push(t); });
+        console.log("Тесты восстановлены из localStorage:", mockTests.length);
       }
     }
 
@@ -6078,12 +6222,10 @@
     /* ---- Справочник групп (Промт №25) ---- */
     // Восстанавливает группы из localStorage. Если ключа нет — остаются mock-группы.
     function loadGroupsFromStorage() {
-      try {
-        const raw = localStorage.getItem(GROUPS_KEY);
-        if (raw == null) return;
-        const saved = JSON.parse(raw);
-        if (!Array.isArray(saved)) return;
+      const saved = safeParse(GROUPS_KEY, null);
+      if (!Array.isArray(saved)) return;
 
+      try {
         mockTeacherGroups.length = 0;               // mockTeacherGroups — const, меняем содержимое
         saved.forEach((g, index) => {
           if (!g || typeof g !== 'object' || !g.name) return;
@@ -6100,7 +6242,7 @@
         });
         console.log("Группы восстановлены из localStorage:", mockTeacherGroups.length);
       } catch (e) {
-        console.error("Не удалось прочитать базу групп:", e);
+        console.error("Не удалось восстановить базу групп:", e);
       }
     }
 
@@ -6121,46 +6263,44 @@
     // Восстанавливает студентов/преподавателей из localStorage. Если ключа нет —
     // остаются демо-массивы mockAllStudents / mockAllTeachers.
     function loadAdminUsersFromStorage() {
-      try {
-        const rawStudents = localStorage.getItem(ADMIN_STUDENTS_KEY);
-        if (rawStudents != null) {
-          const savedStudents = JSON.parse(rawStudents);
-          if (Array.isArray(savedStudents)) {
-            mockAllStudents.length = 0;             // массив const — меняем содержимое
-            savedStudents.forEach((s, index) => {
-              if (!s || typeof s !== 'object' || !String(s.name || '').trim()) return;
-              const course = Number(s.course);
-              mockAllStudents.push({
-                id: s.id || ('s_' + index + '_' + Date.now()),
-                name: String(s.name).trim(),
-                group: String(s.group || ''),
-                course: (course >= 1 && course <= 5) ? course : 1,
-                form: s.form === 'part' ? 'part' : 'full',
-                category: s.category === 'archer' ? 'archer' : 'regular'
-              });
+      const savedStudents = safeParse(ADMIN_STUDENTS_KEY, null);
+      if (Array.isArray(savedStudents)) {
+        try {
+          mockAllStudents.length = 0;             // массив const — меняем содержимое
+          savedStudents.forEach((s, index) => {
+            if (!s || typeof s !== 'object' || !String(s.name || '').trim()) return;
+            const course = Number(s.course);
+            mockAllStudents.push({
+              id: s.id || ('s_' + index + '_' + Date.now()),
+              name: String(s.name).trim(),
+              group: String(s.group || ''),
+              course: (course >= 1 && course <= 5) ? course : 1,
+              form: s.form === 'part' ? 'part' : 'full',
+              category: s.category === 'archer' ? 'archer' : 'regular'
             });
-            console.log("Студенты восстановлены из localStorage:", mockAllStudents.length);
-          }
+          });
+          console.log("Студенты восстановлены из localStorage:", mockAllStudents.length);
+        } catch (e) {
+          console.error("Не удалось восстановить список студентов:", e);
         }
+      }
 
-        const rawTeachers = localStorage.getItem(ADMIN_TEACHERS_KEY);
-        if (rawTeachers != null) {
-          const savedTeachers = JSON.parse(rawTeachers);
-          if (Array.isArray(savedTeachers)) {
-            mockAllTeachers.length = 0;
-            savedTeachers.forEach((t, index) => {
-              if (!t || typeof t !== 'object' || !String(t.name || '').trim()) return;
-              mockAllTeachers.push({
-                id: t.id || ('t_' + index + '_' + Date.now()),
-                name: String(t.name).trim(),
-                subject: String(t.subject || '').trim()
-              });
+      const savedTeachers = safeParse(ADMIN_TEACHERS_KEY, null);
+      if (Array.isArray(savedTeachers)) {
+        try {
+          mockAllTeachers.length = 0;
+          savedTeachers.forEach((t, index) => {
+            if (!t || typeof t !== 'object' || !String(t.name || '').trim()) return;
+            mockAllTeachers.push({
+              id: t.id || ('t_' + index + '_' + Date.now()),
+              name: String(t.name).trim(),
+              subject: String(t.subject || '').trim()
             });
-            console.log("Преподаватели восстановлены из localStorage:", mockAllTeachers.length);
-          }
+          });
+          console.log("Преподаватели восстановлены из localStorage:", mockAllTeachers.length);
+        } catch (e) {
+          console.error("Не удалось восстановить список преподавателей:", e);
         }
-      } catch (e) {
-        console.error("Не удалось прочитать пользователей из localStorage:", e);
       }
     }
 
@@ -6200,12 +6340,10 @@
     // Восстанавливает менеджеров из unitest_managers. Если ключа нет — остаётся
     // демо-массив (mockManager + Sidorova). Пустой/битый массив не затирает демо.
     function loadManagersFromStorage() {
-      try {
-        const raw = localStorage.getItem(MANAGERS_KEY);
-        if (raw == null) return;
-        const saved = JSON.parse(raw);
-        if (!Array.isArray(saved) || !saved.length) return;
+      const saved = safeParse(MANAGERS_KEY, null);
+      if (!Array.isArray(saved) || !saved.length) return;
 
+      try {
         const loaded = [];
         saved.forEach((m, index) => {
           if (!m || typeof m !== 'object' || !String(m.name || '').trim()) return;
@@ -6222,7 +6360,7 @@
         syncMockManagerFromList();
         console.log("Менеджеры восстановлены из localStorage:", mockAllManagers.length);
       } catch (e) {
-        console.error("Не удалось прочитать менеджеров из localStorage:", e);
+        console.error("Не удалось восстановить менеджеров:", e);
       }
     }
 
@@ -6241,12 +6379,8 @@
 
     // Безопасное чтение результатов из localStorage
     function getResults() {
-      try {
-        return JSON.parse(localStorage.getItem(RESULTS_KEY)) || [];
-      } catch (e) {
-        console.error("Не удалось прочитать результаты:", e);
-        return [];
-      }
+      const list = safeParse(RESULTS_KEY, []);
+      return Array.isArray(list) ? list.filter(r => r && typeof r === 'object') : [];
     }
 
     /* ============================================================
@@ -6629,11 +6763,9 @@
 
     // Объявления: сначала localStorage (unitest_announcements), если пусто — демо-массив
     function getAnnouncements() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(ANNOUNCEMENTS_KEY));
-        if (Array.isArray(saved) && saved.length) return saved;
-      } catch (e) {
-        console.error("Не удалось прочитать объявления:", e);
+      const saved = safeParse(ANNOUNCEMENTS_KEY, null);
+      if (Array.isArray(saved) && saved.length) {
+        return saved.filter(a => a && typeof a === 'object');
       }
       return mockAnnouncements.slice();
     }
@@ -6680,7 +6812,8 @@
        ============================================================ */
     function switchTheme() {
       currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-      localStorage.setItem('unitest_theme', currentTheme);   // сохраняем выбор
+      try { localStorage.setItem('unitest_theme', currentTheme); }  // сохраняем выбор
+      catch (e) { console.warn("Не удалось сохранить тему:", e && e.name); }
       applyTheme();
       // Промт №38: понятный лог смены темы (проверка в консоли браузера)
       console.log("Тема изменена на:", currentTheme, "Все компоненты перекрашены");
@@ -6703,7 +6836,8 @@
         return;
       }
       currentLang = lang;
-      localStorage.setItem('unitest_lang', lang);            // сохраняем выбор
+      try { localStorage.setItem('unitest_lang', lang); }       // сохраняем выбор
+      catch (e) { console.warn("Не удалось сохранить язык:", e && e.name); }
       applyLanguage();
       console.log("Язык изменен на:", lang, "Текущий экран перерисован");
     }
@@ -6930,9 +7064,11 @@
       const item = items.find(i => i.id === sectionName);
       if (!item) {
         console.error("Неизвестный раздел:", sectionName);
+        renderRenderError(sectionName);
         return;
       }
       currentSection = sectionName;
+      if (log) console.log("Переход в раздел:", sectionName);
 
       // Подсвечиваем активный пункт меню
       document.querySelectorAll('#sidebarMenu .menu-item').forEach(btn => {
@@ -6944,8 +7080,14 @@
       document.getElementById('sectionHeading').textContent = title;
       document.getElementById('appHeaderTitle').textContent = title;
 
-      // Рендерим содержимое раздела (профиль студента или заглушка)
-      renderSectionContent();
+      // Рендерим содержимое раздела (профиль студента или заглушка).
+      // Промт №39: ошибка одного раздела не должна оставлять белый экран.
+      try {
+        renderSectionContentInner();
+      } catch (error) {
+        console.error("Перехвачена ошибка при рендере раздела:", sectionName, error);
+        renderRenderError(sectionName);
+      }
 
       // На мобильных после выбора пункта закрываем меню
       closeSidebar();
@@ -6987,8 +7129,21 @@
     /* ============================================================
        5.1 КОНТЕНТ РАЗДЕЛОВ (Промт №3: профиль студента)
        ============================================================ */
-    // Решает, какой контент показать в Main Content для текущей роли и раздела
+    // Промт №39: обёртка-предохранитель для прямых вызовов renderSectionContent()
+    // (чат, синхронизация вкладок и т.п.). Ошибка рендера не оставляет белый экран.
     function renderSectionContent() {
+      try {
+        renderSectionContentInner();
+        return true;
+      } catch (error) {
+        console.error("Ошибка рендера:", error);
+        renderRenderError(currentSection);
+        return false;
+      }
+    }
+
+    // Решает, какой контент показать в Main Content для текущей роли и раздела
+    function renderSectionContentInner() {
       const box = document.getElementById('sectionContent');
       const dict = translations[currentLang];
 
@@ -7232,6 +7387,7 @@
     // Исторические результаты принадлежат разным студентам, поэтому
     // к текущему студенту относим только записи с его ФИО.
     function isCurrentStudentResult(result) {
+      if (!mockStudent) return false;
       const name = String((result && result.studentName) || "").toLowerCase();
       if (!name) return false;
       const lastName = String(mockStudent.lastName || "").toLowerCase();
@@ -7307,21 +7463,25 @@
       // Самопроверка №1: данных нет — не рисуем карточку
       if (!mockStudent || typeof mockStudent !== 'object' || Object.keys(mockStudent).length === 0) {
         console.error("Данные студента не загружены!");
-        return `
-          <div class="content-placeholder">
-            <i class="fas fa-triangle-exclamation"></i>
-            <span>${dict.dataNotLoaded}</span>
-          </div>`;
+        return renderEmptyState('fa-user-slash', dict.dataNotFoundTitle, dict.dataNotLoaded);
       }
 
       const s = mockStudent;
-      const fullName = [s.lastName, s.firstName, s.middleName].filter(Boolean).join(" ");
-      const initials = ((s.firstName || "?")[0] + (s.lastName || "")[0]).toUpperCase();
+      const fullName = [s.lastName, s.firstName, s.middleName].filter(Boolean).join(" ") || "—";
+      const initials = (((s.firstName || "?")[0] || "?") + ((s.lastName || "")[0] || "")).toUpperCase();
 
-      // Значения из справочников переводов (напр. programming → dirProgramming)
-      const categoryLabel  = dict["cat" + capitalize(s.category)]  || s.category;
-      const directionLabel = dict["dir" + capitalize(s.direction)] || s.direction;
-      const formLabel      = s.form === "part" ? dict.formPart : dict.formFull;
+      // Промт №39: отсутствующие поля не должны давать «undefined» на экране
+      const categoryLabel  = dict["cat" + capitalize(s.category)]  || s.category || "—";
+      const directionLabel = dict["dir" + capitalize(s.direction)] || s.direction || "—";
+      const formLabel      = s.form === "part" ? dict.formPart
+                           : s.form === "full" ? dict.formFull : "—";
+      const courseValue    = (s.course != null && s.course !== "") ? s.course : "—";
+      const groupValue     = s.group || "—";
+      const stats = {
+        available: Number(studentStats && studentStats.available) || 0,
+        passed: Number(studentStats && studentStats.passed) || 0,
+        averageGrade: (studentStats && studentStats.averageGrade != null) ? studentStats.averageGrade : "—"
+      };
 
       return `
         <div class="profile-card">
@@ -7336,19 +7496,19 @@
           <div class="profile-grid">
             <div class="info-item">
               <span class="info-label">${dict.lblCourse}</span>
-              <span class="info-value">${s.course} ${dict.courseSuffix}</span>
+              <span class="info-value">${escapeHtml(String(courseValue))} ${dict.courseSuffix}</span>
             </div>
             <div class="info-item">
               <span class="info-label">${dict.lblDirection}</span>
-              <span class="info-value">${directionLabel}</span>
+              <span class="info-value">${escapeHtml(directionLabel)}</span>
             </div>
             <div class="info-item">
               <span class="info-label">${dict.lblGroup}</span>
-              <span class="info-value">${s.group}</span>
+              <span class="info-value">${escapeHtml(String(groupValue))}</span>
             </div>
             <div class="info-item">
               <span class="info-label">${dict.lblForm}</span>
-              <span class="info-value">${formLabel}</span>
+              <span class="info-value">${escapeHtml(formLabel)}</span>
             </div>
           </div>
         </div>
@@ -7356,17 +7516,17 @@
         <div class="stats-row">
           <div class="stat-card">
             <i class="fas fa-file-circle-check"></i>
-            <div class="stat-value">${studentStats.available}</div>
+            <div class="stat-value">${stats.available}</div>
             <div class="stat-label">${dict.lblAvailable}</div>
           </div>
           <div class="stat-card">
             <i class="fas fa-circle-check"></i>
-            <div class="stat-value">${studentStats.passed}</div>
+            <div class="stat-value">${stats.passed}</div>
             <div class="stat-label">${dict.lblPassed}</div>
           </div>
           <div class="stat-card">
             <i class="fas fa-star"></i>
-            <div class="stat-value">${studentStats.averageGrade}</div>
+            <div class="stat-value">${stats.averageGrade}</div>
             <div class="stat-label">${dict.lblAverage}</div>
           </div>
         </div>
@@ -7393,6 +7553,8 @@
 
     // Проверяет, подходит ли тест текущему студенту (курс + направление + группа + форма)
     function isTestMatch(test) {
+      if (!test || typeof test !== 'object') return false;
+      if (!mockStudent || typeof mockStudent !== 'object') return false;
       const groups = Array.isArray(test.targetGroup) ? test.targetGroup : [test.targetGroup];
       const forms  = Array.isArray(test.targetForm)  ? test.targetForm  : [test.targetForm];
       return test.targetCourse === mockStudent.course
@@ -7438,6 +7600,11 @@
       const dict = translations[currentLang];
       const results = getResults();
 
+      // Промт №39: без данных студента фильтрация невозможна — понятная заглушка
+      if (!mockStudent || typeof mockStudent !== 'object') {
+        return renderEmptyState('fa-user-slash', dict.dataNotFoundTitle, dict.dataNotFoundDesc);
+      }
+
       // Самопроверка №1
       console.log("Всего тестов в базе:", mockTests.length);
 
@@ -7454,11 +7621,7 @@
 
       // Самопроверка №4: пусто → красивая заглушка
       if (filteredTests.length === 0) {
-        return `
-          <div class="content-placeholder">
-            <i class="fas fa-inbox"></i>
-            <span>${dict.noTests}</span>
-          </div>`;
+        return renderEmptyState('fa-inbox', dict.noTests, dict.emptyTestsDesc);
       }
 
       return `<div class="tests-grid">${filteredTests.map(t => renderTestCard(t, results)).join("")}</div>`;
@@ -7494,6 +7657,11 @@
     function renderStudentSchedule() {
       const dict = translations[currentLang];
 
+      // Промт №39: без группы студента расписание не построить
+      if (!mockStudent || !mockStudent.group) {
+        return renderEmptyState('fa-user-slash', dict.dataNotFoundTitle, dict.dataNotFoundDesc);
+      }
+
       // Самопроверка №2: сколько всего пар в базе
       console.log("Всего пар в базе:", mockSchedule.length);
 
@@ -7503,11 +7671,7 @@
 
       // Самопроверка №3: пусто → красивая заглушка
       if (filteredSchedule.length === 0) {
-        return `
-          <div class="content-placeholder">
-            <i class="fas fa-calendar-xmark"></i>
-            <span>${dict.scheduleEmpty}</span>
-          </div>`;
+        return renderEmptyState('fa-calendar-xmark', dict.scheduleEmpty, dict.noClasses);
       }
 
       // Колонки по дням недели (Пн–Сб)
@@ -7552,6 +7716,13 @@
     function renderTeacherSchedule() {
       const dict = translations[currentLang];
 
+      // Промт №39: без данных преподавателя расписание не построить
+      if (!mockTeacher) {
+        document.getElementById('sectionContent').innerHTML =
+          renderEmptyState('fa-user-slash', dict.dataNotFoundTitle, dict.dataNotFoundDesc);
+        return;
+      }
+
       // Самопроверка №2: логи по базе и по своему фильтру
       console.log("Всего пар в расписании:", mockSchedule.length);
       const mySchedule = mockSchedule.filter(item => item.teacher === mockTeacher.name);
@@ -7559,11 +7730,8 @@
 
       // Самопроверка №3: своих пар нет → заглушка
       if (mySchedule.length === 0) {
-        document.getElementById('sectionContent').innerHTML = `
-          <div class="content-placeholder">
-            <i class="fas fa-calendar-xmark"></i>
-            <span>${dict.noTeacherLessons}</span>
-          </div>`;
+        document.getElementById('sectionContent').innerHTML =
+          renderEmptyState('fa-calendar-xmark', dict.noTeacherLessons, dict.noClasses);
         return;
       }
 
@@ -7600,13 +7768,8 @@
 
     // Прочитанные id из localStorage (Промт №30)
     function loadReadNotificationsFromStorage() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(NOTIF_READ_KEY));
-        readNotificationIds = Array.isArray(saved) ? saved.map(String) : [];
-      } catch (e) {
-        readNotificationIds = [];
-        console.error("Не удалось прочитать прочитанные уведомления:", e);
-      }
+      const saved = safeParse(NOTIF_READ_KEY, []);
+      readNotificationIds = Array.isArray(saved) ? saved.map(String) : [];
     }
 
     function saveReadNotifications() {
@@ -7619,15 +7782,10 @@
 
     // Динамические уведомления (Промт №34): загрузка при старте
     function loadDynamicNotificationsFromStorage() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(DYNAMIC_NOTIF_KEY) || "[]");
-        dynamicNotifications = Array.isArray(saved)
-          ? saved.filter(n => n && typeof n === "object" && n.id)
-          : [];
-      } catch (e) {
-        dynamicNotifications = [];
-        console.error("Не удалось прочитать динамические уведомления:", e);
-      }
+      const saved = safeParse(DYNAMIC_NOTIF_KEY, []);
+      dynamicNotifications = Array.isArray(saved)
+        ? saved.filter(n => n && typeof n === "object" && n.id)
+        : [];
     }
 
     // Сохранение динамических уведомлений (не роняет экран при переполнении)
@@ -7746,7 +7904,7 @@
       if (rest.length) {
         parts.push(rest.map(notifItem).join(""));
       } else if (!featured) {
-        parts.push(`<div class="notif-empty">${dict.noNotifications}</div>`);
+        parts.push(renderEmptyState('fa-bell-slash', dict.noNotifications, dict.emptyNotificationsDesc, 'compact'));
       }
       list.innerHTML = parts.join("");
     }
@@ -8081,6 +8239,10 @@
     // Рисует раздел «Объявления»
     function renderAnnouncements() {
       const dict = translations[currentLang];
+      // Промт №39: без группы студента нельзя отфильтровать объявления
+      if (!mockStudent || !mockStudent.group) {
+        return renderEmptyState('fa-user-slash', dict.dataNotFoundTitle, dict.dataNotFoundDesc);
+      }
       const all = getAnnouncements();
       // Студент видит только объявления своей группы или «для всех»
       const visible = all.filter(a =>
@@ -8089,11 +8251,7 @@
       console.log("Отрисовка объявлений. Количество:", visible.length);  // самопроверка
 
       if (!visible.length) {
-        return `
-          <div class="content-placeholder">
-            <i class="fas fa-bullhorn"></i>
-            <span>${dict.annEmpty}</span>
-          </div>`;
+        return renderEmptyState('fa-bullhorn', dict.annEmpty, dict.emptyNotificationsDesc);
       }
 
       const cards = visible.map(a => `
@@ -8146,10 +8304,7 @@
         </div>
         ${my.length
           ? `<div class="announce-list">${cards}</div>`
-          : `<div class="content-placeholder">
-               <i class="fas fa-bullhorn"></i>
-               <span>${dict.annEmpty}</span>
-             </div>`}`;
+          : renderEmptyState('fa-bullhorn', dict.annEmpty, dict.emptyNotificationsDesc)}`;
     }
 
     function bindTeacherAnnouncements() {
@@ -8301,11 +8456,7 @@
 
       // Самопроверка №2: пусто → заглушка
       if (allGrades.length === 0) {
-        return `
-          <div class="content-placeholder">
-            <i class="fas fa-book-open-reader"></i>
-            <span>${dict.noGrades}</span>
-          </div>`;
+        return renderEmptyState('fa-book-open-reader', dict.noGrades, dict.noData);
       }
 
       const gradeBadge = (grade) => `<span class="grade-badge grade-badge-${grade}">${grade}</span>`;
@@ -8506,11 +8657,9 @@
 
     // Загружает настройки из localStorage (вызывается в initApp до применения темы/языка).
     function loadAdminSettingsFromStorage() {
+      const saved = safeParse(SETTINGS_KEY, null);
+      if (!saved || typeof saved !== 'object') return;
       try {
-        const raw = localStorage.getItem(SETTINGS_KEY);
-        if (raw == null) return;
-        const saved = JSON.parse(raw);
-        if (!saved || typeof saved !== 'object') return;
         systemSettings = {
           university: typeof saved.university === 'string' && saved.university.trim()
             ? saved.university : DEFAULT_SYSTEM_SETTINGS.university,
@@ -8521,7 +8670,7 @@
         };
         console.log("Системные настройки восстановлены:", systemSettings);
       } catch (e) {
-        console.error("Не удалось прочитать системные настройки:", e);
+        console.error("Не удалось восстановить системные настройки:", e);
         systemSettings = { ...DEFAULT_SYSTEM_SETTINGS };
       }
     }
@@ -8541,18 +8690,12 @@
     // Загружает журнал: если ключа нет — показываем демо-записи,
     // если сохранён пустой массив — журнал остаётся пустым.
     function loadAuditLogsFromStorage() {
-      try {
-        const raw = localStorage.getItem(AUDIT_KEY);
-        if (raw == null) {
-          systemLogs = mockSystemLogs.map(entry => ({ ...entry, args: (entry.args || []).slice() }));
-          return;
-        }
-        const saved = JSON.parse(raw);
-        systemLogs = Array.isArray(saved) ? saved.filter(e => e && typeof e === 'object') : [];
-      } catch (e) {
-        console.error("Не удалось прочитать журнал действий:", e);
+      const saved = safeParse(AUDIT_KEY, null);
+      if (saved == null) {
         systemLogs = mockSystemLogs.map(entry => ({ ...entry, args: (entry.args || []).slice() }));
+        return;
       }
+      systemLogs = Array.isArray(saved) ? saved.filter(e => e && typeof e === 'object') : [];
     }
 
     function saveAuditLogsToStorage() {
@@ -8855,15 +8998,9 @@
 
       if (!filteredUsers.length) {
         rowsEl.innerHTML = `<tr><td colspan="4">
-          <div class="content-placeholder">
-            <i class="fas fa-user-slash"></i>
-            <span>${dict.adminUsersNotFound}</span>
-          </div>
+          ${renderEmptyState('fa-user-slash', dict.adminUsersNotFound, dict.emptyUsersDesc)}
         </td></tr>`;
-        cardsEl.innerHTML = `<div class="content-placeholder">
-          <i class="fas fa-user-slash"></i>
-          <span>${dict.adminUsersNotFound}</span>
-        </div>`;
+        cardsEl.innerHTML = renderEmptyState('fa-user-slash', dict.adminUsersNotFound, dict.emptyUsersDesc);
         return filteredUsers;
       }
 
@@ -9399,10 +9536,7 @@
       console.log("Глобальные отчеты. Всего групп в вузе:", groups.length);
 
       if (!groups.length) {
-        return `<div class="content-placeholder">
-          <i class="fas fa-chart-line"></i>
-          <span>${escapeHtml(dict.adminReportsNoGroups)}</span>
-        </div>`;
+        return renderEmptyState('fa-chart-line', dict.adminReportsNoGroups, dict.noData);
       }
 
       return `
@@ -9489,11 +9623,7 @@
       if (!tableBox) return;
 
       if (!groups.length) {
-        tableBox.innerHTML = `
-          <div class="content-placeholder">
-            <i class="fas fa-filter-circle-xmark"></i>
-            <span>${escapeHtml(dict.adminReportsNoGroups)}</span>
-          </div>`;
+        tableBox.innerHTML = renderEmptyState('fa-filter-circle-xmark', dict.adminReportsNoGroups, dict.noData);
         return;
       }
 
@@ -9991,10 +10121,7 @@
 
       const content = groups.length
         ? blocks
-        : `<div class="content-placeholder">
-             <i class="fas fa-people-group"></i>
-             <span>${escapeHtml(dict.adminNoGroups)}</span>
-           </div>`;
+        : renderEmptyState('fa-people-group', dict.adminNoGroups, dict.emptyGroupsDesc);
 
       return `
         <div class="admin-groups-toolbar">
@@ -10056,10 +10183,7 @@
       if (!groups.length) {
         return `
           <p class="admin-ref-subtitle">${escapeHtml(dict.adminCoursesSubtitle)}</p>
-          <div class="content-placeholder">
-            <i class="fas fa-book"></i>
-            <span>${escapeHtml(dict.adminNoCourses)}</span>
-          </div>`;
+          ${renderEmptyState('fa-book', dict.adminNoCourses, dict.emptyGroupsDesc)}`;
       }
 
       const cards = courseNumbers.map(course => {
@@ -10277,20 +10401,26 @@
     let managerStudentsBase = [];
 
     function getManagerGroups() {
-      return mockTeacherGroups.filter(g => g.direction === mockManager.direction);
+      if (!mockManager || !Array.isArray(mockTeacherGroups)) return [];
+      return mockTeacherGroups.filter(g => g && g.direction === mockManager.direction);
     }
 
     function managerDirectionLabel() {
       const dict = translations[currentLang];
+      if (!mockManager || !mockManager.direction) return "—";
       return dict["dir" + capitalize(mockManager.direction)] || mockManager.direction;
     }
 
     function renderManagerDashboard() {
       const dict = translations[currentLang];
+      if (!mockManager) {
+        return renderEmptyState('fa-user-tie', dict.dataNotFoundTitle, dict.dataNotFoundDesc);
+      }
       const groups = getManagerGroups();
-      const totalStudents = groups.reduce((sum, g) => sum + g.studentsCount, 0);
+      const totalStudents = groups.reduce((sum, g) => sum + (Number(g.studentsCount) || 0), 0);
       const teacherIds = [...new Set(groups.map(g => g.teacherId))];
-      const teachersCount = mockAllTeachers.filter(t => teacherIds.includes(t.id)).length;
+      const teachersCount = (Array.isArray(mockAllTeachers) ? mockAllTeachers : [])
+        .filter(t => t && teacherIds.includes(t.id)).length;
 
       console.log("Дашборд менеджера. Групп:", groups.length, "Студентов:", totalStudents);
 
@@ -10350,11 +10480,7 @@
 
       // Самопроверка №3: расписание для направления не составлено → заглушка
       if (filteredSchedule.length === 0) {
-        return `
-          <div class="content-placeholder">
-            <i class="fas fa-calendar-xmark"></i>
-            <span>${dict.managerScheduleEmpty}</span>
-          </div>`;
+        return renderEmptyState('fa-calendar-xmark', dict.managerScheduleEmpty, dict.noClasses);
       }
 
       // Колонки по дням недели (Пн–Сб) — та же сетка, что у студента и преподавателя
@@ -10410,10 +10536,7 @@
       console.log("Групп направления", mockManager.direction, ":", groups.length);
 
       if (!groups.length) {
-        return `<div class="content-placeholder">
-          <i class="fas fa-people-group"></i>
-          <span>${dict.managerNoGroups}</span>
-        </div>`;
+        return renderEmptyState('fa-people-group', dict.managerNoGroups, dict.emptyGroupsDesc);
       }
 
       return `<div class="groups-grid">${groups.map(renderManagerGroupCard).join("")}</div>`;
@@ -10429,10 +10552,7 @@
       console.log("Найдено преподавателей:", myTeachers.length);
 
       if (!myTeachers.length) {
-        return `<div class="content-placeholder">
-          <i class="fas fa-chalkboard-user"></i>
-          <span>${dict.managerNoTeachers}</span>
-        </div>`;
+        return renderEmptyState('fa-chalkboard-user', dict.managerNoTeachers, dict.emptyGroupsDesc);
       }
 
       const cards = myTeachers.map(t => {
@@ -10549,15 +10669,9 @@
 
       if (!result.length) {
         rowsEl.innerHTML = `<tr><td colspan="5">
-          <div class="content-placeholder">
-            <i class="fas fa-user-graduate"></i>
-            <span>${dict.studentsNotFound}</span>
-          </div>
+          ${renderEmptyState('fa-user-graduate', dict.studentsNotFound, dict.emptyUsersDesc)}
         </td></tr>`;
-        cardsEl.innerHTML = `<div class="content-placeholder">
-          <i class="fas fa-user-graduate"></i>
-          <span>${dict.studentsNotFound}</span>
-        </div>`;
+        cardsEl.innerHTML = renderEmptyState('fa-user-graduate', dict.studentsNotFound, dict.emptyUsersDesc);
         return;
       }
 
@@ -10665,10 +10779,7 @@
       if (!grid) return;
       grid.innerHTML = result.length
         ? result.map(renderManagerTestCard).join("")
-        : `<div class="content-placeholder">
-             <i class="fas fa-file-pen"></i>
-             <span>${dict.managerNoTests}</span>
-           </div>`;
+        : renderEmptyState('fa-file-pen', dict.managerNoTests, dict.emptyTestsDesc);
     }
 
     function bindManagerTestsFilter() {
@@ -10707,10 +10818,7 @@
       const groups = getManagerGroups();
 
       if (!groups.length) {
-        return `<div class="content-placeholder">
-          <i class="fas fa-chart-line"></i>
-          <span>${dict.managerNoGroups}</span>
-        </div>`;
+        return renderEmptyState('fa-chart-line', dict.managerNoGroups, dict.emptyGroupsDesc);
       }
 
       const cards = groups.map(group => {
@@ -10790,7 +10898,8 @@
 
     // Возвращает группы, назначенные текущему преподавателю (фильтр по teacherId)
     function getMyGroups() {
-      return mockTeacherGroups.filter(g => g.teacherId === mockTeacher.id);
+      if (!mockTeacher || !Array.isArray(mockTeacherGroups)) return [];
+      return mockTeacherGroups.filter(g => g && g.teacherId === mockTeacher.id);
     }
 
     // Правильная форма слова «студент» для числа.
@@ -10810,12 +10919,15 @@
     // HTML: дашборд преподавателя (приветствие + предмет + 3 карточки статистики)
     function renderTeacherDashboard() {
       const dict = translations[currentLang];
+      if (!mockTeacher) {
+        return renderEmptyState('fa-chalkboard-user', dict.dataNotFoundTitle, dict.dataNotFoundDesc);
+      }
       const myGroups = getMyGroups();
-      const totalStudents = myGroups.reduce((sum, g) => sum + g.studentsCount, 0);
+      const totalStudents = myGroups.reduce((sum, g) => sum + (Number(g.studentsCount) || 0), 0);
 
       // Активные тесты = демо-значение + реально созданные этим преподавателем (Промт №14)
       const myTestsCount = mockTests.filter(t => t.author === mockTeacher.name).length;
-      const activeTestsCount = mockTeacher.activeTests + myTestsCount;
+      const activeTestsCount = (Number(mockTeacher.activeTests) || 0) + myTestsCount;
 
       // Самопроверка: логируем рассчитанные значения
       console.log("Дашборд преподавателя. Групп:", myGroups.length, "Студентов:", totalStudents, "Активных тестов:", activeTestsCount);
@@ -10880,11 +10992,7 @@
 
       // Самопроверка: у преподавателя нет групп → заглушка
       if (myGroups.length === 0) {
-        return `
-          <div class="content-placeholder">
-            <i class="fas fa-people-group"></i>
-            <span>${dict.noTeacherGroups}</span>
-          </div>`;
+        return renderEmptyState('fa-people-group', dict.noTeacherGroups, dict.emptyGroupsDesc);
       }
 
       return `<div class="groups-grid">${myGroups.map(renderGroupCard).join("")}</div>`;
@@ -11272,28 +11380,28 @@
         index: currentQuestionIndex,
         timeLeft: secondsLeft
       };
-      localStorage.setItem(ACTIVE_TEST_KEY, JSON.stringify(data));
-      console.log("Прогресс сохранён в localStorage:", { testId: activeTest.id, timeLeft: secondsLeft });
+      try {
+        localStorage.setItem(ACTIVE_TEST_KEY, JSON.stringify(data));
+        console.log("Прогресс сохранён в localStorage:", { testId: activeTest.id, timeLeft: secondsLeft });
+      } catch (e) {
+        // Промт №39: переполнение localStorage не должно прерывать тест
+        console.warn("Не удалось сохранить прогресс теста:", e && e.name);
+      }
     }
 
     // Удаляет сохранённый прогресс
     function clearProgress() {
-      localStorage.removeItem(ACTIVE_TEST_KEY);
+      try { localStorage.removeItem(ACTIVE_TEST_KEY); } catch (e) {}
     }
 
     // Пытается восстановить прогресс для теста testId. Возвращает true при успехе.
     function restoreProgress(testId) {
-      const raw = localStorage.getItem(ACTIVE_TEST_KEY);
+      const raw = storageGet(ACTIVE_TEST_KEY);
       if (!raw) return false;
 
-      let data;
-      try {
-        data = JSON.parse(raw);
-      } catch (e) {
-        console.error("Повреждённое сохранение, удаляю:", e);
-        clearProgress();
-        return false;
-      }
+      // Промт №39: битое сохранение не роняет экран — safeParse чистит ключ
+      const data = safeParse(ACTIVE_TEST_KEY, null);
+      if (!data) return false;
       if (!data || data.testId !== testId) return false;         // сохранение от другого теста
 
       // Спрашиваем пользователя, продолжать ли
@@ -11387,8 +11495,14 @@
         answers: userAnswers.slice()
       };
       results.push(record);
-      localStorage.setItem(RESULTS_KEY, JSON.stringify(results));
-      console.log("Результат сохранён в localStorage:", record);
+      try {
+        localStorage.setItem(RESULTS_KEY, JSON.stringify(results));
+        console.log("Результат сохранён в localStorage:", record);
+      } catch (e) {
+        // Промт №39: при QuotaExceededError результат всё равно возвращаем на экран
+        console.warn("Не удалось сохранить результат в localStorage:", e && e.name);
+        alert(translations[currentLang].storageFull);
+      }
       return record;
     }
 
@@ -13289,10 +13403,7 @@
       if (myTests.length === 0) {
         return `
           <div class="tt-empty">
-            <div class="content-placeholder">
-              <i class="fas fa-file-circle-xmark"></i>
-              <span>${dict.myTestsEmpty}</span>
-            </div>
+            ${renderEmptyState('fa-file-circle-xmark', dict.myTestsEmpty, dict.emptyTestsDesc)}
             <button type="button" class="btn-primary" id="ttCreateFirst">
               <i class="fas fa-plus"></i> ${dict.createFirstTest}
             </button>
@@ -13383,11 +13494,7 @@
 
       // Самопроверка №2: после фильтрации пусто → заглушка
       if (!rows.length) {
-        return `
-          <div class="content-placeholder">
-            <i class="fas fa-inbox"></i>
-            <span>${dict.noResultsYet}</span>
-          </div>`;
+        return renderEmptyState('fa-inbox', dict.noResultsYet, dict.noData);
       }
 
       const badge = g => `<span class="grade-badge grade-badge-${g}">${g}</span>`;
@@ -13636,13 +13743,8 @@
 
     // Безопасное чтение апелляций из localStorage
     function getAppeals() {
-      try {
-        const list = JSON.parse(localStorage.getItem(APPEALS_KEY) || "[]");
-        return Array.isArray(list) ? list.filter(a => a && typeof a === "object") : [];
-      } catch (e) {
-        console.error("Не удалось прочитать апелляции:", e);
-        return [];
-      }
+      const list = safeParse(APPEALS_KEY, []);
+      return Array.isArray(list) ? list.filter(a => a && typeof a === "object") : [];
     }
 
     // Восстанавливает массив апелляций при старте (F5)
@@ -13853,11 +13955,7 @@
       console.log("Результатов студента:", results.length);
 
       if (!results.length) {
-        return `
-          <div class="content-placeholder">
-            <i class="fas fa-triangle-exclamation"></i>
-            <span>${dict.appealsEmpty}</span>
-          </div>`;
+        return renderEmptyState('fa-triangle-exclamation', dict.appealsEmpty, dict.emptyAppealsDesc);
       }
 
       const cards = results.slice().reverse().map(r => {
@@ -14003,10 +14101,7 @@
       if (!myAppeals.length) {
         return `
           <p class="appeals-intro">${dict.teacherAppealsIntro}</p>
-          <div class="content-placeholder">
-            <i class="fas fa-inbox"></i>
-            <span>${dict.teacherAppealsEmpty}</span>
-          </div>`;
+          ${renderEmptyState('fa-inbox', dict.teacherAppealsEmpty, dict.emptyAppealsDesc)}`;
       }
 
       // Новые (pending) — сверху, затем по дате
@@ -14139,16 +14234,12 @@
     // Читает сообщения из localStorage. Если ключа ещё нет — оставляет демо-набор
     // и сохраняет его, чтобы первые сообщения не «потеряли» историю.
     function loadMessagesFromStorage(persistSeed) {
-      try {
-        const saved = JSON.parse(localStorage.getItem(MESSAGES_KEY));
-        if (Array.isArray(saved)) {
-          mockMessages = saved
-            .filter(m => m && m.groupName && typeof m.text === 'string')
-            .map(normalizeChatMessage);
-          return;
-        }
-      } catch (e) {
-        console.error("Не удалось прочитать сообщения чата:", e);
+      const saved = safeParse(MESSAGES_KEY, null);
+      if (Array.isArray(saved)) {
+        mockMessages = saved
+          .filter(m => m && m.groupName && typeof m.text === 'string')
+          .map(normalizeChatMessage);
+        return;
       }
       mockMessages = mockMessagesSeed.map(m => ({ ...m }));
       if (persistSeed !== false) saveMessages();
@@ -14255,6 +14346,10 @@
     // Чат студента: одна группа (mockStudent.group), окно на весь экран
     function renderStudentChat() {
       const dict = translations[currentLang];
+      // Промт №39: без группы студента чат не к чему привязать
+      if (!mockStudent || !mockStudent.group) {
+        return renderEmptyState('fa-user-slash', dict.dataNotFoundTitle, dict.dataNotFoundDesc);
+      }
       currentChatGroup = mockStudent.group;
       chatPanelOpen = true;
       const title = dict.chatGroupTitle.replace('{0}', mockStudent.group);
@@ -14295,10 +14390,7 @@
       const groups = getMyGroups();
 
       if (!groups.length) {
-        return `<div class="content-placeholder">
-          <i class="fas fa-people-group"></i>
-          <span>${dict.chatNoGroups}</span>
-        </div>`;
+        return renderEmptyState('fa-people-group', dict.chatNoGroups, dict.emptyGroupsDesc);
       }
 
       const groupNames = groups.map(g => g.name);
@@ -14462,8 +14554,8 @@
       // Системные настройки админки (Промт №29): загружаем до применения темы/языка,
       // чтобы значения по умолчанию работали при первом открытии.
       loadAdminSettingsFromStorage();
-      if (!localStorage.getItem('unitest_lang') && systemSettings.language) currentLang = systemSettings.language;
-      if (!localStorage.getItem('unitest_theme') && systemSettings.theme) currentTheme = systemSettings.theme;
+      if (!storageGet('unitest_lang') && systemSettings.language) currentLang = systemSettings.language;
+      if (!storageGet('unitest_theme') && systemSettings.theme) currentTheme = systemSettings.theme;
 
       // Восстанавливаем сохранённые настройки темы и языка
       applyTheme();
@@ -14607,7 +14699,15 @@
       setTimeout(checkOverflow, 1000); // проверка при загрузке
 
       console.log("Приложение инициализировано. Язык:", currentLang, "| Тема:", currentTheme);
+      console.log("Чтобы проверить обработку ошибок, введите в консоли: localStorage.setItem('unitestalltests', 'битый_текст'); location.reload();");
     }
+
+    /* Промт №39: глобальный перехватчик ошибок.
+       Ресурсные ошибки (не загрузился CDN-скрипт) не считаем падением приложения. */
+    window.addEventListener('error', function (e) {
+      if (!e || !e.message) return;
+      console.error("Глобальная ошибка:", e.message);
+    });
 
     // Запуск после полной загрузки DOM
     document.addEventListener('DOMContentLoaded', initApp);
