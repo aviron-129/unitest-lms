@@ -1538,9 +1538,174 @@
     .ann-modal { width: min(560px, 100%); max-height: 88vh; overflow-y: auto; }
     .ann-modal .field { margin-bottom: 12px; }
 
-    /* Мобильный: панель уведомлений почти во всю ширину */
+    /* ============================================================
+       6.6.1 ГЛОБАЛЬНЫЙ ПОИСК (Промт №31)
+       ============================================================ */
+    .search-wrap { position: relative; }
+
+    /* Выпадающая панель поиска: непрозрачный фон, ширина 400px справа */
+    .search-dropdown {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      z-index: 300;
+      width: 400px;
+      max-width: calc(100vw - 24px);
+      padding: 14px;
+      background: var(--surface-solid);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius);
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.28);
+      animation: dropIn 0.18s ease;
+    }
+    .search-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .search-close {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      color: var(--text-muted);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .search-close:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Строка ввода */
+    .search-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      margin-bottom: 10px;
+      background: var(--hover-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      transition: border-color 0.2s ease;
+    }
+    .search-field:focus-within { border-color: var(--accent); }
+    .search-field > i { color: var(--text-muted); font-size: 0.85rem; }
+    .search-input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+    .search-input::placeholder { color: var(--text-muted); }
+    .search-input::-webkit-search-cancel-button { display: none; }
+
+    /* Список результатов: прокрутка без видимой полосы */
+    .search-results {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 360px;
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .search-results::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
+    .search-empty {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 6px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .search-empty i { color: var(--accent); }
+    .search-empty span { min-width: 0; word-break: break-word; }
+
+    .search-group { display: flex; flex-direction: column; gap: 4px; }
+    .search-results-title {
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 2px 2px;
+    }
+    .search-group-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 2px 2px 0;
+    }
+    .search-result {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 8px 10px;
+      border: none;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text);
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .search-result:hover { background: var(--hover-bg); }
+    .search-result-icon {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--hover-bg);
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+    .search-result-icon--group      { color: #3b82f6; }
+    .search-result-icon--student    { color: #f59e0b; }
+    .search-result-icon--teacher    { color: #10b981; }
+    .search-result-icon--manager    { color: #3b82f6; }
+    .search-result-icon--announcement { color: #8b5cf6; }
+    .search-result-body { min-width: 0; display: flex; flex-direction: column; }
+    .search-result-title {
+      font-size: 0.86rem;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .search-result-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Мобильный: панели уведомлений и поиска почти во всю ширину */
     @media (max-width: 480px) {
       .notif-dropdown {
+        position: fixed;
+        top: 64px;
+        left: 12px;
+        right: 12px;
+        width: auto;
+        max-width: none;
+      }
+      .search-dropdown {
         position: fixed;
         top: 64px;
         left: 12px;
@@ -3268,6 +3433,27 @@
           <span id="appHeaderTitle" class="app-header-title"></span>
 
           <div class="app-header-actions">
+            <!-- Глобальный поиск (Промт №31) -->
+            <div class="search-wrap">
+              <button id="searchBtn" class="bell-btn search-btn" data-i18n-title="search" data-i18n-aria-label="search" title="Поиск" aria-label="Поиск">
+                <i class="fas fa-magnifying-glass"></i>
+              </button>
+              <div id="searchDropdown" class="search-dropdown hidden">
+                <div class="search-top">
+                  <span class="notif-head-title" data-i18n="search">Поиск</span>
+                  <button id="searchClose" class="search-close" data-i18n-title="close" data-i18n-aria-label="close" title="Закрыть" aria-label="Закрыть" type="button">
+                    <i class="fas fa-xmark"></i>
+                  </button>
+                </div>
+                <div class="search-field">
+                  <i class="fas fa-magnifying-glass"></i>
+                  <input id="searchInput" class="search-input" type="search" autocomplete="off"
+                         data-i18n-placeholder="searchPlaceholder" placeholder="Поиск...">
+                </div>
+                <div id="searchResults" class="search-results"></div>
+              </div>
+            </div>
+
             <!-- Колокольчик уведомлений + выпадающая панель (Промт №9) -->
             <div class="bell-wrap">
               <button id="bellBtn" class="bell-btn" data-i18n-title="notifications" title="Уведомления">
@@ -3490,6 +3676,18 @@
         when:            "Когда",
         place:           "Где",
         sourceLabel:     "Источник",
+        // Глобальный поиск (Промт №31)
+        search:              "Поиск",
+        searchPlaceholder:   "Поиск...",
+        searchResults:       "Результаты поиска",
+        searchNothing:       "Ничего не найдено по запросу",
+        searchMinChars:      "Введите минимум 2 символа",
+        searchTests:         "Тесты",
+        searchUsers:         "Пользователи",
+        searchGroups:        "Группы",
+        searchAnnouncements: "Объявления",
+        searchOpenDev:       "Переход к объекту",
+        searchInDev:         "в разработке",
         // Зачётка (Промт №10)
         lblSubjectsPassed: "Сдано дисциплин",
         downloadPdf:       "Скачать PDF",
@@ -3898,6 +4096,18 @@
         when:            "Qachon",
         place:           "Qayerda",
         sourceLabel:     "Manba",
+        // Глобальный поиск (Промт №31)
+        search:              "Qidiruv",
+        searchPlaceholder:   "Qidirish...",
+        searchResults:       "Qidiruv natijalari",
+        searchNothing:       "So'rov bo'yicha hech narsa topilmadi",
+        searchMinChars:      "Kamida 2 ta belgi kiriting",
+        searchTests:         "Testlar",
+        searchUsers:         "Foydalanuvchilar",
+        searchGroups:        "Guruhlar",
+        searchAnnouncements: "E'lonlar",
+        searchOpenDev:       "Obyektga o'tish",
+        searchInDev:         "ishlab chiqilmoqda",
         // Зачётка (Промт №10)
         lblSubjectsPassed: "Topshirilgan fanlar",
         downloadPdf:       "PDF yuklab olish",
@@ -4306,6 +4516,18 @@
         when:            "When",
         place:           "Where",
         sourceLabel:     "Source",
+        // Глобальный поиск (Промт №31)
+        search:              "Search",
+        searchPlaceholder:   "Search...",
+        searchResults:       "Search results",
+        searchNothing:       "Nothing found for query",
+        searchMinChars:      "Enter at least 2 characters",
+        searchTests:         "Tests",
+        searchUsers:         "Users",
+        searchGroups:        "Groups",
+        searchAnnouncements: "Announcements",
+        searchOpenDev:       "Opening object",
+        searchInDev:         "under development",
         // Зачётка (Промт №10)
         lblSubjectsPassed: "Subjects passed",
         downloadPdf:       "Download PDF",
@@ -5368,6 +5590,18 @@
         if (dict[key]) el.title = dict[key];
       });
 
+      // Переводим плейсхолдеры полей (например, «Поиск...»)
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (dict[key]) el.placeholder = dict[key];
+      });
+
+      // Переводим aria-label (доступность)
+      document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+        const key = el.getAttribute('data-i18n-aria-label');
+        if (dict[key]) el.setAttribute('aria-label', dict[key]);
+      });
+
       // Подсвечиваем активную кнопку языка (в шапке входа и в панели)
       document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === currentLang);
@@ -5393,6 +5627,13 @@
 
       // Перерисовываем панель уведомлений (строка новостей, бейджи, подписи) на новом языке
       if (document.getElementById('notifList')) renderNotifications();
+
+      // Если открыта панель поиска — перерисовываем результаты на новом языке
+      const searchDd = document.getElementById('searchDropdown');
+      const searchInp = document.getElementById('searchInput');
+      if (searchDd && !searchDd.classList.contains('hidden')) {
+        performSearch(searchInp ? searchInp.value : "");
+      }
 
       // Если открыто окно подробностей уведомления — перерисовываем на новом языке (Промт №9.1)
       const nm = document.getElementById('notifModal');
@@ -5435,6 +5676,8 @@
 
       // Промт №30: колокольчик сразу перерисовывается под новую роль
       closeNotifications();
+      // Промт №31: результаты поиска не должны переживать смену роли
+      closeSearch();
       renderNotifications();
       updateBellDot();
 
@@ -6213,6 +6456,8 @@
       const willOpen = dd.classList.contains('hidden');
 
       if (willOpen) {
+        // Панель поиска и уведомления не должны быть открыты одновременно
+        closeSearch();
         renderNotifications();
         const unreadCount = getRoleNotifications(currentRole).filter(n => !isNotificationRead(n)).length;
         console.log("Уведомления открыты. Роль:", currentRole, "| Непрочитанных:", unreadCount);
@@ -6226,6 +6471,236 @@
     function closeNotifications() {
       const dd = document.getElementById('notifDropdown');
       if (dd) dd.classList.add('hidden');
+    }
+
+    /* ============================================================
+       5.6.2 ГЛОБАЛЬНЫЙ ПОИСК (Промт №31)
+       ============================================================ */
+    // targetGroup теста может быть строкой или массивом — приводим к массиву строк
+    function searchTestGroups(test) {
+      const raw = test && test.targetGroup;
+      const list = Array.isArray(raw) ? raw : [raw];
+      return list.filter(Boolean).map(String);
+    }
+
+    // Данные, доступные текущей роли. Студент видит только свои тесты и объявления,
+    // преподаватель — свои тесты/группы/студентов, менеджер — своё направление,
+    // администратор — всю базу.
+    function getSearchScope(role) {
+      const scope = { tests: [], groups: [], users: [], announcements: [] };
+      if (!role) return scope;
+
+      const asStudent = (s) => ({
+        id: s.id, name: s.name || "", role: "student",
+        extra: s.group || "", extraKind: "group"
+      });
+      const asTeacher = (t) => ({
+        id: t.id, name: t.name || "", role: "teacher",
+        extra: t.subject || "", extraKind: "subject"
+      });
+
+      if (role === "student") {
+        scope.tests = mockTests.filter(isTestMatch);
+        scope.announcements = getAnnouncements().filter(a =>
+          !a.targetGroup || a.targetGroup === "all" || a.targetGroup === mockStudent.group);
+        return scope;
+      }
+
+      if (role === "teacher") {
+        const myGroups = getMyGroups();
+        const groupNames = myGroups.map(g => g.name);
+        scope.tests = mockTests.filter(t => t.author === mockTeacher.name);
+        scope.groups = myGroups;
+        scope.users = mockAllStudents.filter(s => groupNames.includes(s.group)).map(asStudent);
+        scope.announcements = getAnnouncements().filter(a => a.author === mockTeacher.name);
+        return scope;
+      }
+
+      if (role === "manager") {
+        const groups = getManagerGroups();
+        const groupNames = groups.map(g => g.name);
+        const teacherNames = managerTeacherNames();
+        const teacherIds = [...new Set(groups.map(g => g.teacherId))];
+        scope.tests = mockTests.filter(t => {
+          const names = searchTestGroups(t);
+          return teacherNames.includes(t.author) || names.some(n => groupNames.includes(n));
+        });
+        scope.groups = groups;
+        scope.users = mockAllStudents.filter(s => groupNames.includes(s.group)).map(asStudent)
+          .concat(mockAllTeachers.filter(t => teacherIds.includes(t.id)).map(asTeacher));
+        scope.announcements = getAnnouncements().filter(a =>
+          !a.targetGroup || a.targetGroup === "all" || groupNames.includes(a.targetGroup));
+        return scope;
+      }
+
+      // admin — вся база
+      scope.tests = mockTests.slice();
+      scope.groups = mockTeacherGroups.slice();
+      scope.users = getAdminAllUsers().map(u => ({ ...u }));
+      scope.announcements = getAnnouncements().slice();
+      return scope;
+    }
+
+    // HTML одного результата. Пользовательский текст экранируется.
+    function searchResultItem(item) {
+      return `
+        <button type="button" class="search-result" data-search-label="${escapeHtml(item.title)}">
+          <span class="search-result-icon search-result-icon--${item.kind}"><i class="fas ${item.icon}"></i></span>
+          <span class="search-result-body">
+            <span class="search-result-title">${escapeHtml(item.title)}</span>
+            ${item.meta ? `<span class="search-result-meta">${escapeHtml(item.meta)}</span>` : ""}
+          </span>
+        </button>`;
+    }
+
+    // HTML категории результатов (пустые категории не рисуем)
+    function searchCategoryHTML(label, items) {
+      if (!items.length) return "";
+      return `
+        <div class="search-group">
+          <div class="search-group-label">${escapeHtml(label)}</div>
+          ${items.map(searchResultItem).join("")}
+        </div>`;
+    }
+
+    function searchTestResult(t) {
+      const dict = translations[currentLang];
+      const author = t.author || t.teacher || "";
+      const count = t.questionsCount || (Array.isArray(t.questions) ? t.questions.length : 0);
+      const meta = [author, count ? `${count} ${dict.questionsWord}` : ""].filter(Boolean).join(" • ");
+      return { kind: "test", icon: "fa-file-lines", title: testTitle(t), meta };
+    }
+
+    function searchGroupResult(g) {
+      const dict = translations[currentLang];
+      const direction = dict["dir" + capitalize(g.direction)] || g.direction || "";
+      const course = g.course ? `${g.course} ${dict.courseSuffix}` : "";
+      return {
+        kind: "group", icon: "fa-people-group", title: g.name || "",
+        meta: [course, direction].filter(Boolean).join(" • ")
+      };
+    }
+
+    function searchUserResult(u) {
+      const dict = translations[currentLang];
+      let extra = u.extra || "";
+      if (u.extraKind === "subject") extra = dict["subj_" + u.extra] || extra;
+      else if (u.extraKind === "direction") extra = dict["dir" + capitalize(u.extra)] || extra;
+      const roleLabel = dict["role_" + u.role] || u.role;
+      const icon = u.role === "student" ? "fa-user-graduate"
+        : u.role === "teacher" ? "fa-chalkboard-user" : "fa-user-tie";
+      return {
+        kind: u.role, icon, title: u.name || "",
+        meta: [roleLabel, extra].filter(Boolean).join(" • ")
+      };
+    }
+
+    function searchAnnouncementResult(a) {
+      const dict = translations[currentLang];
+      const target = a.targetGroup === "all" ? dict.annAllGroups : (a.targetGroup || "");
+      return {
+        kind: "announcement", icon: "fa-bullhorn", title: a.title || "",
+        meta: [a.author || "", target].filter(Boolean).join(" • ")
+      };
+    }
+
+    // Поиск по введённому тексту: нечувствителен к регистру, от 2 символов.
+    function performSearch(rawQuery) {
+      const dict = translations[currentLang];
+      const box = document.getElementById('searchResults');
+      if (!box) return;
+      const query = String(rawQuery == null ? "" : rawQuery).trim();
+      console.log("Поиск по запросу:", query, "Роль:", currentRole);
+
+      // По одной букве не ищем (самопроверка №2)
+      if (query.length < 2) {
+        box.innerHTML = `<div class="search-empty"><i class="fas fa-keyboard"></i><span>${dict.searchMinChars}</span></div>`;
+        return;
+      }
+
+      const q = query.toLowerCase();
+      const match = (value) => String(value || "").toLowerCase().includes(q);
+      const scope = getSearchScope(currentRole);
+
+      const foundTests = scope.tests
+        .filter(t => {
+          const subject = dict["subj_" + t.subject] || t.subject || "";
+          return match(testTitle(t)) || match(subject) || match(t.author) || match(t.teacher);
+        })
+        .map(searchTestResult);
+
+      const foundGroups = scope.groups
+        .filter(g => {
+          const direction = dict["dir" + capitalize(g.direction)] || g.direction || "";
+          return match(g.name) || match(g.course) || match(direction);
+        })
+        .map(searchGroupResult);
+
+      const foundUsers = scope.users
+        .filter(u => {
+          let extra = u.extra || "";
+          if (u.extraKind === "subject") extra = dict["subj_" + u.extra] || extra;
+          else if (u.extraKind === "direction") extra = dict["dir" + capitalize(u.extra)] || extra;
+          return match(u.name) || match(extra) || match(dict["role_" + u.role]);
+        })
+        .map(searchUserResult);
+
+      const foundAnnouncements = scope.announcements
+        .filter(a => match(a.title) || match(a.text) || match(a.author))
+        .map(searchAnnouncementResult);
+
+      // Самопроверка №3: логи по количеству найденного
+      console.log("Найдено тестов:", foundTests.length);
+      console.log("Найдено пользователей:", foundUsers.length);
+
+      const total = foundTests.length + foundGroups.length + foundUsers.length + foundAnnouncements.length;
+      if (!total) {
+        box.innerHTML = `
+          <div class="search-empty">
+            <i class="fas fa-circle-info"></i>
+            <span>${dict.searchNothing}: «${escapeHtml(query)}»</span>
+          </div>`;
+        return;
+      }
+
+      box.innerHTML = `
+        <div class="search-results-title">${dict.searchResults}</div>
+        ${searchCategoryHTML(dict.searchTests, foundTests)}
+        ${searchCategoryHTML(dict.searchGroups, foundGroups)}
+        ${searchCategoryHTML(dict.searchUsers, foundUsers)}
+        ${searchCategoryHTML(dict.searchAnnouncements, foundAnnouncements)}`;
+    }
+
+    // Открывает панель поиска и ставит фокус в поле
+    function openSearch() {
+      const dd = document.getElementById('searchDropdown');
+      if (!dd || !currentRole) return;
+      closeNotifications();
+      dd.classList.remove('hidden');
+      const input = document.getElementById('searchInput');
+      if (input) {
+        input.focus();
+        input.select();
+      }
+      performSearch(input ? input.value : "");
+      console.log("Поиск открыт. Роль:", currentRole);
+    }
+
+    // Закрывает панель и очищает поле/результаты (Промт №31, п.4)
+    function closeSearch() {
+      const dd = document.getElementById('searchDropdown');
+      if (dd) dd.classList.add('hidden');
+      const input = document.getElementById('searchInput');
+      if (input) input.value = "";
+      const box = document.getElementById('searchResults');
+      if (box) box.innerHTML = "";
+    }
+
+    function toggleSearch() {
+      const dd = document.getElementById('searchDropdown');
+      if (!dd) return;
+      if (dd.classList.contains('hidden')) openSearch();
+      else closeSearch();
     }
 
     // Рисует раздел «Объявления»
@@ -11824,6 +12299,39 @@
       // Первичный рендер уведомлений и красной точки
       renderNotifications();
       updateBellDot();
+
+      // 6.3) Глобальный поиск: кнопка, Ctrl/Cmd+K, ввод, результаты (Промт №31)
+      document.getElementById('searchBtn').addEventListener('click', toggleSearch);
+      document.getElementById('searchClose').addEventListener('click', closeSearch);
+
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', () => performSearch(searchInput.value));
+
+      const searchResults = document.getElementById('searchResults');
+      searchResults.addEventListener('click', (e) => {
+        const el = e.target && e.target.closest ? e.target.closest('[data-search-label]') : null;
+        if (!el) return;
+        const dict = translations[currentLang];
+        alert(`${dict.searchOpenDev}: ${el.dataset.searchLabel} ${dict.searchInDev}`);
+      });
+
+      // Горячая клавиша Ctrl/Cmd+K (работает и в русской раскладке через e.code)
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && (String(e.key).toLowerCase() === 'k' || e.code === 'KeyK')) {
+          e.preventDefault();
+          toggleSearch();
+        } else if (e.key === 'Escape') {
+          closeSearch();
+        }
+      });
+
+      // Клик вне панели поиска — закрываем и очищаем поле
+      document.addEventListener('click', (e) => {
+        const wrap = document.querySelector('.search-wrap');
+        const dd = document.getElementById('searchDropdown');
+        if (!wrap || !dd || dd.classList.contains('hidden')) return;
+        if (!wrap.contains(e.target)) closeSearch();
+      });
 
       // 7) Экран прохождения теста: навигация и завершение
       document.getElementById('testPrevBtn').addEventListener('click', () => goToQuestion(-1));
