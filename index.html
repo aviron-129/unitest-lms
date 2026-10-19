@@ -3035,6 +3035,9 @@
         noData: "Нет данных",
         studentsByGroups: "Студенты по группам",
         studentCategories: "Категории студентов",
+        // Расписание направления (Промт №22)
+        managerScheduleTitle: "Расписание направления",
+        managerScheduleEmpty: "На эту неделю расписание для вашего направления еще не составлено",
         // Схемы к вопросам
         diagramTitle: "Схема к вопросу",
         diagramEditTitle: "Редактировать схему",
@@ -3291,6 +3294,9 @@
         noData: "Ma'lumot yo'q",
         studentsByGroups: "Guruhlar bo'yicha talabalar",
         studentCategories: "Talabalar toifalari",
+        // Расписание направления (Промт №22)
+        managerScheduleTitle: "Yo'nalish dars jadvali",
+        managerScheduleEmpty: "Bu hafta uchun yo'nalishingiz bo'yicha dars jadvali hali tuzilmagan",
         // Схемы к вопросам
         diagramTitle: "Savolga sxema",
         diagramEditTitle: "Sxemani tahrirlash",
@@ -3547,6 +3553,9 @@
         noData: "No data",
         studentsByGroups: "Students by group",
         studentCategories: "Student categories",
+        // Расписание направления (Промт №22)
+        managerScheduleTitle: "Direction schedule",
+        managerScheduleEmpty: "The schedule for your direction has not been made for this week yet",
         // Схемы к вопросам
         diagramTitle: "Diagram for question",
         diagramEditTitle: "Edit diagram",
@@ -4456,6 +4465,12 @@
         bindManagerButtons();
         return;
       }
+      // Расписание направления — только пары групп менеджера (Промт №22)
+      if (currentRole === 'manager' && currentSection === 'schedule') {
+        box.innerHTML = renderManagerSchedule();
+        renderMath(box);                                     // формулы в названиях предметов (LaTeX)
+        return;
+      }
 
       // Для всех остальных разделов — заглушка (контент добавим в следующих промтах)
       box.innerHTML = `
@@ -5284,6 +5299,64 @@
           </div>
         </div>
         ${renderManagerCharts(groups)}`;
+    }
+
+    /* ---- Расписание направления (Промт №22) ---- */
+    // Карточка пары для менеджера: преподаватель + группа + аудитория.
+    // Структура и CSS — общие со студентом/преподавателем (.schedule-card).
+    function managerScheduleCard(item) {
+      const dict = translations[currentLang];
+      const subject = dict["subj_" + item.subject] || item.subject;
+      const type    = dict["type" + capitalize(item.type)] || item.type;
+      return `
+        <article class="schedule-card type-${item.type}">
+          <div class="schedule-time"><i class="fas fa-clock"></i> ${escapeHtml(item.time)}</div>
+          <h4 class="schedule-subject">${subject}</h4>
+          <span class="schedule-type">${type}</span>
+          <p class="schedule-meta"><i class="fas fa-user-tie"></i> ${escapeHtml(item.teacher)}</p>
+          <p class="schedule-meta"><i class="fas fa-people-group"></i> ${escapeHtml(item.group)}</p>
+          <p class="schedule-meta"><i class="fas fa-location-dot"></i> ${dict.roomShort} ${escapeHtml(item.room)}</p>
+        </article>`;
+    }
+
+    // Рисует сетку расписания только для групп направления менеджера.
+    // Менеджер программирования видит 101-PR и 201-PR; пара 102-PR (Дизайн) скрыта.
+    function renderManagerSchedule() {
+      const dict = translations[currentLang];
+
+      console.log("Всего пар в базе:", mockSchedule.length);
+      const myGroups = getManagerGroups().map(g => g.name);
+      console.log("Группы менеджера:", myGroups);
+
+      const filteredSchedule = mockSchedule.filter(item => myGroups.includes(item.group));
+      console.log("Пар для направления менеджера:", filteredSchedule.length);
+
+      // Самопроверка №3: расписание для направления не составлено → заглушка
+      if (filteredSchedule.length === 0) {
+        return `
+          <div class="content-placeholder">
+            <i class="fas fa-calendar-xmark"></i>
+            <span>${dict.managerScheduleEmpty}</span>
+          </div>`;
+      }
+
+      // Колонки по дням недели (Пн–Сб) — та же сетка, что у студента и преподавателя
+      const columns = DAY_KEYS.map(day => {
+        const items = filteredSchedule
+          .filter(i => i.day === day)
+          .sort((a, b) => a.time.localeCompare(b.time));
+        const body = items.length
+          ? items.map(managerScheduleCard).join("")
+          : `<div class="schedule-none">${dict.noClasses}</div>`;
+        return `
+          <div class="schedule-day">
+            <div class="schedule-day-name">${dict["day_" + day]}</div>
+            <div class="schedule-day-body">${body}</div>
+          </div>`;
+      }).join("");
+
+      return `<h2 class="schedule-title">${dict.managerScheduleTitle}</h2>
+              <div class="schedule-grid">${columns}</div>`;
     }
 
     function renderManagerGroupCard(group) {
