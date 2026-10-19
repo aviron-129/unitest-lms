@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UniTest — Платформа тестирования</title>
+  <title>UniTest</title>
 
   <!-- Шрифт Inter (Google Fonts) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3976,7 +3976,7 @@
       </div>
 
       <!-- Переключатель темы -->
-      <button id="themeToggle" class="icon-btn" title="Сменить тему">
+      <button id="themeToggle" class="icon-btn" data-i18n-title="switchTheme" title="">
         <i class="fas fa-moon"></i>
       </button>
     </div>
@@ -4057,7 +4057,7 @@
         <!-- Верхняя панель внутри приложения -->
         <header class="app-header">
           <!-- Бургер: только на моб./планшете -->
-          <button id="burgerBtn" class="burger-btn" aria-label="Меню">
+          <button id="burgerBtn" class="burger-btn" data-i18n-aria-label="menuAria" aria-label="">
             <i class="fas fa-bars"></i>
           </button>
 
@@ -4067,20 +4067,20 @@
           <div class="app-header-actions">
             <!-- Глобальный поиск (Промт №31) -->
             <div class="search-wrap">
-              <button id="searchBtn" class="bell-btn search-btn" data-i18n-title="search" data-i18n-aria-label="search" title="Поиск" aria-label="Поиск">
+              <button id="searchBtn" class="bell-btn search-btn" data-i18n-title="search" data-i18n-aria-label="search" title="" aria-label="">
                 <i class="fas fa-magnifying-glass"></i>
               </button>
               <div id="searchDropdown" class="search-dropdown hidden">
                 <div class="search-top">
                   <span class="notif-head-title" data-i18n="search">Поиск</span>
-                  <button id="searchClose" class="search-close" data-i18n-title="close" data-i18n-aria-label="close" title="Закрыть" aria-label="Закрыть" type="button">
+                  <button id="searchClose" class="search-close" data-i18n-title="close" data-i18n-aria-label="close" title="" aria-label="" type="button">
                     <i class="fas fa-xmark"></i>
                   </button>
                 </div>
                 <div class="search-field">
                   <i class="fas fa-magnifying-glass"></i>
                   <input id="searchInput" class="search-input" type="search" autocomplete="off"
-                         data-i18n-placeholder="searchPlaceholder" placeholder="Поиск...">
+                         data-i18n-placeholder="searchPlaceholder" placeholder="">
                 </div>
                 <div id="searchResults" class="search-results"></div>
               </div>
@@ -4088,7 +4088,7 @@
 
             <!-- Колокольчик уведомлений + выпадающая панель (Промт №9) -->
             <div class="bell-wrap">
-              <button id="bellBtn" class="bell-btn" data-i18n-title="notifications" title="Уведомления">
+              <button id="bellBtn" class="bell-btn" data-i18n-title="notifications" title="">
                 <i class="fas fa-bell"></i>
                 <span class="bell-dot"></span>
               </button>
@@ -4109,7 +4109,7 @@
             </div>
 
             <!-- Переключатель темы -->
-            <button id="themeTogglePanel" class="icon-btn" title="Сменить тему">
+            <button id="themeTogglePanel" class="icon-btn" data-i18n-title="switchTheme" title="">
               <i class="fas fa-moon"></i>
             </button>
           </div>
@@ -4136,7 +4136,7 @@
       <!-- Шапка: слева [закрыть + название] | по центру прогресс | справа таймер -->
       <header class="test-top">
         <div class="test-top-left">
-          <button id="testCloseBtn" class="icon-btn" data-i18n-title="closeTest" title="Закрыть">
+          <button id="testCloseBtn" class="icon-btn" data-i18n-title="closeTest" title="">
             <i class="fas fa-xmark"></i>
           </button>
           <span id="testTitle" class="test-top-title"></span>
@@ -4182,7 +4182,7 @@
   <div id="notifModal" class="notif-modal hidden">
     <div class="notif-modal-backdrop" data-notif-close="1"></div>
     <article id="notifArticle" class="notif-article" role="dialog" aria-modal="true">
-      <button id="notifModalClose" class="notif-modal-close" data-i18n-title="close" title="Закрыть">
+      <button id="notifModalClose" class="notif-modal-close" data-i18n-title="close" title="">
         <i class="fas fa-xmark"></i>
       </button>
       <div id="notifModalBody"></div>
@@ -4204,6 +4204,12 @@
         role_student:   "Студент",
         logout:         "Выйти",
         switchTheme:    "Сменить тему",
+        appTitle:       "UniTest — Платформа тестирования",
+        menuAria:       "Меню",
+        timeUp:         "Время вышло!",
+        restoreConfirm: "Найдено сохранение. Продолжить с места остановки?",
+        pdfExportDev:   "Экспорт в PDF в разработке",
+        resultsExportDev: "Экспорт в разработке",
         notifications:  "Уведомления",
         sectionStub:    "Содержимое раздела появится на следующих этапах разработки.",
         placeholderHint:"Этот раздел пока в разработке.",
@@ -4495,6 +4501,19 @@
         dgFileTooBig: "Файл больше 1 МБ. Выберите картинку поменьше.",
         dgNoFile: "Выберите файл изображения",
         dgInvalid: "Проверьте выражение или параметры схемы",
+        dgVectorCaption: "Вектор AB: A({0}; {1}) → B({2}; {3})",
+        dgCircleCaption: "Окружность: O({0}; {1}), r = {2}. S = πr² ≈ {3}",
+        dgTriangleCaption: "Треугольник: b = {0}, h = {1}. S = ½·b·h = {2}",
+        dgRectangleCaption: "Прямоугольник: a = {0}, b = {1}. S = a·b = {2}",
+        dgPlaneCaption: "Координатная плоскость: x, y ∈ [{0}; {1}]",
+        dgFunctionCaption: "График y = {0}",
+        dgImageAlt: "Схема",
+        dgErrExpected: "Ожидается «{0}»",
+        dgErrExtra: "Лишние символы в выражении",
+        dgErrFunction: "Неизвестная функция: {0}",
+        dgErrExpression: "Ошибка в выражении",
+        dgErrNoValues: "Функция не даёт конечных значений",
+        dgErrUnknownType: "Неизвестный тип схемы",
         storageFull: "Не хватает места в localStorage. Удалите старые тесты или уменьшите картинку.",
         btnBackToSettings: "Назад к настройкам",
         btnFinishCreate:   "Завершить создание",
@@ -4518,6 +4537,14 @@
         ptTitle:           "Периодическая таблица элементов",
         ptSearch:          "Поиск: символ, номер или название",
         ptHint:            "Кликните по элементу — символ вставится в поле",
+        mlMatrix:          "Матрица…",
+        mlDiffEq:          "ДУ",
+        mlTable:           "Таблица",
+        matrixSize:        "Размер матрицы",
+        matrixRows:        "Строки",
+        matrixCols:        "Столбцы",
+        matrixHint:        "От 1 до 10. Матрица может быть неквадратной — например, 2×3 или 4×2.",
+        matrixInsert:      "Вставить",
         statusActive:      "Активен",
         // Панель администратора: дашборд (Промт №23)
         adminRoleLabel:        "Супер-админ",
@@ -4684,6 +4711,12 @@
         role_student:   "Talaba",
         logout:         "Chiqish",
         switchTheme:    "Mavzuni almashtirish",
+        appTitle:       "UniTest — Test platformasi",
+        menuAria:       "Menyu",
+        timeUp:         "Vaqt tugadi!",
+        restoreConfirm: "Saqlangan natija topildi. To'xtagan joydan davom etasizmi?",
+        pdfExportDev:   "PDF eksporti ishlab chiqilmoqda",
+        resultsExportDev: "Eksport ishlab chiqilmoqda",
         notifications:  "Bildirishnomalar",
         sectionStub:    "Bo'lim mazmuni keyingi bosqichlarda qo'shiladi.",
         placeholderHint:"Bu bo'lim hozircha ishlab chiqilmoqda.",
@@ -4973,6 +5006,19 @@
         dgFileTooBig: "Fayl 1 MB dan katta. Kichikroq rasm tanlang.",
         dgNoFile: "Rasm faylini tanlang",
         dgInvalid: "Ifoda yoki sxema parametrlarini tekshiring",
+        dgVectorCaption: "AB vektori: A({0}; {1}) → B({2}; {3})",
+        dgCircleCaption: "Aylana: O({0}; {1}), r = {2}. S = πr² ≈ {3}",
+        dgTriangleCaption: "Uchburchak: b = {0}, h = {1}. S = ½·b·h = {2}",
+        dgRectangleCaption: "To'rtburchak: a = {0}, b = {1}. S = a·b = {2}",
+        dgPlaneCaption: "Koordinatalar tekisligi: x, y ∈ [{0}; {1}]",
+        dgFunctionCaption: "Grafik y = {0}",
+        dgImageAlt: "Sxema",
+        dgErrExpected: "«{0}» kutilgan",
+        dgErrExtra: "Ifodada ortiqcha belgilar bor",
+        dgErrFunction: "Noma'lum funksiya: {0}",
+        dgErrExpression: "Ifodada xatolik",
+        dgErrNoValues: "Funksiya chekli qiymatlar bermaydi",
+        dgErrUnknownType: "Noma'lum sxema turi",
         storageFull: "localStorage'da joy yetarli emas. Eski testlarni o'chiring yoki rasmni kichraytiring.",
         btnBackToSettings: "Sozlamalarga qaytish",
         btnFinishCreate:   "Test yaratishni yakunlash",
@@ -4996,6 +5042,14 @@
         ptTitle:           "Elementlar davriy jadvali",
         ptSearch:          "Qidiruv: belgi, raqam yoki nom",
         ptHint:            "Elementni bosing — belgi maydonga kiritiladi",
+        mlMatrix:          "Matritsa…",
+        mlDiffEq:          "Differensial tenglama",
+        mlTable:           "Jadval",
+        matrixSize:        "Matritsa o'lchami",
+        matrixRows:        "Qatorlar",
+        matrixCols:        "Ustunlar",
+        matrixHint:        "1 dan 10 gacha. Matritsa kvadrat bo'lmasligi mumkin — masalan, 2×3 yoki 4×2.",
+        matrixInsert:      "Qo'shish",
         statusActive:      "Faol",
         // Панель администратора: дашборд (Промт №23)
         adminRoleLabel:        "Super administrator",
@@ -5162,6 +5216,12 @@
         role_student:   "Student",
         logout:         "Logout",
         switchTheme:    "Switch theme",
+        appTitle:       "UniTest — Testing platform",
+        menuAria:       "Menu",
+        timeUp:         "Time is up!",
+        restoreConfirm: "A saved session was found. Continue where you left off?",
+        pdfExportDev:   "PDF export is under development",
+        resultsExportDev: "Export is under development",
         notifications:  "Notifications",
         sectionStub:    "Section content will be added in the upcoming development stages.",
         placeholderHint:"This section is under development.",
@@ -5451,6 +5511,19 @@
         dgFileTooBig: "The file is larger than 1 MB. Choose a smaller image.",
         dgNoFile: "Choose an image file",
         dgInvalid: "Check the expression or diagram parameters",
+        dgVectorCaption: "Vector AB: A({0}; {1}) → B({2}; {3})",
+        dgCircleCaption: "Circle: O({0}; {1}), r = {2}. S = πr² ≈ {3}",
+        dgTriangleCaption: "Triangle: b = {0}, h = {1}. S = ½·b·h = {2}",
+        dgRectangleCaption: "Rectangle: a = {0}, b = {1}. S = a·b = {2}",
+        dgPlaneCaption: "Coordinate plane: x, y ∈ [{0}; {1}]",
+        dgFunctionCaption: "Graph y = {0}",
+        dgImageAlt: "Diagram",
+        dgErrExpected: "Expected «{0}»",
+        dgErrExtra: "Extra characters in the expression",
+        dgErrFunction: "Unknown function: {0}",
+        dgErrExpression: "Expression error",
+        dgErrNoValues: "The function has no finite values",
+        dgErrUnknownType: "Unknown diagram type",
         storageFull: "Not enough localStorage space. Delete old tests or reduce the image.",
         btnBackToSettings: "Back to settings",
         btnFinishCreate:   "Finish creation",
@@ -5474,6 +5547,14 @@
         ptTitle:           "Periodic table of elements",
         ptSearch:          "Search: symbol, number or name",
         ptHint:            "Click an element — the symbol is inserted into the field",
+        mlMatrix:          "Matrix…",
+        mlDiffEq:          "Diff. equation",
+        mlTable:           "Table",
+        matrixSize:        "Matrix size",
+        matrixRows:        "Rows",
+        matrixCols:        "Columns",
+        matrixHint:        "From 1 to 10. The matrix can be non-square — for example, 2×3 or 4×2.",
+        matrixInsert:      "Insert",
         statusActive:      "Active",
         // Панель администратора: дашборд (Промт №23)
         adminRoleLabel:        "Super admin",
@@ -5639,6 +5720,16 @@
     let currentSection = null;                                // текущий раздел панели
     let currentLang = localStorage.getItem('unitest_lang') || 'ru';
     let currentTheme = localStorage.getItem('unitest_theme') || 'light';
+
+    // Возвращает перевод текущего языка с подстановкой {0}, {1}, …
+    function trf(key, ...args) {
+      const dict = translations[currentLang] || translations.ru;
+      let text = dict[key] != null ? String(dict[key]) : String(key);
+      args.forEach((value, index) => {
+        text = text.split('{' + index + '}').join(String(value));
+      });
+      return text;
+    }
 
     // Иконки FontAwesome для каждой роли
     const ROLE_ICONS = {
@@ -5811,7 +5902,7 @@
       } catch (e) {
         console.error("Не удалось сохранить тесты в localStorage:", e);
         const dict = translations[currentLang];
-        alert(dict.storageFull || "Не хватает места в localStorage");
+        alert(dict.storageFull);
         return false;
       }
     }
@@ -5853,7 +5944,7 @@
       } catch (e) {
         console.error("Не удалось сохранить группы в localStorage:", e);
         const dict = translations[currentLang];
-        alert(dict.storageFull || "Не хватает места в localStorage");
+        alert(dict.storageFull);
         return false;
       }
     }
@@ -5915,7 +6006,7 @@
         return true;
       } catch (e) {
         console.error("Не удалось сохранить пользователей в localStorage:", e);
-        alert(dict.storageFull || "Не хватает места в localStorage");
+        alert(dict.storageFull);
         return false;
       }
     }
@@ -5975,7 +6066,7 @@
         return true;
       } catch (e) {
         console.error("Не удалось сохранить менеджеров в localStorage:", e);
-        alert(dict.storageFull || "Не хватает места в localStorage");
+        alert(dict.storageFull);
         return false;
       }
     }
@@ -6385,7 +6476,7 @@
       } catch (e) {
         console.error("Не удалось сохранить объявления в localStorage:", e);
         const dict = translations[currentLang];
-        alert(dict.storageFull || "Не хватает места в localStorage");
+        alert(dict.storageFull);
       }
     }
 
@@ -6445,12 +6536,13 @@
       currentLang = lang;
       localStorage.setItem('unitest_lang', lang);            // сохраняем выбор
       applyLanguage();
-      console.log("Язык переключён на:", lang);
+      console.log("Язык изменен на:", lang, "Текущий экран перерисован");
     }
 
     function applyLanguage() {
       const dict = translations[currentLang];
       document.documentElement.lang = currentLang;           // атрибут <html lang>
+      document.title = dict.appTitle || "UniTest";           // заголовок вкладки
 
       // Переводим все элементы с атрибутом data-i18n
       document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -6514,6 +6606,36 @@
       if (nm && !nm.classList.contains('hidden') && currentNotifId != null) {
         const n = findNotification(currentNotifId);
         if (hasNotifDetails(n)) document.getElementById('notifModalBody').innerHTML = notifDetailHTML(n);
+      }
+
+      // Открытый диалог «Размер матрицы» переводим, сохраняя выбранные строки/столбцы
+      const mxOverlay = document.getElementById('matrixOverlay');
+      if (mxOverlay && !mxOverlay.classList.contains('hidden')) {
+        const rowsValue = (document.getElementById('mxRows') || {}).value;
+        const colsValue = (document.getElementById('mxCols') || {}).value;
+        mxOverlay.innerHTML = matrixWindowHTML();
+        mxOverlay.dataset.lang = currentLang;
+        const rowsEl = document.getElementById('mxRows');
+        const colsEl = document.getElementById('mxCols');
+        if (rowsEl && rowsValue) rowsEl.value = rowsValue;
+        if (colsEl && colsValue) colsEl.value = colsValue;
+      }
+    }
+
+    // Временный аудитор локализации: ищет кириллицу в интерфейсе не на русском.
+    // Вызывается после отрисовки дашборда администратора (самопроверка Промта №36).
+    function auditTranslations(root) {
+      if (currentLang === 'ru') return;
+      const scope = root || document.getElementById('sectionContent');
+      if (!scope || typeof document.createTreeWalker !== 'function') return;
+      const cyrillic = /[\u0400-\u04FF]/;
+      const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT);
+      let node;
+      while ((node = walker.nextNode())) {
+        const text = (node.textContent || '').trim();
+        if (text && cyrillic.test(text)) {
+          console.warn("Не переведен текст:", text.slice(0, 120));
+        }
       }
     }
 
@@ -6716,7 +6838,7 @@
       if (currentRole === 'student' && currentSection === 'gradebook') {
         box.innerHTML = renderStudentTranscript();
         const expBtn = document.getElementById('exportPdfBtn');
-        if (expBtn) expBtn.addEventListener('click', () => alert("Экспорт в PDF в разработке"));
+        if (expBtn) expBtn.addEventListener('click', () => alert(trf('pdfExportDev')));
         return;
       }
 
@@ -6791,6 +6913,7 @@
       // Панель администратора: дашборд вуза (Промт №23)
       if (currentRole === 'admin' && currentSection === 'dashboard') {
         box.innerHTML = renderAdminDashboard();
+        auditTranslations(box);
         return;
       }
 
@@ -7855,7 +7978,7 @@
               <select class="field-input" id="annGroupSelect"></select>
             </label>
             <div class="form-actions">
-              <button type="button" class="btn-ghost" id="annCancel">${dict.cancel || "Отмена"}</button>
+              <button type="button" class="btn-ghost" id="annCancel">${dict.cancel}</button>
               <button type="button" class="btn-primary" id="annPublish">${dict.publish}</button>
             </div>
           </div>
@@ -8209,7 +8332,7 @@
         return true;
       } catch (e) {
         console.error("Не удалось сохранить системные настройки:", e);
-        alert(dict.storageFull || "Не хватает места в localStorage");
+        alert(dict.storageFull);
         return false;
       }
     }
@@ -10925,7 +11048,7 @@
         if (secondsLeft <= 0) {
           secondsLeft = 0;
           stopTimer();
-          alert("Время вышло!");
+          alert(trf('timeUp'));
         }
       }, 1000);
       console.log("Таймер запущен на", seconds, "секунд");
@@ -10973,7 +11096,7 @@
       if (!data || data.testId !== testId) return false;         // сохранение от другого теста
 
       // Спрашиваем пользователя, продолжать ли
-      if (!confirm("Найдено сохранение. Продолжить с места остановки?")) {
+      if (!confirm(trf('restoreConfirm'))) {
         clearProgress();
         console.log("Сохранение отклонено — начинаем заново.");
         return false;
@@ -11175,7 +11298,7 @@
       return {
         svg: diagramFrame(inner,
           `data-xmin="${b.xmin}" data-xmax="${b.xmax}" data-ymin="${b.ymin}" data-ymax="${b.ymax}"`),
-        caption: p.caption || `Вектор AB: A(${x1}; ${y1}) → B(${x2}; ${y2})`
+        caption: p.caption || trf('dgVectorCaption', x1, y1, x2, y2)
       };
     }
 
@@ -11192,7 +11315,7 @@
         <text class="dg-label" x="${X + R / 2}" y="${Y - 8}" text-anchor="middle">r = ${r}</text>`;
       return {
         svg: diagramFrame(inner),
-        caption: p.caption || `Окружность: O(${cx}; ${cy}), r = ${r}. S = πr² ≈ ${area}`
+        caption: p.caption || trf('dgCircleCaption', cx, cy, r, area)
       };
     }
 
@@ -11212,7 +11335,7 @@
         <text class="dg-label" x="${xa + 8}" y="${(ya + y0) / 2}">h = ${height}</text>`;
       return {
         svg: diagramFrame(inner),
-        caption: p.caption || `Треугольник: b = ${base}, h = ${height}. S = ½·b·h = ${area}`
+        caption: p.caption || trf('dgTriangleCaption', base, height, area)
       };
     }
 
@@ -11229,7 +11352,7 @@
         <text class="dg-label" x="${x1 + 8}" y="${(y0 + y1) / 2}">b = ${h}</text>`;
       return {
         svg: diagramFrame(inner),
-        caption: p.caption || `Прямоугольник: a = ${w}, b = ${h}. S = a·b = ${area}`
+        caption: p.caption || trf('dgRectangleCaption', w, h, area)
       };
     }
 
@@ -11250,7 +11373,7 @@
       }
       return {
         svg: diagramFrame(inner),
-        caption: p.caption || `Координатная плоскость: x, y ∈ [${min}; ${max}]`
+        caption: p.caption || trf('dgPlaneCaption', min, max)
       };
     }
 
@@ -11259,7 +11382,7 @@
       const src = String(expr || '').replace(/\s+/g, '').replace(/,/g, '.');
       let pos = 0;
       const peek = () => src[pos];
-      const eat = c => { if (src[pos] === c) pos++; else throw new Error('Ожидается «' + c + '»'); };
+      const eat = c => { if (src[pos] === c) pos++; else throw new Error(trf('dgErrExpected', c)); };
       const matchNum = () => {
         const m = /^(?:\d+\.?\d*|\.\d+)/.exec(src.slice(pos));
         if (!m) return null;
@@ -11317,12 +11440,12 @@
             eat(')');
             return x => fns[id](arg(x));
           }
-          throw new Error('Неизвестная функция: ' + id);
+          throw new Error(trf('dgErrFunction', id));
         }
-        throw new Error('Ошибка в выражении');
+        throw new Error(trf('dgErrExpression'));
       }
       const fn = parseExpr();
-      if (pos !== src.length) throw new Error('Лишние символы в выражении');
+      if (pos !== src.length) throw new Error(trf('dgErrExtra'));
       return fn;
     }
 
@@ -11332,7 +11455,7 @@
       if (xmin >= xmax) { xmin = -4; xmax = 4; }
       let fn;
       try { fn = compileMathExpression(expr); }
-      catch (e) { return { error: e.message || 'Ошибка в выражении' }; }
+      catch (e) { return { error: e.message || trf('dgErrExpression') }; }
 
       const N = 240, pts = [];
       for (let i = 0; i <= N; i++) {
@@ -11340,7 +11463,7 @@
         const y = fn(x);
         if (Number.isFinite(y)) pts.push([x, y]);
       }
-      if (!pts.length) return { error: 'Функция не даёт конечных значений' };
+      if (!pts.length) return { error: trf('dgErrNoValues') };
 
       let ymin = Math.min(...pts.map(p => p[1]));
       let ymax = Math.max(...pts.map(p => p[1]));
@@ -11362,7 +11485,7 @@
         <text class="dg-label" x="${a.P}" y="${a.P - 10}">y = ${svgEsc(expr)}</text>`;
       return {
         svg: diagramFrame(inner),
-        caption: p.caption || `График y = ${expr}`
+        caption: p.caption || trf('dgFunctionCaption', expr)
       };
     }
 
@@ -11374,7 +11497,7 @@
         case 'rectangle': return buildRectangleDiagram(p);
         case 'plane': return buildPlaneDiagram(p);
         case 'function': return buildFunctionDiagram(p);
-        default: return { error: 'Неизвестный тип схемы' };
+        default: return { error: trf('dgErrUnknownType') };
       }
     }
 
@@ -11383,7 +11506,7 @@
       const d = q.diagram;
       let media = '';
       if (d.svg) media = d.svg;
-      else if (d.dataUrl) media = `<img class="q-diagram-img" src="${d.dataUrl}" alt="${svgEsc(d.caption || 'Схема')}">`;
+      else if (d.dataUrl) media = `<img class="q-diagram-img" src="${d.dataUrl}" alt="${svgEsc(d.caption || trf('dgImageAlt'))}">`;
       else return '';
       const cap = d.caption ? `<figcaption>${escapeHtml(d.caption)}</figcaption>` : '';
       return `<figure class="q-diagram">${media}${cap}</figure>`;
@@ -11737,7 +11860,7 @@
       const d = pendingDiagram;
       const media = d.svg
         ? d.svg
-        : `<img class="q-diagram-img" src="${d.dataUrl}" alt="${svgEsc(d.caption || 'Схема')}">`;
+        : `<img class="q-diagram-img" src="${d.dataUrl}" alt="${svgEsc(d.caption || trf('dgImageAlt'))}">`;
       box.classList.remove('hidden');
       box.innerHTML = `
         <figure class="q-diagram">${media}${d.caption ? `<figcaption>${escapeHtml(d.caption)}</figcaption>` : ''}</figure>
@@ -12570,6 +12693,7 @@
     // ▦ — матрицы/производные/диффуры, 🧪 — химия + таблица Менделеева.
     function setupMathLiveKeyboard() {
       if (!window.mathVirtualKeyboard) return;
+      const dict = translations[currentLang];
       const m2 = "\\begin{pmatrix}#@&#?\\\\#?&#?\\end{pmatrix}";
       const m3 = "\\begin{pmatrix}#@&#?&#?\\\\#?&#?&#?\\\\#?&#?&#?\\end{pmatrix}";
       const cases = "\\begin{cases}#@\\\\#?\\end{cases}";
@@ -12581,7 +12705,7 @@
           label: "▦",
           rows: [
             [
-              { label: "Матрица…", class: "small", width: 2, insert: "\\text{MATRIXDLG}" },
+              { label: dict.mlMatrix, class: "small", width: 2, insert: "\\text{MATRIXDLG}" },
               { label: "2×2", insert: m2 },
               { label: "3×3", insert: m3 },
               { label: "{", insert: cases },
@@ -12593,7 +12717,7 @@
               { label: "∂/∂x", insert: "\\frac{\\partial #?}{\\partial x}" },
               { label: "∫dx", insert: "\\int #?\\,dx" },
               { label: "dy/dx", insert: "\\frac{dy}{dx}=#?" },
-              { label: "ДУ", insert: "y''+#?y'+#?y=0" },
+              { label: dict.mlDiffEq, insert: "y''+#?y'+#?y=0" },
             ],
           ],
         },
@@ -12604,7 +12728,7 @@
           label: "📐",
           rows: [
             [
-              { label: "Схема к вопросу", class: "small", width: 4, insert: "\\text{DIAGRAMDLG}" },
+              { label: dict.diagramTitle, class: "small", width: 4, insert: "\\text{DIAGRAMDLG}" },
             ],
           ],
         },
@@ -12622,7 +12746,7 @@
             [
               { label: "→", insert: "\\longrightarrow" },
               { label: "⇌", insert: "\\rightleftharpoons" },
-              { label: "Таблица", class: "small", width: 2, insert: "\\text{PTTABLE}" },
+              { label: dict.mlTable, class: "small", width: 2, insert: "\\text{PTTABLE}" },
             ],
           ],
         },
@@ -12821,30 +12945,34 @@
     /* ---- Мини-диалог «Размер матрицы»: любая матрица, в т.ч. неквадратная ---- */
     let matrixTargetField = null;
 
-    function matrixDialogHTML() {
+    // Содержимое окна «Размер матрицы» — перерисовывается при смене языка
+    function matrixWindowHTML() {
+      const dict = translations[currentLang];
       return `
-        <div class="pt-overlay hidden" id="matrixOverlay">
-          <div class="pt-window mx-window" role="dialog" aria-modal="true" aria-label="Размер матрицы">
-            <div class="pt-head">
-              <div class="pt-title">▦ Размер матрицы</div>
-              <button type="button" class="pt-close" id="mxClose">✕</button>
-            </div>
-            <div class="mx-fields">
-              <label class="mx-field">Строки
-                <input type="number" id="mxRows" min="1" max="10" value="2">
-              </label>
-              <span class="mx-times">×</span>
-              <label class="mx-field">Столбцы
-                <input type="number" id="mxCols" min="1" max="10" value="2">
-              </label>
-            </div>
-            <p class="mx-hint">От 1 до 10. Матрица может быть неквадратной — например, 2×3 или 4×2.</p>
-            <div class="mx-actions">
-              <button type="button" class="btn-ghost" id="mxCancel">Отмена</button>
-              <button type="button" class="btn-primary" id="mxInsert">Вставить</button>
-            </div>
+        <div class="pt-window mx-window" role="dialog" aria-modal="true" aria-label="${escapeHtml(dict.matrixSize)}">
+          <div class="pt-head">
+            <div class="pt-title">▦ ${escapeHtml(dict.matrixSize)}</div>
+            <button type="button" class="pt-close" id="mxClose" aria-label="${escapeHtml(dict.close)}" title="${escapeHtml(dict.close)}">✕</button>
+          </div>
+          <div class="mx-fields">
+            <label class="mx-field">${escapeHtml(dict.matrixRows)}
+              <input type="number" id="mxRows" min="1" max="10" value="2">
+            </label>
+            <span class="mx-times">×</span>
+            <label class="mx-field">${escapeHtml(dict.matrixCols)}
+              <input type="number" id="mxCols" min="1" max="10" value="2">
+            </label>
+          </div>
+          <p class="mx-hint">${escapeHtml(dict.matrixHint)}</p>
+          <div class="mx-actions">
+            <button type="button" class="btn-ghost" id="mxCancel">${escapeHtml(dict.cancel)}</button>
+            <button type="button" class="btn-primary" id="mxInsert">${escapeHtml(dict.matrixInsert)}</button>
           </div>
         </div>`;
+    }
+
+    function matrixDialogHTML() {
+      return `<div class="pt-overlay hidden" id="matrixOverlay">${matrixWindowHTML()}</div>`;
     }
 
     function openMatrixDialog(field) {
@@ -12864,7 +12992,11 @@
           const o = document.getElementById('matrixOverlay');
           if (e.key === 'Escape' && o && !o.classList.contains('hidden')) closeMatrixDialog();
         });
+      } else if (overlay.dataset.lang !== currentLang) {
+        // Язык сменился, пока окно было в DOM — обновляем подписи
+        overlay.innerHTML = matrixWindowHTML();
       }
+      overlay.dataset.lang = currentLang;
       const rows = document.getElementById('mxRows');
       const cols = document.getElementById('mxCols');
       if (rows) rows.value = '2';
@@ -13147,7 +13279,7 @@
       });
 
       // Экспорт в Excel — пока заглушка
-      document.getElementById('trExportBtn').addEventListener('click', () => alert("Экспорт в разработке"));
+      document.getElementById('trExportBtn').addEventListener('click', () => alert(trf('resultsExportDev')));
     }
 
     // Строит HTML разбора ответов (✅/❌, подсветка правильного/выбранного)
@@ -13824,7 +13956,7 @@
         localStorage.setItem(MESSAGES_KEY, JSON.stringify(mockMessages));
       } catch (e) {
         console.error("Не удалось сохранить сообщения чата в localStorage:", e);
-        alert(translations[currentLang].storageFull || "Не хватает места в localStorage");
+        alert(translations[currentLang].storageFull);
       }
     }
 
