@@ -15,7 +15,11 @@ node tests/run-all.js
 
 ```powershell
 node tests/verify-screens.js --task 22
+node tests/verify-screens.js --task-json "night-prompts/q1.task.json"
 ```
+
+`--task` берёт сценарии из `night-tasks.json`. `--task-json` — из отдельного файла
+(используется для задач аудита, которых нет в очереди).
 
 Открывает `index.html` в headless Chrome (CDP, без puppeteer), снимает PNG
 в `screenshots/task22/` и проверяет:

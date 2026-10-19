@@ -2,6 +2,9 @@
 backups/
 logs/
 night-state.json
+night.lock
+night.done
+night.stop
 night-prompts/
 night-cmd/
 screenshots/task*/

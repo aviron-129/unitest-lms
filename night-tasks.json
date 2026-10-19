@@ -1,11 +1,15 @@
 {
   "settings": {
     "model": "deepseek/deepseek-flash#high",
-    "maxTasks": 8,
-    "maxHours": 8,
+    "maxTasks": 0,
+    "maxHours": 10,
     "taskTimeoutMinutes": 90,
-    "stopOnFailure": true,
-    "deadline": "07:00"
+    "stopOnFailure": false,
+    "retryFailed": true,
+    "maxAttempts": 2,
+    "qualityMode": true,
+    "qualityDelaySeconds": 300,
+    "deadline": "09:00"
   },
   "tasks": [
     {
@@ -470,6 +474,594 @@
           }
         ]
       }
+    },
+    {
+      "id": "30",
+      "title": "Глобальные уведомления в шапке",
+      "promptFile": "Промты/Промт-30-Глобальные-уведомления-в-шапке.md",
+      "notes": "Единый колокольчик для всех ролей. Не сломать студенческие уведомления №9 и модальные новости №9.1. Учитывай роль и права.",
+      "verify": {
+        "role": "student",
+        "section": "profile"
+      }
+    },
+    {
+      "id": "31",
+      "title": "Глобальный поиск",
+      "promptFile": "Промты/Промт-31-Глобальный-поиск.md",
+      "notes": "Ctrl/Cmd+K, поиск по тестам, группам, студентам, преподавателям, объявлениям. Результаты фильтруются по правам роли. Пустой результат — заглушка.",
+      "verify": {
+        "role": "student",
+        "section": "profile"
+      }
+    },
+    {
+      "id": "32",
+      "title": "Геймификация: бейджи студента",
+      "promptFile": "Промты/Промт-32-Геймификация-Достижения-студента.md",
+      "notes": "Бейджи считать из результатов (unitest_results + mockHistoricalResults), не хранить лишнее. Показать в профиле студента. 3 языка, 2 темы.",
+      "verify": {
+        "role": "student",
+        "section": "profile"
+      }
+    },
+    {
+      "id": "33",
+      "title": "Апелляции: подача студентом",
+      "promptFile": "Промты/Промт-33-Апелляции.md",
+      "notes": "Студент оспаривает оценку: причина, комментарий, статус. Ключ unitest_appeals, привязка к resultId. Не ломать зачётку и результаты.",
+      "verify": {
+        "role": "student",
+        "section": "announcements"
+      }
+    },
+    {
+      "id": "34",
+      "title": "Апелляции: рассмотрение преподавателем",
+      "promptFile": "Промты/Промт-34-Апелляции.md",
+      "notes": "Преподаватель видит только апелляции по своим тестам. Принимает/отклоняет с комментарием. Статусы pending/approved/rejected, уведомление студенту.",
+      "verify": {
+        "role": "teacher",
+        "section": "results"
+      }
+    },
+    {
+      "id": "35",
+      "title": "Групповой чат",
+      "promptFile": "Промты/Промт-35-Групповой-чат.md",
+      "notes": "Студент ↔ преподаватель, сообщения в localStorage. Синхронизация между вкладками через storage. Это демо без сервера — честно указать в UI.",
+      "verify": {
+        "role": "student",
+        "section": "announcements"
+      }
+    },
+    {
+      "id": "36",
+      "title": "Полная локализация интерфейса",
+      "promptFile": "Промты/Промт-36-Аудит-и-полная-локализация-интерфейса.md",
+      "notes": "Ни одной русской строки в UI: alert, confirm, placeholder, title, aria-label. Все ключи ×3. Переключение языка не ломает открытые модалки. Даты/числа/склонения.",
+      "verify": {
+        "scenarios": [
+          {
+            "name": "i18n-student",
+            "role": "student",
+            "section": "profile",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "i18n-teacher",
+            "role": "teacher",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "i18n-manager",
+            "role": "manager",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "i18n-admin",
+            "role": "admin",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "37",
+      "title": "Мобильная адаптивность и UI-фиксы",
+      "promptFile": "Промты/Промт-37-Мобильная-адаптивность-и-UI-фиксы.md",
+      "notes": "320/375/480/768/1024. Таблицы → карточки, модалки на всю высоту, sticky-шапка, бургер, длинные ФИО/названия. Никакого горизонтального скролла.",
+      "verify": {
+        "scenarios": [
+          {
+            "name": "mobile-student",
+            "role": "student",
+            "section": "profile",
+            "width": 390,
+            "height": 844,
+            "lang": "ru",
+            "theme": "light",
+            "mobile": true,
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "mobile-teacher",
+            "role": "teacher",
+            "section": "dashboard",
+            "width": 390,
+            "height": 844,
+            "lang": "ru",
+            "theme": "light",
+            "mobile": true,
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "mobile-manager",
+            "role": "manager",
+            "section": "dashboard",
+            "width": 390,
+            "height": 844,
+            "lang": "ru",
+            "theme": "light",
+            "mobile": true,
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "mobile-admin",
+            "role": "admin",
+            "section": "dashboard",
+            "width": 390,
+            "height": 844,
+            "lang": "ru",
+            "theme": "light",
+            "mobile": true,
+            "expect": {
+              "minTextLength": 20
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "38",
+      "title": "Аудит и исправление тёмной темы",
+      "promptFile": "Промты/Промт-38-Аудит-и-исправление-тёмной-темы.md",
+      "notes": "Контраст текста, границы, SVG-схемы, MathLive-клавиатура, KaTeX, графики, скроллбары. Проверить все панели и модалки.",
+      "verify": {
+        "scenarios": [
+          {
+            "name": "dark-student",
+            "role": "student",
+            "section": "profile",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "dark-teacher",
+            "role": "teacher",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "dark-manager",
+            "role": "manager",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "dark-admin",
+            "role": "admin",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": {
+              "minTextLength": 20
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "39",
+      "title": "Обработка ошибок и пустые состояния",
+      "promptFile": "Промты/Промт-39-Обработка-ошибок-и-Пустые-состояния.md",
+      "notes": "try/catch вокруг рендера, битый localStorage, QuotaExceededError, отсутствующие поля, ни одного белого экрана. Везде «нет данных».",
+      "verify": {
+        "scenarios": [
+          {
+            "name": "errors-student",
+            "role": "student",
+            "section": "profile",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "errors-teacher",
+            "role": "teacher",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "errors-manager",
+            "role": "manager",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "errors-admin",
+            "role": "admin",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "40",
+      "title": "Финальная очистка и подготовка к сдаче",
+      "promptFile": "Промты/Промт-40-Финальная-очистка-и-подготовка-к-сдаче.md",
+      "notes": "Убрать dev-заглушки и лишние console.log, проверить file://, почистить screenshots, v1-промты в архив, обновить README/Паспорт. В интерфейсе не должно остаться «в разработке».",
+      "verify": {
+        "scenarios": [
+          {
+            "name": "cleanup-student",
+            "role": "student",
+            "section": "profile",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "cleanup-teacher",
+            "role": "teacher",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "cleanup-manager",
+            "role": "manager",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "cleanup-admin",
+            "role": "admin",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "41",
+      "title": "Аудит безопасности (v2)",
+      "promptFile": "Промты/Промт-41-Комплексный-аудит-безопасности-v2.md",
+      "notes": "XSS: каждый innerHTML с пользовательскими данными через escapeHtml. Проверка ролей в рендере и действиях. Подмена localStorage, SVG/картинки, отсутствие eval, KaTeX trust:false.",
+      "verify": {
+        "scenarios": [
+          {
+            "name": "security-student",
+            "role": "student",
+            "section": "profile",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "security-teacher",
+            "role": "teacher",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "security-manager",
+            "role": "manager",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "security-admin",
+            "role": "admin",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "42",
+      "title": "Аудит логики и памяти (v2)",
+      "promptFile": "Промты/Промт-42-Аудит-логики-памяти-и-защита-от-v2.md",
+      "notes": "Таймеры очищаются при выходе/закрытии, нет дублей обработчиков, восстановление прогресса, деление на ноль, пустые массивы, setInterval после logout.",
+      "verify": {
+        "scenarios": [
+          {
+            "name": "logic-student",
+            "role": "student",
+            "section": "profile",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "logic-teacher",
+            "role": "teacher",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "logic-manager",
+            "role": "manager",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "logic-admin",
+            "role": "admin",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "43",
+      "title": "UI/UX стресс-тест (v2)",
+      "promptFile": "Промты/Промт-43-Комплексный-UI-UX-Аудит-v2.md",
+      "notes": "Длинные имена, 100 вопросов, 0 вопросов, большие таблицы, 320px, zoom 200%, фокус в модалках, Esc, клавиатура, aria.",
+      "verify": {
+        "scenarios": [
+          {
+            "name": "uiux-320-student",
+            "role": "student",
+            "section": "profile",
+            "width": 320,
+            "height": 800,
+            "lang": "ru",
+            "theme": "light",
+            "mobile": true,
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "uiux-768-teacher",
+            "role": "teacher",
+            "section": "dashboard",
+            "width": 768,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "uiux-1024-manager",
+            "role": "manager",
+            "section": "schedule",
+            "width": 1024,
+            "height": 900,
+            "lang": "uz",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "uiux-1440-admin",
+            "role": "admin",
+            "section": "dashboard",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "44",
+      "title": "Экспорт/импорт JSON + печать зачётки (v2)",
+      "promptFile": "Промты/Промт-44-Реальный-Экспорт-Импорт-JSON-и-Печать-v2.md",
+      "notes": "Реальный экспорт JSON (тесты, результаты, объявления, пользователи), импорт с валидацией и предпросмотром, печать зачётки через print CSS.",
+      "verify": {
+        "scenarios": [
+          {
+            "name": "export-student-gradebook",
+            "role": "student",
+            "section": "gradebook",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "export-admin-users",
+            "role": "admin",
+            "section": "users",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": {
+              "minTextLength": 20
+            }
+          },
+          {
+            "name": "export-teacher-results",
+            "role": "teacher",
+            "section": "results",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "light",
+            "mobile": true,
+            "expect": {
+              "minTextLength": 20
+            }
+          }
+        ]
+      }
     }
+  ],
+  "qualityFocus": [
+    "security/XSS и права доступа",
+    "логика, таймеры и память",
+    "локализация ru/uz/en",
+    "мобильная вёрстка 320–768",
+    "тёмная тема и контраст",
+    "пустые состояния и обработка ошибок",
+    "доступность и клавиатура",
+    "целостность данных и localStorage",
+    "производительность и лишние перерисовки",
+    "UX-полировка и микровзаимодействия"
   ]
 }

@@ -149,7 +149,13 @@
 - **Тесты перенесены в проект:** `tests/` (`check.js`, `harness.js`, `test15…22.js`, `static.js`, `smoke.js`, `run-all.js`, `verify-screens.js`), jsdom установлен в `tests/node_modules`.
 - **Единый прогон:** `node tests/run-all.js` → **11/11 наборов, 877 проверок** (включая 488 smoke).
 - **Проверка по скриншотам:** `node tests/verify-screens.js --task NN` → headless Chrome, 1440/390, light/dark, ru/uz/en; проверяет заглушки, переполнение, `console.error`, селекторы; PNG + `report.json` в `screenshots/taskNN/`.
-- **Запуск ночи:** `ЗАПУСТИТЬ-НОЧЬ.cmd` → `night-run.ps1` → одна задача из `night-tasks.json` в отдельной сессии `opencode run --auto` → `run-all` + скриншоты → коммит. При красных проверках — стоп и `night-blockers.md`.
-- **Отчёт:** `НОЧНОЙ-ОТЧЁТ.md`; состояние: `night-state.json`; логи: `logs/`.
+- **Запуск ночи:** `ЗАПУСТИТЬ-НОЧЬ.cmd` → `night-watchdog.ps1` → `night-run.ps1`.
+  Очередь **№22–44** (23 задачи), одна задача = одна сессия `opencode run --auto --agent night`;
+  после каждой — `run-all` + скриншоты. Провал → WIP-ветка `wip/<id>/<время>` + откат к checkpoint,
+  ночь продолжается (`stopOnFailure=false`). Watchdog перезапускает раннер после сбоя.
+- **После очереди:** режим аудита по 10 фокусам (security/XSS, логика/таймеры, i18n, mobile,
+  dark, пустые состояния, доступность, данные, производительность, UX) — по кругу до конца сессии.
+- **Конец сессии:** 09:00 или 10 часов; `night.stop` — мягкая остановка.
+- **Отчёт:** `НОЧНОЙ-ОТЧЁТ.md`; состояние: `night-state.json`; логи: `logs/` (включая `watchdog.log`).
 - **Защита:** бэкап `index.html` перед каждой задачей, `git`-коммит на задачу, запрет `git push`/`reset --hard`/`shutdown`/форматирования в `opencode.jsonc`.
 - **Контекст:** модель `deepseek/deepseek-flash` — 1M токенов, компакция `keep 30k / buffer 20k`; но каждая задача идёт в **новой сессии**, чтобы не деградировать.

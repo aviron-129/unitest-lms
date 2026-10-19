@@ -320,22 +320,35 @@ async function runScenario(cdp, task, scenario, taskDir) {
 
 (async () => {
   const args = process.argv.slice(2);
+  const taskJsonArg = args.indexOf("--task-json");
   const taskArg = args.indexOf("--task");
-  const taskId = taskArg >= 0 ? args[taskArg + 1] : null;
-  if (!taskId) {
-    console.error("Использование: node tests/verify-screens.js --task <id>");
-    process.exit(2);
+  let task = null;
+
+  if (taskJsonArg >= 0) {
+    const jsonPath = args[taskJsonArg + 1];
+    if (!jsonPath || !fs.existsSync(jsonPath)) {
+      console.error("Не найден --task-json: " + jsonPath);
+      process.exit(2);
+    }
+    task = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
+  } else {
+    const taskId = taskArg >= 0 ? args[taskArg + 1] : null;
+    if (!taskId) {
+      console.error("Использование: node tests/verify-screens.js --task <id> | --task-json <file>");
+      process.exit(2);
+    }
+    if (!fs.existsSync(QUEUE_PATH)) {
+      console.error("Нет night-tasks.json");
+      process.exit(2);
+    }
+    const queue = JSON.parse(fs.readFileSync(QUEUE_PATH, "utf8"));
+    task = (queue.tasks || []).find((t) => String(t.id) === String(taskId));
+    if (!task) {
+      console.error("Задача не найдена в night-tasks.json: " + taskId);
+      process.exit(2);
+    }
   }
-  if (!fs.existsSync(QUEUE_PATH)) {
-    console.error("Нет night-tasks.json");
-    process.exit(2);
-  }
-  const queue = JSON.parse(fs.readFileSync(QUEUE_PATH, "utf8"));
-  const task = (queue.tasks || []).find((t) => String(t.id) === String(taskId));
-  if (!task) {
-    console.error("Задача не найдена в night-tasks.json: " + taskId);
-    process.exit(2);
-  }
+  const taskId = String(task.id);
 
   const taskDir = path.join(OUT_ROOT, `task${task.id}`);
   fs.mkdirSync(taskDir, { recursive: true });
