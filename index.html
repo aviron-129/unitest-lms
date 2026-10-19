@@ -4751,6 +4751,7 @@
         dgTo: "x до",
         dgErrorNotReady: "Схема ещё не готова. Проверьте параметры.",
         dgFileTooBig: "Файл больше 1 МБ. Выберите картинку поменьше.",
+        dgFileType: "Можно загрузить только PNG, JPEG или WEBP.",
         dgNoFile: "Выберите файл изображения",
         dgInvalid: "Проверьте выражение или параметры схемы",
         dgVectorCaption: "Вектор AB: A({0}; {1}) → B({2}; {3})",
@@ -5267,6 +5268,7 @@
         dgTo: "x gacha",
         dgErrorNotReady: "Sxema hali tayyor emas. Parametrlarni tekshiring.",
         dgFileTooBig: "Fayl 1 MB dan katta. Kichikroq rasm tanlang.",
+        dgFileType: "Faqat PNG, JPEG yoki WEBP yuklash mumkin.",
         dgNoFile: "Rasm faylini tanlang",
         dgInvalid: "Ifoda yoki sxema parametrlarini tekshiring",
         dgVectorCaption: "AB vektori: A({0}; {1}) → B({2}; {3})",
@@ -5783,6 +5785,7 @@
         dgTo: "x to",
         dgErrorNotReady: "The diagram is not ready. Check the parameters.",
         dgFileTooBig: "The file is larger than 1 MB. Choose a smaller image.",
+        dgFileType: "Only PNG, JPEG or WEBP images are allowed.",
         dgNoFile: "Choose an image file",
         dgInvalid: "Check the expression or diagram parameters",
         dgVectorCaption: "Vector AB: A({0}; {1}) → B({2}; {3})",
@@ -7539,10 +7542,10 @@
       return `
         <div class="profile-card">
           <div class="profile-head">
-            <div class="profile-avatar">${initials}</div>
+            <div class="profile-avatar">${escapeHtml(initials)}</div>
             <div>
-              <div class="profile-name">${fullName}</div>
-              <span class="category-badge">⭐ ${categoryLabel}</span>
+              <div class="profile-name">${escapeHtml(fullName)}</div>
+              <span class="category-badge">⭐ ${escapeHtml(categoryLabel)}</span>
             </div>
           </div>
 
@@ -7624,7 +7627,7 @@
 
       const statusHTML = passed
         ? `<span class="test-passed"><i class="fas fa-check"></i> ${dict.lblPassed}</span>`
-        : `<button class="btn-start" data-test-id="${test.id}">
+        : `<button class="btn-start" data-test-id="${escapeHtml(test.id)}">
              <i class="fas fa-play"></i> ${dict.startTest}
            </button>`;
 
@@ -7632,16 +7635,16 @@
         <article class="test-card">
           <div class="test-icon"><i class="fas ${icon}"></i></div>
           <h3 class="test-title">${escapeHtml(testTitle(test))}</h3>
-          <p class="test-teacher"><i class="fas fa-user-tie"></i> ${test.teacher}</p>
+          <p class="test-teacher"><i class="fas fa-user-tie"></i> ${escapeHtml(test.teacher)}</p>
 
           <div class="test-meta">
-            <span class="test-chip"><i class="fas fa-circle-question"></i> ${test.questionsCount} ${dict.questionsWord}</span>
-            <span class="test-chip"><i class="fas fa-clock"></i> ${test.timeLimit} ${dict.minWord}</span>
+            <span class="test-chip"><i class="fas fa-circle-question"></i> ${escapeHtml(test.questionsCount)} ${dict.questionsWord}</span>
+            <span class="test-chip"><i class="fas fa-clock"></i> ${escapeHtml(test.timeLimit)} ${dict.minWord}</span>
           </div>
 
           ${test.deadline ? `
           <div class="test-deadline">
-            <i class="fas fa-calendar-day"></i> ${dict.lblDeadline}: ${test.deadline}
+            <i class="fas fa-calendar-day"></i> ${dict.lblDeadline}: ${escapeHtml(test.deadline)}
           </div>` : ''}
 
           <div class="test-status">${statusHTML}</div>
@@ -7697,12 +7700,12 @@
       const subject = dict["subj_" + item.subject] || item.subject;
       const type    = dict["type" + capitalize(item.type)] || item.type;
       return `
-        <article class="schedule-card type-${item.type}">
-          <div class="schedule-time"><i class="fas fa-clock"></i> ${item.time}</div>
-          <h4 class="schedule-subject">${subject}</h4>
-          <span class="schedule-type">${type}</span>
-          <p class="schedule-meta"><i class="fas fa-user-tie"></i> ${item.teacher}</p>
-          <p class="schedule-meta"><i class="fas fa-location-dot"></i> ${dict.roomShort} ${item.room}</p>
+        <article class="schedule-card type-${escapeHtml(item.type)}">
+          <div class="schedule-time"><i class="fas fa-clock"></i> ${escapeHtml(item.time)}</div>
+          <h4 class="schedule-subject">${escapeHtml(subject)}</h4>
+          <span class="schedule-type">${escapeHtml(type)}</span>
+          <p class="schedule-meta"><i class="fas fa-user-tie"></i> ${escapeHtml(item.teacher)}</p>
+          <p class="schedule-meta"><i class="fas fa-location-dot"></i> ${dict.roomShort} ${escapeHtml(item.room)}</p>
         </article>`;
     }
 
@@ -7756,12 +7759,12 @@
       const subject = dict["subj_" + item.subject] || item.subject;
       const type    = dict["type" + capitalize(item.type)] || item.type;
       return `
-        <article class="schedule-card type-${item.type}">
-          <div class="schedule-time"><i class="fas fa-clock"></i> ${item.time}</div>
-          <h4 class="schedule-subject">${subject}</h4>
-          <span class="schedule-type">${type}</span>
-          <p class="schedule-meta"><i class="fas fa-people-group"></i> ${item.group}</p>
-          <p class="schedule-meta"><i class="fas fa-location-dot"></i> ${dict.roomShort} ${item.room}</p>
+        <article class="schedule-card type-${escapeHtml(item.type)}">
+          <div class="schedule-time"><i class="fas fa-clock"></i> ${escapeHtml(item.time)}</div>
+          <h4 class="schedule-subject">${escapeHtml(subject)}</h4>
+          <span class="schedule-type">${escapeHtml(type)}</span>
+          <p class="schedule-meta"><i class="fas fa-people-group"></i> ${escapeHtml(item.group)}</p>
+          <p class="schedule-meta"><i class="fas fa-location-dot"></i> ${dict.roomShort} ${escapeHtml(item.room)}</p>
         </article>`;
     }
 
@@ -7906,7 +7909,7 @@
       const clickable = hasNotifDetails(n);
       return `
         <div class="notif-item${isNotificationRead(n) ? '' : ' unread'}${clickable ? ' notif-item--link' : ''}"
-             ${clickable ? `data-notif-id="${n.id}" role="button" tabindex="0"` : ''}>
+             ${clickable ? `data-notif-id="${escapeHtml(n.id)}" role="button" tabindex="0"` : ''}>
           <div class="notif-item-top">
             <span class="notif-item-title">${escapeHtml(notifField(n, "title"))}</span>
             <span class="notif-item-date">${formatDate(n.date)}</span>
@@ -7919,7 +7922,7 @@
     // HTML «строки последних новостей» вверху панели
     function notifNewsLine(n) {
       return `
-        <button type="button" class="notif-news${isNotificationRead(n) ? '' : ' unread'}" data-notif-id="${n.id}">
+        <button type="button" class="notif-news${isNotificationRead(n) ? '' : ' unread'}" data-notif-id="${escapeHtml(n.id)}">
           <span class="notif-news-text">${escapeHtml(notifField(n, "title"))}</span>
           <i class="fas fa-chevron-right notif-news-arrow"></i>
         </button>`;
@@ -7975,25 +7978,25 @@
       const isEvent = n.type === "event" || d.tag === "event";
       const metaParts = [];
       if (d.author) {
-        metaParts.push(d.role ? `${d.author} • ${dict["role_" + d.role] || d.role}` : d.author);
+        metaParts.push(d.role ? `${escapeHtml(d.author)} • ${escapeHtml(dict["role_" + d.role] || d.role)}` : escapeHtml(d.author));
       }
       metaParts.push(formatDate(n.date));
 
       const facts = [];
       if (isEvent) {
-        if (d.when)  facts.push(`<div class="notif-fact"><span>${dict.when}</span><b>${d.when}</b></div>`);
-        if (d.place) facts.push(`<div class="notif-fact"><span>${dict.place}</span><b>${d.place}</b></div>`);
+        if (d.when)  facts.push(`<div class="notif-fact"><span>${dict.when}</span><b>${escapeHtml(d.when)}</b></div>`);
+        if (d.place) facts.push(`<div class="notif-fact"><span>${dict.place}</span><b>${escapeHtml(d.place)}</b></div>`);
       }
 
       const body = (Array.isArray(d.body) && d.body.length ? d.body : [notifField(n, "text")])
-        .map(p => `<p>${p}</p>`).join("");
+        .map(p => `<p>${escapeHtml(p)}</p>`).join("");
 
       return `
         <h2 class="notif-article-title">${escapeHtml(notifField(n, "title"))}</h2>
         <div class="notif-article-meta">${metaParts.join(" • ")}</div>
         ${facts.length ? `<div class="notif-facts">${facts.join("")}</div>` : ''}
         <div class="notif-article-text">${body}</div>
-        ${d.source ? `<div class="notif-source">${dict.sourceLabel}: ${d.source}</div>` : ''}`;
+        ${d.source ? `<div class="notif-source">${dict.sourceLabel}: ${escapeHtml(d.source)}</div>` : ''}`;
     }
 
     // Открывает модальное окно с подробностями (только news/event — у них есть details)
@@ -8313,7 +8316,7 @@
             <div class="announce-avatar">${authorInitials(a.author)}</div>
             <div class="announce-author">
               <span class="announce-name">${escapeHtml(a.author)}</span>
-              <span class="announce-role">${dict["role_" + a.role] || a.role} • ${formatDate(a.date)}</span>
+              <span class="announce-role">${escapeHtml(dict["role_" + a.role] || a.role)} • ${formatDate(a.date)}</span>
             </div>
           </div>
           <h3 class="announce-title">${escapeHtml(a.title)}</h3>
@@ -8339,7 +8342,7 @@
             <div class="announce-avatar">${authorInitials(a.author)}</div>
             <div class="announce-author">
               <span class="announce-name">${escapeHtml(a.author)}</span>
-              <span class="announce-role">${dict["role_" + a.role] || a.role} • ${formatDate(a.date)}</span>
+              <span class="announce-role">${escapeHtml(dict["role_" + a.role] || a.role)} • ${formatDate(a.date)}</span>
             </div>
           </div>
           <h3 class="announce-title">${escapeHtml(a.title)}</h3>
@@ -8434,6 +8437,8 @@
     }
 
     function publishTeacherAnnouncement() {
+      // Промт №41: публикация объявлений — только преподаватель
+      if (!requireRole('teacher', 'publishTeacherAnnouncement')) return;
       const dict = translations[currentLang];
       const titleEl = document.getElementById('annTitleInput');
       const textEl = document.getElementById('annTextInput');
@@ -8512,14 +8517,14 @@
         return renderEmptyState('fa-book-open-reader', dict.noGrades, dict.noData);
       }
 
-      const gradeBadge = (grade) => `<span class="grade-badge grade-badge-${grade}">${grade}</span>`;
+      const gradeBadge = (grade) => `<span class="grade-badge grade-badge-${escapeHtml(grade)}">${escapeHtml(grade)}</span>`;
       const dateStr = (d) => d ? formatDate(d) : "—";
 
       // Строки таблицы (десктоп)
       const rows = allGrades.map(g => `
         <tr>
-          <td class="tr-subject">${g.subject}</td>
-          <td>${g.teacher}</td>
+          <td class="tr-subject">${escapeHtml(g.subject)}</td>
+          <td>${escapeHtml(g.teacher)}</td>
           <td>${dateStr(g.date)}</td>
           <td>${gradeBadge(g.grade)}</td>
         </tr>`).join("");
@@ -8528,12 +8533,12 @@
       const cards = allGrades.map(g => `
         <div class="grade-card">
           <div class="grade-card-top">
-            <span class="grade-card-subject">${g.subject}</span>
+            <span class="grade-card-subject">${escapeHtml(g.subject)}</span>
             ${gradeBadge(g.grade)}
           </div>
           <div class="grade-card-bottom">
             <span class="grade-card-date"><i class="fas fa-calendar-day"></i> ${dateStr(g.date)}</span>
-            <span class="grade-card-teacher">${g.teacher}</span>
+            <span class="grade-card-teacher">${escapeHtml(g.teacher)}</span>
           </div>
         </div>`).join("");
 
@@ -9217,6 +9222,8 @@
 
     // Валидация и сохранение нового пользователя (студент или преподаватель).
     function saveAdminUser() {
+      // Промт №41: создание пользователей — только администратор
+      if (!requireRole('admin', 'saveAdminUser')) return;
       const dict = translations[currentLang];
       const roleSelect = document.getElementById('adminNewUserRole');
       const nameInput = document.getElementById('adminNewUserName');
@@ -9476,6 +9483,8 @@
 
     // Сохранение назначения: один менеджер ведёт только одно направление.
     function saveAdminManager() {
+      // Промт №41: назначение менеджеров — только администратор
+      if (!requireRole('admin', 'saveAdminManager')) return;
       const dict = translations[currentLang];
       const select = document.getElementById('adminManagerSelect');
       const direction = adminManagerDirection;
@@ -9920,6 +9929,8 @@
 
     // Сохранение системных настроек + применение выбранных языка/темы.
     function saveAdminSettings() {
+      // Промт №41: настройки системы — только администратор
+      if (!requireRole('admin', 'saveAdminSettings')) return;
       const dict = translations[currentLang];
       const nameEl = document.getElementById('adminSettingsName');
       const yearEl = document.getElementById('adminSettingsYear');
@@ -10061,6 +10072,8 @@
 
     // Очистка журнала действий (кнопка в блоке журнала).
     function clearAdminLogs() {
+      // Промт №41: журнал действий может чистить только администратор
+      if (!requireRole('admin', 'clearAdminLogs')) return;
       const dict = translations[currentLang];
       if (!confirm(dict.adminClearLogConfirm)) return;
       systemLogs = [];
@@ -10077,6 +10090,8 @@
     // Сброс базы: confirm → очистка localStorage → reload.
     // Язык и тему сохраняем, чтобы после перезагрузки не сбрасывался интерфейс.
     function resetAdminDatabase() {
+      // Промт №41: полный сброс базы — только администратор
+      if (!requireRole('admin', 'resetAdminDatabase')) return;
       const dict = translations[currentLang];
       dbg("Пользователь запросил сброс БД");
       if (!confirm(dict.adminResetConfirm)) return;
@@ -10376,6 +10391,8 @@
 
     // Валидация и сохранение группы (создание или обновление).
     function saveAdminGroup() {
+      // Промт №41: управление группами — только администратор
+      if (!requireRole('admin', 'saveAdminGroup')) return;
       const dict = translations[currentLang];
       const nameInput = document.getElementById('adminGroupName');
       const courseSelect = document.getElementById('adminGroupCourse');
@@ -10509,10 +10526,10 @@
       const subject = dict["subj_" + item.subject] || item.subject;
       const type    = dict["type" + capitalize(item.type)] || item.type;
       return `
-        <article class="schedule-card type-${item.type}">
+        <article class="schedule-card type-${escapeHtml(item.type)}">
           <div class="schedule-time"><i class="fas fa-clock"></i> ${escapeHtml(item.time)}</div>
-          <h4 class="schedule-subject">${subject}</h4>
-          <span class="schedule-type">${type}</span>
+          <h4 class="schedule-subject">${escapeHtml(subject)}</h4>
+          <span class="schedule-type">${escapeHtml(type)}</span>
           <p class="schedule-meta"><i class="fas fa-user-tie"></i> ${escapeHtml(item.teacher)}</p>
           <p class="schedule-meta"><i class="fas fa-people-group"></i> ${escapeHtml(item.group)}</p>
           <p class="schedule-meta"><i class="fas fa-location-dot"></i> ${dict.roomShort} ${escapeHtml(item.room)}</p>
@@ -10561,18 +10578,18 @@
       const form = group.form === "part" ? dict.formPart : dict.formFull;
 
       return `
-        <div class="group-card" data-group-id="${group.id}">
+        <div class="group-card" data-group-id="${escapeHtml(group.id)}">
           <div class="group-card-head">
             <span class="group-name">${escapeHtml(group.name)}</span>
-            <span class="course-badge">${group.course} ${dict.courseSuffix}</span>
+            <span class="course-badge">${escapeHtml(group.course)} ${dict.courseSuffix}</span>
           </div>
           <div class="group-meta">
-            <span><i class="fas fa-compass-drafting"></i> ${direction}</span>
-            <span><i class="fas fa-graduation-cap"></i> ${form}</span>
+            <span><i class="fas fa-compass-drafting"></i> ${escapeHtml(direction)}</span>
+            <span><i class="fas fa-graduation-cap"></i> ${escapeHtml(form)}</span>
           </div>
           <div class="group-students">
             <i class="fas fa-users"></i>
-            <span>${group.studentsCount} ${studentsWord(group.studentsCount)}</span>
+            <span>${escapeHtml(group.studentsCount)} ${escapeHtml(studentsWord(group.studentsCount))}</span>
           </div>
           <div class="manager-card-actions">
             <button type="button" class="btn-view-students" data-manager-alert="editGroupDev">
@@ -10735,7 +10752,7 @@
         <tr data-student-name="${escapeHtml(s.name)}">
           <td>${escapeHtml(s.name)}</td>
           <td>${escapeHtml(s.group)}</td>
-          <td>${s.course} ${dict.courseSuffix}</td>
+          <td>${escapeHtml(s.course)} ${dict.courseSuffix}</td>
           <td>${formLabel(s)}</td>
           <td>${catLabel(s)}</td>
         </tr>`).join("");
@@ -10746,7 +10763,7 @@
             <span class="results-card-name">${escapeHtml(s.name)}</span>
             <span class="course-badge">${escapeHtml(s.group)}</span>
           </div>
-          <div class="results-card-row"><i class="fas fa-book"></i> ${s.course} ${dict.courseSuffix} · ${formLabel(s)}</div>
+          <div class="results-card-row"><i class="fas fa-book"></i> ${escapeHtml(s.course)} ${dict.courseSuffix} · ${formLabel(s)}</div>
           <div class="results-card-row"><i class="fas fa-star"></i> ${catLabel(s)}</div>
         </article>`).join("");
 
@@ -10785,7 +10802,7 @@
           <div class="group-meta">
             <span><i class="fas fa-user"></i> ${escapeHtml(author)}</span>
             <span><i class="fas fa-people-group"></i> ${escapeHtml(groups.filter(Boolean).join(", "))}</span>
-            <span><i class="fas fa-circle-question"></i> ${count}</span>
+            <span><i class="fas fa-circle-question"></i> ${escapeHtml(count)}</span>
           </div>
           <div class="manager-card-actions">
             <button type="button" class="btn-view-students" data-manager-alert="detailedResultsDev">
@@ -10885,7 +10902,7 @@
           <div class="group-card report-card">
             <div class="group-card-head">
               <span class="group-name">${escapeHtml(group.name)}</span>
-              <span class="course-badge">${group.course} ${dict.courseSuffix}</span>
+              <span class="course-badge">${escapeHtml(group.course)} ${dict.courseSuffix}</span>
             </div>
             <div class="report-stats">
               <div class="report-stat">
@@ -11017,20 +11034,20 @@
       const form = group.form === "part" ? dict.formPart : dict.formFull;
 
       return `
-        <div class="group-card" data-group-id="${group.id}">
+        <div class="group-card" data-group-id="${escapeHtml(group.id)}">
           <div class="group-card-head">
-            <span class="group-name">${group.name}</span>
-            <span class="course-badge">${group.course} ${dict.courseSuffix}</span>
+            <span class="group-name">${escapeHtml(group.name)}</span>
+            <span class="course-badge">${escapeHtml(group.course)} ${dict.courseSuffix}</span>
           </div>
           <div class="group-meta">
-            <span><i class="fas fa-compass-drafting"></i> ${direction}</span>
-            <span><i class="fas fa-graduation-cap"></i> ${form}</span>
+            <span><i class="fas fa-compass-drafting"></i> ${escapeHtml(direction)}</span>
+            <span><i class="fas fa-graduation-cap"></i> ${escapeHtml(form)}</span>
           </div>
           <div class="group-students">
             <i class="fas fa-users"></i>
-            <span>${group.studentsCount} ${studentsWord(group.studentsCount)}</span>
+            <span>${escapeHtml(group.studentsCount)} ${escapeHtml(studentsWord(group.studentsCount))}</span>
           </div>
-          <button type="button" class="btn-view-students" data-group-id="${group.id}">
+          <button type="button" class="btn-view-students" data-group-id="${escapeHtml(group.id)}">
             <i class="fas fa-users-viewfinder"></i> ${dict.viewStudents}
           </button>
         </div>`;
@@ -11082,8 +11099,8 @@
       if (!groups.length) return `<span class="checks-empty">${dict.noGroupsForCourse}</span>`;
       return groups.map(g => `
         <label class="check">
-          <input type="checkbox" name="ctGroup" value="${g.name}">
-          <span>${g.name}</span>
+          <input type="checkbox" name="ctGroup" value="${escapeHtml(g.name)}">
+          <span>${escapeHtml(g.name)}</span>
         </label>`).join('');
     }
 
@@ -11245,6 +11262,8 @@
 
     // Запуск теста: скрывает список, открывает экран прохождения
     function startTest(testId) {
+      // Промт №41: тест запускает только студент (защита от вызова из чужой панели)
+      if (!requireRole('student', 'startTest')) return;
       // id бывает числом (демо-тесты) или строкой 'test_...' (Промт №14) —
       // сравниваем в строковом виде, чтобы оба варианта находились
       const test = mockTests.find(t => String(t.id) === String(testId));
@@ -11305,7 +11324,7 @@
         return `
           <button class="test-option${selected ? ' selected' : ''}" data-index="${i}">
             <span class="option-letter">${letters[i] || (i + 1)}</span>
-            <span class="option-text">${opt}</span>
+            <span class="option-text">${escapeHtml(opt)}</span>
             <i class="fas fa-circle-check option-check"></i>
           </button>`;
       }).join('');
@@ -11873,9 +11892,12 @@
       if (!q || !q.diagram) return '';
       const d = q.diagram;
       let media = '';
-      if (d.svg) media = d.svg;
-      else if (d.dataUrl) media = `<img class="q-diagram-img" src="${d.dataUrl}" alt="${svgEsc(d.caption || trf('dgImageAlt'))}">`;
-      else return '';
+      if (d.svg) media = sanitizeSvgMarkup(d.svg);
+      else if (d.dataUrl) {
+        const src = safeImageDataUrl(d.dataUrl);
+        if (src) media = `<img class="q-diagram-img" src="${escapeHtml(src)}" alt="${escapeHtml(d.caption || trf('dgImageAlt'))}">`;
+      }
+      if (!media) return '';
       const cap = d.caption ? `<figcaption>${escapeHtml(d.caption)}</figcaption>` : '';
       return `<figure class="q-diagram">${media}${cap}</figure>`;
     }
@@ -11938,7 +11960,7 @@
 
             <div class="dg-row" data-dg-type="image" style="display:none">
               <label class="field">${dict.dgFile}
-                <input class="field-input" type="file" id="dgImage" accept="image/png,image/jpeg,image/svg+xml">
+                <input class="field-input" type="file" id="dgImage" accept="image/png,image/jpeg,image/webp">
               </label>
               <p class="mx-hint" style="flex-basis:100%;text-align:left">${dict.dgFileHint}</p>
             </div>
@@ -11987,9 +12009,10 @@
       currentDiagramDraft = null;
 
       if (type === 'image') {
-        if (currentDiagramImage) {
-          preview.innerHTML = `<img src="${currentDiagramImage}" alt="${dict.diagramTitle}">`;
-          currentDiagramDraft = { type: 'image', diagramType: 'image', dataUrl: currentDiagramImage, caption };
+        const safeSrc = safeImageDataUrl(currentDiagramImage);
+        if (safeSrc) {
+          preview.innerHTML = `<img src="${escapeHtml(safeSrc)}" alt="${escapeHtml(dict.diagramTitle)}">`;
+          currentDiagramDraft = { type: 'image', diagramType: 'image', dataUrl: safeSrc, caption };
         } else {
           preview.innerHTML = `<div class="dg-error">${dict.dgNoFile}</div>`;
         }
@@ -12115,8 +12138,20 @@
             updateDiagramPreview();
             return;
           }
+          if (!/^image\/(png|jpe?g|webp)$/i.test(String(file.type || ''))) {
+            alert(dict.dgFileType);
+            e.target.value = '';
+            currentDiagramImage = null;
+            updateDiagramPreview();
+            return;
+          }
           const reader = new FileReader();
-          reader.onload = () => { currentDiagramImage = String(reader.result || ''); updateDiagramPreview(); };
+          reader.onload = () => {
+            const dataUrl = String(reader.result || '');
+            currentDiagramImage = safeImageDataUrl(dataUrl) ? dataUrl : null;
+            if (!currentDiagramImage) alert(dict.dgFileType);
+            updateDiagramPreview();
+          };
           reader.readAsDataURL(file);
         });
         document.addEventListener('keydown', (e) => {
@@ -12226,9 +12261,12 @@
         return;
       }
       const d = pendingDiagram;
-      const media = d.svg
-        ? d.svg
-        : `<img class="q-diagram-img" src="${d.dataUrl}" alt="${svgEsc(d.caption || trf('dgImageAlt'))}">`;
+      let media = sanitizeSvgMarkup(d.svg);
+      if (!media) {
+        const src = safeImageDataUrl(d.dataUrl);
+        if (src) media = `<img class="q-diagram-img" src="${escapeHtml(src)}" alt="${escapeHtml(d.caption || trf('dgImageAlt'))}">`;
+      }
+      if (!media) { box.classList.add('hidden'); box.innerHTML = ''; return; }
       box.classList.remove('hidden');
       box.innerHTML = `
         <figure class="q-diagram">${media}${d.caption ? `<figcaption>${escapeHtml(d.caption)}</figcaption>` : ''}</figure>
@@ -12316,13 +12354,13 @@
       list.innerHTML = currentTestDraft.questions.map((q, idx) => `
         <div class="q-item">
           <div class="q-item-head">
-            <div class="q-item-text"><span class="q-item-num">№${idx+1}.</span> ${String(q.text).replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+            <div class="q-item-text"><span class="q-item-num">№${idx+1}.</span> ${escapeHtml(q.text)}</div>
             ${q.diagram ? `<button type="button" class="q-diagram-edit" data-diagram-idx="${idx}" title="${dict.diagramEditTitle}">📐</button>` : ''}
             <button type="button" class="q-delete" data-idx="${idx}" title="${dict.btnDelete}"><i class="fas fa-trash"></i></button>
           </div>
           ${renderQuestionDiagram(q)}
           <div class="q-item-opts">
-            ${letters.map((L,i)=>`<div class="q-item-opt${Number(q.correct)===i?' is-correct':''}"><i class="fas ${Number(q.correct)===i?'fa-check-circle':'fa-circle'}"></i><span>${L}. ${String(q.options[i]||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span></div>`).join('')}
+            ${letters.map((L,i)=>`<div class="q-item-opt${Number(q.correct)===i?' is-correct':''}"><i class="fas ${Number(q.correct)===i?'fa-check-circle':'fa-circle'}"></i><span>${L}. ${escapeHtml(q.options[i] || '')}</span></div>`).join('')}
           </div>
         </div>`).join('');
       list.querySelectorAll('.q-delete').forEach(btn => {
@@ -12472,6 +12510,8 @@
     // ВАЖНО (самопроверка №4): target*-поля маппингаются из настроек шага 1 так же,
     // как их проверяет фильтр студента isTestMatch(): курс, направление, группы, форма.
     function saveTestToDB() {
+      // Промт №41: создавать тесты может только преподаватель
+      if (!requireRole('teacher', 'saveTestToDB')) return;
       if (!currentTestDraft) {
         console.error("saveTestToDB: черновик теста пуст — сохранять нечего");
         return;
@@ -12516,13 +12556,63 @@
     /* ============================================================
        5.11 РАЗДЕЛ «МОИ ТЕСТЫ» ПРЕПОДАВАТЕЛЯ (Промт №14)
        ============================================================ */
-    // Экранирует спецсимволы HTML (пользовательский ввод названий/вопросов)
+    // Экранирует спецсимволы HTML (пользовательский ввод названий/вопросов).
+    // Промт №41: экранируем и апостроф — иначе значение можно разорвать
+    // в атрибуте с одинарными кавычками и внедрить обработчик события.
     function escapeHtml(str) {
+      if (str == null) return '';
       return String(str)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Промт №41: единая проверка роли для действий, а не только для меню.
+    // Если роль ещё не выбрана (прямой вызов из тестов/консоли) — не блокируем,
+    // но при активной чужой роли действие молча отклоняется.
+    function requireRole(role, action) {
+      if (currentRole && currentRole !== role) {
+        console.warn("Действие недоступно для роли", currentRole + ":", action || role);
+        return false;
+      }
+      return true;
+    }
+
+    // Разрешаем только растровые data:-картинки. SVG и прочие MIME-типы
+    // могут содержать скрипты/обработчики, поэтому их не рендерим.
+    function safeImageDataUrl(url) {
+      return typeof url === 'string' && /^data:image\/(png|jpe?g|gif|webp);base64,[a-z0-9+/=\s]+$/i.test(url)
+        ? url
+        : '';
+    }
+
+    // Санитайзер SVG из localStorage: вырезаем script/foreignObject/iframe/object/embed
+    // и все on*-атрибуты, чтобы подменённая схема не выполнила код.
+    function sanitizeSvgMarkup(svg) {
+      if (typeof svg !== 'string' || !/^\s*<svg[\s>]/i.test(svg)) return '';
+      try {
+        const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+        const root = doc && doc.documentElement;
+        if (!root || String(root.tagName || '').toLowerCase() !== 'svg') return '';
+        if (doc.querySelector('parsererror')) return '';
+        doc.querySelectorAll('script, foreignObject, iframe, object, embed, link, style').forEach(node => node.remove());
+        [root].concat(Array.prototype.slice.call(root.querySelectorAll('*'))).forEach(el => {
+          Array.prototype.slice.call(el.attributes || []).forEach(attr => {
+            const name = String(attr.name || '').toLowerCase();
+            const value = String(attr.value || '').toLowerCase();
+            if (name.indexOf('on') === 0 || value.indexOf('javascript:') !== -1 ||
+                value.indexOf('data:text/html') !== -1) {
+              el.removeAttribute(attr.name);
+            }
+          });
+        });
+        return root.outerHTML;
+      } catch (e) {
+        console.warn("SVG-схема отклонена санитайзером");
+        return '';
+      }
     }
 
     // Рендер математических формул (LaTeX) внутри элемента: $...$ и $$...$$.
@@ -12539,6 +12629,10 @@
           // Промт №38: битая формула в тёмной теме — светло-красным,
           // иначе стандартный тёмно-красный KaTeX почти не читается.
           errorColor: currentTheme === 'dark' ? '#f87171' : '#cc0000',
+          // Промт №41: запрещаем \href/\htmlClass/\includegraphics и другие
+          // потенциально опасные команды KaTeX (никакого javascript:-URL из формул).
+          trust: false,
+          strict: 'ignore',
           throwOnError: false   // одна битая формула → красная подсказка KaTeX,
                                 // но НЕ срывает рендер остальных формул на экране
         });
@@ -13428,16 +13522,16 @@
           <p class="test-teacher"><i class="fas fa-user-tie"></i> ${escapeHtml(t.teacher || '')}</p>
 
           <div class="test-meta">
-            <span class="test-chip"><i class="fas fa-book"></i> ${subject}</span>
+            <span class="test-chip"><i class="fas fa-book"></i> ${escapeHtml(subject)}</span>
             <span class="test-chip"><i class="fas fa-people-group"></i> ${escapeHtml(groups.join(', '))}</span>
-            <span class="test-chip"><i class="fas fa-layer-group"></i> ${t.targetCourse} ${dict.courseSuffix}</span>
-            <span class="test-chip"><i class="fas fa-circle-question"></i> ${t.questionsCount} ${dict.questionsWord}</span>
-            <span class="test-chip"><i class="fas fa-clock"></i> ${t.timeLimit} ${dict.minWord}</span>
+            <span class="test-chip"><i class="fas fa-layer-group"></i> ${escapeHtml(t.targetCourse)} ${dict.courseSuffix}</span>
+            <span class="test-chip"><i class="fas fa-circle-question"></i> ${escapeHtml(t.questionsCount)} ${dict.questionsWord}</span>
+            <span class="test-chip"><i class="fas fa-clock"></i> ${escapeHtml(t.timeLimit)} ${dict.minWord}</span>
           </div>
 
           <div class="test-status-row">
             <span class="test-status-badge"><i class="fas fa-circle-check"></i> ${dict.statusActive}</span>
-            <button type="button" class="q-delete tt-delete" data-test-id="${t.id}" title="${dict.btnDelete}">
+            <button type="button" class="q-delete tt-delete" data-test-id="${escapeHtml(t.id)}" title="${dict.btnDelete}">
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -13487,9 +13581,15 @@
 
     // Удаляет тест из mockTests, обновляет localStorage и перерисовывает список
     function deleteTeacherTest(testId) {
+      // Промт №41: только преподаватель и только свой тест
+      if (!requireRole('teacher', 'deleteTeacherTest')) return;
       const idx = mockTests.findIndex(t => String(t.id) === String(testId));
       if (idx === -1) {
         console.error("deleteTeacherTest: тест не найден:", testId);
+        return;
+      }
+      if (mockTests[idx].author !== mockTeacher.name) {
+        console.warn("deleteTeacherTest: запрещено удалять чужой тест:", testId);
         return;
       }
       const removed = mockTests.splice(idx, 1)[0];
@@ -13657,14 +13757,14 @@
           let cls = "review-opt";
           if (oi === q.correct) cls += " correct";                 // правильный — зелёный
           if (oi === chosen && !isCorrect) cls += " wrong";        // выбранный неверный — красный
-          return `<div class="${cls}"><b>${letters[oi] || (oi + 1)}</b> ${opt}</div>`;
+          return `<div class="${cls}"><b>${letters[oi] || (oi + 1)}</b> ${escapeHtml(opt)}</div>`;
         }).join("");
 
         return `
           <div class="review-item ${isCorrect ? "correct-item" : "wrong-item"}" data-correct="${isCorrect}">
             <div class="review-head">
               <span class="review-num">${i + 1}</span>
-              <span class="review-q">${q.text}</span>
+              <span class="review-q">${escapeHtml(q.text)}</span>
               <span class="review-icon">${isCorrect ? "✅" : "❌"}</span>
             </div>
             ${renderQuestionDiagram(q)}
@@ -14171,6 +14271,8 @@
 
     // Одобрение/отклонение апелляции: статус, комментарий, оценка, уведомление
     function resolveAppeal(appealId, action, comment = "") {
+      // Промт №41: решение по апелляции — только преподаватель и только по своим тестам
+      if (!requireRole('teacher', 'resolveAppeal')) return;
       const dict = translations[currentLang];
       const all = getAppeals();
       const idx = all.findIndex(a => String(a.id) === String(appealId));
@@ -14180,6 +14282,13 @@
       }
 
       const appeal = all[idx];
+      const myTestIds = mockTests
+        .filter(t => t.author === mockTeacher.name)
+        .map(t => String(t.id));
+      if (!myTestIds.includes(String(appeal.testId))) {
+        console.warn("resolveAppeal: апелляция по чужому тесту отклонена:", appealId);
+        return;
+      }
       if ((appeal.status || "pending") !== "pending") return;
 
       dbg("Обработка апелляции:", appealId, "Действие:", action);
@@ -14522,6 +14631,11 @@
 
     // Отправка сообщения: пустые не отправляются, поле очищается, всё сохраняется
     function sendMessage() {
+      // Промт №41: чат доступен только студенту и преподавателю
+      if (currentRole && currentRole !== 'student' && currentRole !== 'teacher') {
+        console.warn("sendMessage: чат недоступен для роли", currentRole);
+        return false;
+      }
       const input = document.getElementById('chatInput');
       const text = input ? input.value.trim() : '';
       if (!text) {
@@ -14530,6 +14644,15 @@
       }
       if (!currentChatGroup) {
         console.error("Не выбрана группа для чата");
+        return false;
+      }
+
+      // Нельзя писать в чужую группу: студент — только своя, преподаватель — свои.
+      const allowedGroups = currentRole === 'teacher'
+        ? getMyGroups().map(g => g.name)
+        : (mockStudent && mockStudent.group ? [mockStudent.group] : []);
+      if (!allowedGroups.includes(currentChatGroup)) {
+        console.warn("sendMessage: группа недоступна для роли", currentRole, currentChatGroup);
         return false;
       }
 
