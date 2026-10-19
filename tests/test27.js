@@ -60,8 +60,8 @@ function fillTeacher({ name, subject }) {
 console.log("\n[1] Исходный раздел «Пользователи»");
 w.selectRole("admin");
 w.navigate("users");
-T("allUsers = 11", w.eval("allUsers.length") === 11, w.eval("allUsers.length"));
-T("в таблице 11 строк", rows().length === 11, rows().length);
+T("allUsers = 12", w.eval("allUsers.length") === 12, w.eval("allUsers.length"));
+T("в таблице 12 строк", rows().length === 12, rows().length);
 T("кнопка добавления есть", !!D.querySelector('[data-admin-action="add-user"]'));
 
 console.log("\n[2] Модалка и динамические поля по роли");
@@ -131,7 +131,7 @@ submitForm();
 T("модалка закрылась", !overlay());
 T("alert при сохранении не показывался", alerts.length === 0, safe(alerts));
 T("студентов стало 8", w.eval("mockAllStudents.length") === 8, w.eval("mockAllStudents.length"));
-T("новая строка в таблице", rows().length === 12 && sectionText().includes(studentName), rows().length);
+T("новая строка в таблице", rows().length === 13 && sectionText().includes(studentName), rows().length);
 const createdStudent = savedStudents().find(s => s.name === studentName);
 T("студент сохранён в uniteststudents (8)", savedStudents().length === 8, savedStudents().length);
 T("объект студента: id s_ + Date.now()", !!createdStudent && /^s_\d+$/.test(createdStudent.id),
@@ -152,7 +152,7 @@ fillTeacher({ name: teacherName, subject: "Информатика" });
 submitForm();
 T("модалка закрылась", !overlay());
 T("преподавателей стало 4", w.eval("mockAllTeachers.length") === 4, w.eval("mockAllTeachers.length"));
-T("преподаватель в таблице", rows().length === 13 && sectionText().includes(teacherName), rows().length);
+T("преподаватель в таблице", rows().length === 14 && sectionText().includes(teacherName), rows().length);
 T("предмет показан в доп. информации", sectionText().includes("Информатика"));
 const createdTeacher = savedTeachers().find(t => t.name === teacherName);
 T("преподаватель сохранён в unitestteachers (4)", savedTeachers().length === 4, savedTeachers().length);
@@ -196,7 +196,7 @@ T("F5: 8 студентов из uniteststudents", reloadStudents === 8, `${relo
 T("F5: 4 преподавателя из unitestteachers", reloadTeachers === 4, reloadTeachers);
 T("F5: созданный студент на месте", reloadHasStudent === true, reloadHasStudent);
 T("F5: созданный преподаватель на месте", reloadHasTeacher === true, reloadHasTeacher);
-T("F5: в таблице 13 строк", reloadRows === 13, reloadRows);
+T("F5: в таблице 14 строк", reloadRows === 14, reloadRows);
 
 console.log("\n[7] Переводы ru/uz/en");
 const keys = ["adminUserNamePh", "adminUserGroup", "adminUserGroupPh", "adminUserCategory",

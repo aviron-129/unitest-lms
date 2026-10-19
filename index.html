@@ -2089,6 +2089,24 @@
       .admin-modal .form-grid { grid-template-columns: 1fr; }
     }
 
+    /* ============================================================
+       6.8.3 ПАНЕЛЬ АДМИНИСТРАТОРА: НАЗНАЧЕНИЕ МЕНЕДЖЕРОВ (Промт №27)
+       ============================================================ */
+    .admin-managers-table td { vertical-align: middle; }
+    .admin-manager-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+    .admin-manager-name i { color: var(--role, var(--accent)); font-size: 0.78rem; }
+    .admin-manager-empty { color: var(--text-muted); font-style: italic; }
+    .admin-manager-assign { padding: 9px 14px; font-size: 0.82rem; white-space: nowrap; }
+    .admin-manager-card { display: flex; flex-direction: column; }
+    .admin-manager-card .admin-manager-assign { align-self: flex-start; margin-top: 10px; }
+    .admin-manager-modal .field-input { width: 100%; }
+
     /* Справочники факультетов и курсов */
     .admin-ref-subtitle { margin: 4px 0 18px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
     .admin-ref-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
@@ -3489,6 +3507,16 @@
         adminUserCreated:      "Пользователь создан: {0}",
         adminUserStudentsNow:  "Всего студентов теперь: {0}",
         adminUserTeachersNow:  "Всего преподавателей теперь: {0}",
+        // Панель администратора: назначение менеджеров (Промт №27)
+        adminManagersSubtitle:  "Назначение менеджеров на направления",
+        adminManagerCurrent:    "Текущий менеджер",
+        adminManagerNotAssigned:"Не назначен",
+        adminManagerAssign:     "Назначить / Изменить",
+        adminManagerFree:       "Освободить должность",
+        adminManagerSelect:     "Выберите менеджера",
+        adminErrManager:        "Выберите менеджера или освободите должность",
+        adminManagerActions:    "Действия",
+        adminManagerModalTitle: "Назначить менеджера на «{0}»",
         // Панель администратора: управление группами (Промт №25)
         adminCreateGroup:      "Создать группу",
         adminEditGroup:        "Редактировать",
@@ -3815,6 +3843,16 @@
         adminUserCreated:      "Foydalanuvchi yaratildi: {0}",
         adminUserStudentsNow:  "Jami talabalar soni: {0}",
         adminUserTeachersNow:  "Jami o'qituvchilar soni: {0}",
+        // Панель администратора: назначение менеджеров (Промт №27)
+        adminManagersSubtitle:  "Yo'nalishlarga menejer tayinlash",
+        adminManagerCurrent:    "Joriy menejer",
+        adminManagerNotAssigned:"Tayinlanmagan",
+        adminManagerAssign:     "Tayinlash / O'zgartirish",
+        adminManagerFree:       "Lavozimni bo'shatish",
+        adminManagerSelect:     "Menejerni tanlang",
+        adminErrManager:        "Menejerni tanlang yoki lavozimni bo'shating",
+        adminManagerActions:    "Amallar",
+        adminManagerModalTitle: "«{0}» yo'nalishiga menejer tayinlash",
         // Панель администратора: управление группами (Промт №25)
         adminCreateGroup:      "Guruh yaratish",
         adminEditGroup:        "Tahrirlash",
@@ -4141,6 +4179,16 @@
         adminUserCreated:      "User created: {0}",
         adminUserStudentsNow:  "Total students now: {0}",
         adminUserTeachersNow:  "Total teachers now: {0}",
+        // Панель администратора: назначение менеджеров (Промт №27)
+        adminManagersSubtitle:  "Assign managers to directions",
+        adminManagerCurrent:    "Current manager",
+        adminManagerNotAssigned:"Not assigned",
+        adminManagerAssign:     "Assign / Change",
+        adminManagerFree:       "Vacate the position",
+        adminManagerSelect:     "Select a manager",
+        adminErrManager:        "Select a manager or vacate the position",
+        adminManagerActions:    "Actions",
+        adminManagerModalTitle: "Assign a manager to “{0}”",
         // Панель администратора: управление группами (Промт №25)
         adminCreateGroup:      "Create group",
         adminEditGroup:        "Edit",
@@ -4294,6 +4342,8 @@
     // добавленные через модальное окно. Храним ПОЛНЫЕ массивы (демо + новые).
     const ADMIN_STUDENTS_KEY = "uniteststudents";
     const ADMIN_TEACHERS_KEY = "unitestteachers";
+    // Ключ менеджеров (Промт №27): назначение на направления.
+    const MANAGERS_KEY = "unitest_managers";
 
     // Исторические результаты (Промт №15): прошлые прохождения из других систем.
     // К ним при слиянии добавляются записи из localStorage unitest_results.
@@ -4441,6 +4491,66 @@
         return true;
       } catch (e) {
         console.error("Не удалось сохранить пользователей в localStorage:", e);
+        alert(dict.storageFull || "Не хватает места в localStorage");
+        return false;
+      }
+    }
+
+    /* ---- Назначение менеджеров (Промт №27) ---- */
+    // Текущий менеджер направления: direction хранится ключом (programming/design).
+    function adminManagerForDirection(direction) {
+      const managers = Array.isArray(mockAllManagers) ? mockAllManagers : [];
+      return managers.find(m => m && m.direction === direction) || null;
+    }
+
+    // mockManager — тот же объект, что и карточка менеджера в панели менеджера.
+    // После чтения из localStorage/назначения синхронизируем его поля.
+    function syncMockManagerFromList() {
+      if (!Array.isArray(mockAllManagers)) return;
+      const current = mockAllManagers.find(m => m && String(m.id) === String(mockManager.id));
+      if (current) {
+        mockManager.name = current.name;
+        mockManager.direction = current.direction;
+      }
+    }
+
+    // Восстанавливает менеджеров из unitest_managers. Если ключа нет — остаётся
+    // демо-массив (mockManager + Sidorova). Пустой/битый массив не затирает демо.
+    function loadManagersFromStorage() {
+      try {
+        const raw = localStorage.getItem(MANAGERS_KEY);
+        if (raw == null) return;
+        const saved = JSON.parse(raw);
+        if (!Array.isArray(saved) || !saved.length) return;
+
+        const loaded = [];
+        saved.forEach((m, index) => {
+          if (!m || typeof m !== 'object' || !String(m.name || '').trim()) return;
+          loaded.push({
+            id: m.id || ('m_' + index + '_' + Date.now()),
+            name: String(m.name).trim(),
+            direction: m.direction ? String(m.direction) : null
+          });
+        });
+        if (!loaded.length) return;
+
+        mockAllManagers.length = 0;                 // массив const — меняем содержимое
+        loaded.forEach(m => mockAllManagers.push(m));
+        syncMockManagerFromList();
+        console.log("Менеджеры восстановлены из localStorage:", mockAllManagers.length);
+      } catch (e) {
+        console.error("Не удалось прочитать менеджеров из localStorage:", e);
+      }
+    }
+
+    // Полная перезапись менеджеров (назначение/освобождение должности).
+    function saveManagersToStorage() {
+      const dict = translations[currentLang];
+      try {
+        localStorage.setItem(MANAGERS_KEY, JSON.stringify(mockAllManagers));
+        return true;
+      } catch (e) {
+        console.error("Не удалось сохранить менеджеров в localStorage:", e);
         alert(dict.storageFull || "Не хватает места в localStorage");
         return false;
       }
@@ -5125,6 +5235,13 @@
       if (currentRole === 'admin' && currentSection === 'users') {
         box.innerHTML = renderAdminUsers();
         bindAdminUsers();
+        return;
+      }
+
+      // Панель администратора: назначение менеджеров (Промт №27)
+      if (currentRole === 'admin' && currentSection === 'managers') {
+        box.innerHTML = renderAdminManagers();
+        bindAdminManagers();
         return;
       }
 
@@ -5935,9 +6052,12 @@
       direction: 'programming'           // менеджер направления «Программирование»
     };
 
-    // Все менеджеры (Промт №24): пока один — тот же mockManager.
-    // Админ видит всех; название направления переводится по ключу (dirProgramming).
-    const mockAllManagers = [mockManager];
+    // Все менеджеры (Промт №24): админ видит всех, назначение — Промт №27.
+    // direction — ключ направления (programming/design) или null («Не назначен»).
+    const mockAllManagers = [
+      mockManager,
+      { id: 'm2', name: 'Sidorova A.A.', direction: null }
+    ];
 
     const mockAllTeachers = [
       { id: 't1', name: mockTeacher.name, subject: 'math' },
@@ -6493,6 +6613,243 @@
         if (row) {
           alert(dict.adminUserCardDev.replace('{0}', row.dataset.adminUser || ''));
         }
+      };
+    }
+
+    /* ============================================================
+       ПАНЕЛЬ АДМИНИСТРАТОРА: НАЗНАЧЕНИЕ МЕНЕДЖЕРОВ (Промт №27)
+       ============================================================ */
+    let adminManagerDirection = null;
+
+    // Строка таблицы (десктоп): направление, текущий менеджер, кнопка.
+    function adminManagerRowHTML(direction) {
+      const dict = translations[currentLang];
+      const manager = adminManagerForDirection(direction);
+      return `
+        <tr data-admin-manager-direction="${escapeHtml(direction)}">
+          <td>
+            <span class="admin-direction-name">
+              <i class="fas fa-compass-drafting"></i>${escapeHtml(adminDirectionLabel(direction))}
+            </span>
+          </td>
+          <td>${manager
+            ? `<span class="admin-manager-name"><i class="fas fa-user-tie"></i>${escapeHtml(manager.name)}</span>`
+            : `<span class="admin-manager-empty">${escapeHtml(dict.adminManagerNotAssigned)}</span>`}</td>
+          <td>
+            <button type="button" class="btn-ghost admin-manager-assign"
+                    data-admin-manager-assign="${escapeHtml(direction)}">
+              <i class="fas fa-user-pen"></i> ${escapeHtml(dict.adminManagerAssign)}
+            </button>
+          </td>
+        </tr>`;
+    }
+
+    // Карточка (мобильный): те же данные, что в строке таблицы.
+    function adminManagerCardHTML(direction) {
+      const dict = translations[currentLang];
+      const manager = adminManagerForDirection(direction);
+      return `
+        <article class="results-card admin-manager-card" data-admin-manager-direction="${escapeHtml(direction)}">
+          <div class="results-card-top">
+            <span class="results-card-name">${escapeHtml(adminDirectionLabel(direction))}</span>
+            <span class="admin-role-badge admin-role-manager">
+              <i class="fas fa-user-tie"></i>${escapeHtml(dict.role_manager)}
+            </span>
+          </div>
+          <div class="results-card-row">
+            <i class="fas fa-user-tie"></i>
+            ${manager
+              ? `<span class="admin-manager-name">${escapeHtml(manager.name)}</span>`
+              : `<span class="admin-manager-empty">${escapeHtml(dict.adminManagerNotAssigned)}</span>`}
+          </div>
+          <button type="button" class="btn-ghost admin-manager-assign"
+                  data-admin-manager-assign="${escapeHtml(direction)}">
+            <i class="fas fa-user-pen"></i> ${escapeHtml(dict.adminManagerAssign)}
+          </button>
+        </article>`;
+    }
+
+    // Раздел «Менеджеры»: направления из mockTeacherGroups (programming/design),
+    // таблица на десктопе и карточки на мобильном.
+    function renderAdminManagers() {
+      const dict = translations[currentLang];
+      const groups = Array.isArray(mockTeacherGroups) ? mockTeacherGroups : [];
+      const uniqueDirections = [];
+
+      groups.forEach(g => {
+        if (g && g.direction && !uniqueDirections.includes(g.direction)) {
+          uniqueDirections.push(g.direction);
+        }
+      });
+      // Если групп ещё нет — показываем базовые направления справочника.
+      if (!uniqueDirections.length) {
+        ADMIN_DIRECTION_KEYS.forEach(direction => uniqueDirections.push(direction));
+      }
+      console.log("Направления для управления:", uniqueDirections);
+
+      return `
+        <p class="admin-ref-subtitle">${escapeHtml(dict.adminManagersSubtitle)}</p>
+        <div class="results-table-wrap admin-managers-table-wrap">
+          <table class="results-table admin-managers-table">
+            <thead>
+              <tr>
+                <th>${escapeHtml(dict.adminGroupDirection)}</th>
+                <th>${escapeHtml(dict.adminManagerCurrent)}</th>
+                <th>${escapeHtml(dict.adminManagerActions)}</th>
+              </tr>
+            </thead>
+            <tbody>${uniqueDirections.map(adminManagerRowHTML).join('')}</tbody>
+          </table>
+        </div>
+        <div class="results-cards admin-manager-cards">
+          ${uniqueDirections.map(adminManagerCardHTML).join('')}
+        </div>`;
+    }
+
+    // Закрывает модалку назначения и снимает Esc-обработчик.
+    function closeAdminManagerModal() {
+      const overlay = document.getElementById('adminManagerOverlay');
+      if (overlay) overlay.remove();
+      adminManagerDirection = null;
+      document.removeEventListener('keydown', adminManagerModalKeydown);
+    }
+
+    function adminManagerModalKeydown(e) {
+      if (e.key === 'Escape') closeAdminManagerModal();
+    }
+
+    // Модалка «Назначить менеджера на …»: все менеджеры + освобождение должности.
+    function openAdminManagerModal(direction) {
+      const dict = translations[currentLang];
+      adminManagerDirection = direction;
+      const directionName = adminDirectionLabel(direction);
+      const current = adminManagerForDirection(direction);
+      const managers = Array.isArray(mockAllManagers) ? mockAllManagers : [];
+      console.log("Открыто окно назначения для:", directionName);
+
+      const old = document.getElementById('adminManagerOverlay');
+      if (old) old.remove();
+      document.removeEventListener('keydown', adminManagerModalKeydown);
+
+      const managerOptions = managers.map(m => {
+        const extra = m.direction ? ' — ' + adminDirectionLabel(m.direction) : '';
+        const selected = current && String(current.id) === String(m.id) ? ' selected' : '';
+        return `<option value="${escapeHtml(String(m.id))}"${selected}>${escapeHtml(m.name + extra)}</option>`;
+      }).join('');
+
+      const placeholder = current
+        ? ''
+        : `<option value="" disabled selected>${escapeHtml(dict.adminManagerSelect)}</option>`;
+
+      const overlay = document.createElement('div');
+      overlay.className = 'admin-modal-overlay';
+      overlay.id = 'adminManagerOverlay';
+      overlay.innerHTML = `
+        <div class="admin-modal admin-manager-modal" role="dialog" aria-modal="true" aria-labelledby="adminManagerModalTitle">
+          <div class="admin-modal-head">
+            <h3 class="admin-modal-title" id="adminManagerModalTitle">
+              ${escapeHtml(dict.adminManagerModalTitle.replace('{0}', directionName))}
+            </h3>
+            <button type="button" class="admin-modal-close" id="adminManagerClose"
+                    aria-label="${escapeHtml(dict.close)}" title="${escapeHtml(dict.close)}">✕</button>
+          </div>
+          <form class="admin-modal-form" id="adminManagerForm" novalidate>
+            <div class="form-grid">
+              <label class="field field-full">
+                <span class="field-label">${escapeHtml(dict.role_manager)}</span>
+                <select class="field-input" id="adminManagerSelect">
+                  ${placeholder}
+                  ${managerOptions}
+                  <option value="__free__">${escapeHtml(dict.adminManagerFree)}</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-ghost" id="adminManagerCancel">${escapeHtml(dict.cancel)}</button>
+              <button type="submit" class="btn-primary" id="adminManagerSave">
+                <i class="fas fa-floppy-disk"></i> ${escapeHtml(dict.adminSave)}
+              </button>
+            </div>
+          </form>
+        </div>`;
+
+      document.body.appendChild(overlay);
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay ||
+            (e.target.closest && (e.target.closest('#adminManagerClose') || e.target.closest('#adminManagerCancel')))) {
+          closeAdminManagerModal();
+        }
+      });
+      document.getElementById('adminManagerForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        saveAdminManager();
+      });
+      document.addEventListener('keydown', adminManagerModalKeydown);
+
+      const select = document.getElementById('adminManagerSelect');
+      if (select) select.focus();
+    }
+
+    // Сохранение назначения: один менеджер ведёт только одно направление.
+    function saveAdminManager() {
+      const dict = translations[currentLang];
+      const select = document.getElementById('adminManagerSelect');
+      const direction = adminManagerDirection;
+      if (!select || !direction) return;
+
+      const value = select.value;
+      if (!value) { alert(dict.adminErrManager); select.focus(); return; }
+      const managers = Array.isArray(mockAllManagers) ? mockAllManagers : [];
+
+      if (value === '__free__') {
+        let freed = null;
+        managers.forEach(m => {
+          if (m && m.direction === direction) {
+            m.direction = null;
+            freed = m;
+          }
+        });
+        if (freed) {
+          console.log("Должность освобождена:", adminDirectionLabel(direction), "—", freed.name);
+        } else {
+          console.log("Должность уже свободна:", adminDirectionLabel(direction));
+        }
+      } else {
+        const manager = managers.find(m => m && String(m.id) === String(value));
+        if (!manager) { closeAdminManagerModal(); return; }
+
+        // Менеджер уходит с прежнего направления — там он больше не числится.
+        if (manager.direction && manager.direction !== direction) {
+          console.log("Менеджер", manager.name, "переведен с направления", adminDirectionLabel(manager.direction));
+        }
+        // На направлении остаётся один менеджер: прежнего снимаем.
+        managers.forEach(m => {
+          if (m && m !== manager && m.direction === direction) m.direction = null;
+        });
+        manager.direction = direction;
+        console.log("Менеджер", manager.name, "назначен на", adminDirectionLabel(direction));
+      }
+
+      syncMockManagerFromList();
+      saveManagersToStorage();
+      console.log("Обновленный список менеджеров:", mockAllManagers);
+
+      closeAdminManagerModal();
+      if (currentRole === 'admin' && currentSection === 'managers') {
+        navigate('managers', false);                // таблица/карточки перерисовываются
+      }
+    }
+
+    // Обработчики раздела «Менеджеры»: кнопки «Назначить / Изменить».
+    function bindAdminManagers() {
+      const box = document.getElementById('sectionContent');
+      if (!box) return;
+      box.onclick = (e) => {
+        const btn = e.target.closest('[data-admin-manager-assign]');
+        if (!btn) return;
+        e.preventDefault();
+        openAdminManagerModal(btn.dataset.adminManagerAssign);
       };
     }
 
@@ -10201,6 +10558,8 @@
       loadGroupsFromStorage();
       // Восстанавливаем пользователей из uniteststudents / unitestteachers (Промт №26)
       loadAdminUsersFromStorage();
+      // Восстанавливаем назначения менеджеров из unitest_managers (Промт №27)
+      loadManagersFromStorage();
       // Демо-тесты (формулы и схемы) — только при открытии через file://
       ensureFormulaDemoTest();
       ensureDiagramDemoTest();

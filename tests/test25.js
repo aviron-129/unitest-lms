@@ -51,11 +51,11 @@ w.selectRole("admin");
 w.navigate("users");
 T("раздел «Пользователи» отрисован", !!D.getElementById("sectionContent"));
 T("есть таблица", !!D.querySelector("#sectionContent table.admin-users-table"));
-T("allUsers = 7 студентов + 3 преподавателя + 1 менеджер", w.eval("allUsers.length") === 11, w.eval("allUsers.length"));
-T("в таблице 11 строк", rows().length === 11, rows().length);
-T("в мобильных карточках 11 карточек", cards().length === 11, cards().length);
-T("лог общего количества", hasLog("Всего пользователей в системе: 11"), logs.log.join(" | "));
-T("лог фильтра", hasLog("Отфильтровано пользователей: 11"), logs.log.join(" | "));
+T("allUsers = 7 студентов + 3 преподавателя + 2 менеджера", w.eval("allUsers.length") === 12, w.eval("allUsers.length"));
+T("в таблице 12 строк", rows().length === 12, rows().length);
+T("в мобильных карточках 12 карточек", cards().length === 12, cards().length);
+T("лог общего количества", hasLog("Всего пользователей в системе: 12"), logs.log.join(" | "));
+T("лог фильтра", hasLog("Отфильтровано пользователей: 12"), logs.log.join(" | "));
 T("студент Tosheva есть в списке", sectionText().includes("Tosheva Malika"));
 T("преподаватель Sardor Rahimov есть", sectionText().includes("Sardor Rahimov"));
 T("менеджер Dilnoza Yusupova есть", sectionText().includes("Dilnoza Yusupova"));
@@ -67,7 +67,7 @@ console.log("\n[2] Колонки, бейджи и «доп. информаци�
 const headers = [...D.querySelectorAll("#sectionContent thead th")].map(txt);
 T("4 колонки: ФИО/Роль/Доп. информация/Статус",
   headers.join("|") === "ФИО|Роль|Доп. информация|Статус", headers.join("|"));
-T("у каждой строки бейдж роли", badges().length === 11, badges().length);
+T("у каждой строки бейдж роли", badges().length === 12, badges().length);
 T("класс студента (оранжевый)", !!D.querySelector("#adminUsersRows .admin-role-student"));
 T("класс преподавателя (зелёный)", !!D.querySelector("#adminUsersRows .admin-role-teacher"));
 T("класс менеджера (синий)", !!D.querySelector("#adminUsersRows .admin-role-manager"));
@@ -78,7 +78,7 @@ T("преподавателю показан предмет «Математик
 T("преподавателю показан предмет «Русский язык»", sectionText().includes("Русский язык"));
 T("менеджеру показано направление «Программирование»", sectionText().includes("Программирование"));
 T("статус «Активен» у всех строк",
-  D.querySelectorAll("#adminUsersRows .admin-user-status").length === 11,
+  D.querySelectorAll("#adminUsersRows .admin-user-status").length === 12,
   D.querySelectorAll("#adminUsersRows .admin-user-status").length);
 T("нет сырых ключей направлений/предметов",
   !/subj_|dirProgramming|programming|design/.test(sectionText()), sectionText().slice(0, 300));
@@ -110,7 +110,7 @@ T("только роль student → 7", rows().length === 7, rows().length);
 T("все строки — студенты", rows().every(r => r.dataset.userRole === "student"));
 
 setFilter("", "");
-T("фильтры сброшены → 11", rows().length === 11, rows().length);
+T("фильтры сброшены → 12", rows().length === 12, rows().length);
 
 console.log("\n[4] Пустой результат");
 setFilter("zzzz", "");
@@ -189,7 +189,7 @@ w.eval(`mockAllStudents.length = 0; JSON.parse(${JSON.stringify(saved.students)}
   mockAllTeachers.length = 0; JSON.parse(${JSON.stringify(saved.teachers)}).forEach(x => mockAllTeachers.push(x));
   mockAllManagers.length = 0; JSON.parse(${JSON.stringify(saved.managers)}).forEach(x => mockAllManagers.push(x))`);
 w.navigate("users");
-T("данные восстановлены (11)", rows().length === 11, rows().length);
+T("данные восстановлены (12)", rows().length === 12, rows().length);
 
 w.selectRole("manager");
 w.navigate("students");

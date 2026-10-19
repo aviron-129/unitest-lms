@@ -240,8 +240,8 @@ T("группы восстановлены (5)", groupCards().length === 5, grou
 w.navigate("dashboard");
 T("регресс: дашборд админа — 4 карточки", D.querySelectorAll("#sectionContent .stat-card").length === 4);
 w.navigate("users");
-T("регресс: пользователи — 11 строк",
-  D.querySelectorAll("#adminUsersRows tr[data-admin-user]").length === 11,
+T("регресс: пользователи - 12 строк",
+  D.querySelectorAll("#adminUsersRows tr[data-admin-user]").length === 12,
   D.querySelectorAll("#adminUsersRows tr[data-admin-user]").length);
 
 w.selectRole("manager");
