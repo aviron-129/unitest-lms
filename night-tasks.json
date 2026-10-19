@@ -652,7 +652,55 @@
       "notes": "Преподаватель видит только апелляции по своим тестам. Принимает/отклоняет с комментарием. Статусы pending/approved/rejected, уведомление студенту.",
       "verify": {
         "role": "teacher",
-        "section": "results"
+        "section": "appeals",
+        "scenarios": [
+          {
+            "name": "desktop-light-ru",
+            "role": "teacher",
+            "section": "appeals",
+            "width": 1440,
+            "height": 900,
+            "lang": "ru",
+            "theme": "light",
+            "expect": {
+              "selector": ".appeal-card",
+              "count": 1,
+              "minTextLength": 80,
+              "hasText": "Одобрить"
+            }
+          },
+          {
+            "name": "desktop-dark-en",
+            "role": "teacher",
+            "section": "appeals",
+            "width": 1440,
+            "height": 900,
+            "lang": "en",
+            "theme": "dark",
+            "expect": {
+              "selector": ".appeal-card",
+              "count": 1,
+              "minTextLength": 80,
+              "hasText": "Approve"
+            }
+          },
+          {
+            "name": "mobile-light-uz",
+            "role": "teacher",
+            "section": "appeals",
+            "width": 390,
+            "height": 844,
+            "lang": "uz",
+            "theme": "light",
+            "mobile": true,
+            "expect": {
+              "selector": ".appeal-card",
+              "count": 1,
+              "minTextLength": 80,
+              "hasText": "Ma'qullash"
+            }
+          }
+        ]
       }
     },
     {
