@@ -67,6 +67,32 @@ T("заголовок раздела переносится", cssHas(/#sectionHe
 T("шапка ужимается на 320px", /@media\s*\(max-width:\s*380px\)\s*\{[\s\S]*?\.burger-btn,[\s\S]*?\.icon-btn\s*\{[\s\S]*?width:\s*36px/.test(css));
 T("расписание на 1024px — 3 колонки", cssHas(/@media\s*\(max-width:\s*1199\.98px\)\s*\{[\s\S]*?\.schedule-grid\s*\{[^}]*repeat\(3,\s*minmax\(0,\s*1fr\)\)/));
 
+console.log("\n[6.1] Названия тестов менеджера не обрезаются на узком экране");
+T("CSS: карточка теста менеджера переносит название",
+  cssHas(/\.group-card\.manager-test-card \.group-name\s*\{[^}]*white-space:\s*normal[^}]*overflow:\s*visible[^}]*text-overflow:\s*clip/));
+const longManagerTitle = "Формулы: матрицы, химия, производные и дифференциальные уравнения";
+w.eval(`mockTests.push({
+  id: 'mobile_long_title',
+  title: ${JSON.stringify(longManagerTitle)},
+  author: mockTeacher.name,
+  teacher: mockTeacher.name,
+  targetGroup: ['101-PR'],
+  targetDirection: 'programming',
+  questionsCount: 5,
+  status: 'active'
+})`);
+w.selectRole("manager");
+w.navigate("tests");
+const longManagerCard = [...D.querySelectorAll("#managerTestsGrid .manager-test-card")]
+  .find(card => (card.querySelector(".group-name")?.getAttribute("title") || "") === longManagerTitle);
+T("карточка с длинным названием найдена", !!longManagerCard);
+T("полное название в title (подсказка + доступность)", !!longManagerCard &&
+  longManagerCard.querySelector(".group-name").getAttribute("title") === longManagerTitle);
+const managerTitleText = longManagerCard
+  ? longManagerCard.querySelector(".group-name").textContent.replace(/\s+/g, " ").trim() : "";
+T("текст названия не обрезан в DOM", !!longManagerCard && managerTitleText === longManagerTitle,
+  managerTitleText);
+
 console.log("\n[7] JS-самопроверка переполнения");
 T("функция checkOverflow существует", typeof w.checkOverflow === "function");
 T("возвращает boolean без переполнения", w.checkOverflow() === false);

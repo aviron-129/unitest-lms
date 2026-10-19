@@ -2245,6 +2245,15 @@
     }
     .manager-card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
     .manager-card-actions .btn-view-students { margin-top: 0; flex: 1 1 140px; }
+    /* Заголовок теста в карточке менеджера переносим, а не обрезаем многоточием:
+       на 320–768px «Формулы: матри…» не даёт отличить тесты друг от друга.
+       Селектор специфичнее общего правила обрезки .group-card .group-name. */
+    .group-card.manager-test-card .group-name {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+    }
+    .group-card.manager-test-card .group-card-head { align-items: flex-start; }
     .manager-table tbody tr { cursor: pointer; }
     .manager-table td .course-badge { font-size: 0.64rem; }
 
@@ -11608,7 +11617,7 @@
       return `
         <div class="group-card manager-test-card">
           <div class="group-card-head">
-            <span class="group-name">${escapeHtml(testTitle(t))}</span>
+            <span class="group-name" title="${escapeHtml(testTitle(t))}">${escapeHtml(testTitle(t))}</span>
             <span class="course-badge">${escapeHtml(status)}</span>
           </div>
           <div class="group-meta">
