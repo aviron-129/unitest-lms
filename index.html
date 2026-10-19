@@ -45,12 +45,14 @@
       --text: #e5e7eb;
       --text-muted: #9ca3af;
       --card-bg: rgba(23, 27, 58, 0.55);
-      --card-border: rgba(255, 255, 255, 0.08);
+      /* Промт №38: границы карточек/полей в тёмной теме чуть заметнее,
+         иначе на тёмном градиенте они почти исчезают. Светлую тему не трогаем. */
+      --card-border: rgba(255, 255, 255, 0.12);
       --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.40);
       --header-bg: rgba(15, 18, 45, 0.55);
       --hover-bg: rgba(139, 92, 246, 0.10);
       --surface-solid: #161a36;                  /* непрозрачный фон попапов (уведомления) */
-      --surface-border: rgba(255, 255, 255, 0.12);
+      --surface-border: rgba(255, 255, 255, 0.16);
       --overlay-bg: #0f132e;
       color-scheme: dark;
     }
@@ -291,7 +293,7 @@
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      background: var(--role);
+      background: var(--role-solid, var(--role));
       color: #ffffff;
       font-size: 1.7rem;
       box-shadow: 0 6px 18px var(--role-soft);
@@ -310,10 +312,17 @@
     }
 
     /* Индивидуальные цвета ролей */
-    .role-admin    { --role: #8b5cf6; --role-soft: rgba(139, 92, 246, 0.35); }
-    .role-manager  { --role: #3b82f6; --role-soft: rgba(59, 130, 246, 0.35); }
-    .role-teacher  { --role: #10b981; --role-soft: rgba(16, 185, 129, 0.35); }
-    .role-student  { --role: #f59e0b; --role-soft: rgba(245, 158, 11, 0.35); }
+    .role-admin    { --role: #8b5cf6; --role-soft: rgba(139, 92, 246, 0.35); --role-solid: #8b5cf6; }
+    .role-manager  { --role: #3b82f6; --role-soft: rgba(59, 130, 246, 0.35); --role-solid: #3b82f6; }
+    .role-teacher  { --role: #10b981; --role-soft: rgba(16, 185, 129, 0.35); --role-solid: #10b981; }
+    .role-student  { --role: #f59e0b; --role-soft: rgba(245, 158, 11, 0.35); --role-solid: #f59e0b; }
+    /* Промт №38: в тёмной теме заливки с БЕЛЫМ текстом (активный пункт меню,
+       аватар, кнопки) берут более глубокий оттенок роли — белый текст на нём
+       проходит по контрасту. Цвет иконок/рамок (--role) остаётся прежним. */
+    [data-theme="dark"] .role-admin   { --role-solid: #6d28d9; }
+    [data-theme="dark"] .role-manager { --role-solid: #1d4ed8; }
+    [data-theme="dark"] .role-teacher { --role-solid: #047857; }
+    [data-theme="dark"] .role-student { --role-solid: #b45309; }
 
     /* ============================================================
        6. КАРКАС ПАНЕЛИ (Sidebar + Header + Main)
@@ -388,7 +397,7 @@
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      background: var(--role, var(--accent));
+      background: var(--role-solid, var(--role, var(--accent)));
       color: #ffffff;
       font-weight: 700;
       font-size: 0.95rem;
@@ -443,7 +452,7 @@
     .menu-item:active { transform: scale(0.98); }
     /* Активный пункт — акцентный цвет роли */
     .menu-item.active {
-      background: var(--role, var(--accent));
+      background: var(--role-solid, var(--role, var(--accent)));
       color: #ffffff;
       font-weight: 600;
       box-shadow: 0 4px 12px var(--role-soft, rgba(99, 102, 241, 0.35));
@@ -647,7 +656,7 @@
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      background: var(--role, var(--accent));
+      background: var(--role-solid, var(--role, var(--accent)));
       color: #ffffff;
       font-size: 1.6rem;
       font-weight: 700;
@@ -856,7 +865,7 @@
       align-items: center;
       justify-content: center;
       border-radius: 14px;
-      background: var(--role, var(--accent));
+      background: var(--role-solid, var(--role, var(--accent)));
       color: #ffffff;
       font-size: 1.2rem;
       box-shadow: 0 6px 16px var(--role-soft, rgba(99, 102, 241, 0.35));
@@ -932,7 +941,7 @@
       font-size: 0.9rem;
       font-weight: 600;
       color: #ffffff;
-      background: var(--role, var(--accent));
+      background: var(--role-solid, var(--role, var(--accent)));
       cursor: pointer;
       transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
     }
@@ -2148,7 +2157,7 @@
       font-weight: 800;
       letter-spacing: 0.03em;
       color: #ffffff;
-      background: var(--role, var(--accent));
+      background: var(--role-solid, var(--role, var(--accent)));
       white-space: nowrap;
     }
     .group-meta { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 0.82rem; color: var(--text-muted); min-width: 0; }
@@ -2816,6 +2825,19 @@
     }
     .field-input[readonly] { background: var(--hover-bg); color: var(--text-muted); cursor: default; }
 
+    /* Промт №38: страховочный слой для ЛЮБЫХ input/textarea/select без класса.
+       :where() даёт нулевую специфичность — все существующие классы (.field-input,
+       .chat-input, .pt-search, .mx-field input и т.д.) остаются главнее, а «сырые»
+       поля больше не получают белый фон/чёрный текст в тёмной теме. */
+    :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]), textarea, select) {
+      color: var(--text);
+      background-color: var(--surface-solid);
+      border: 1px solid var(--surface-border);
+    }
+    :where(input, textarea)::placeholder { color: var(--text-muted); opacity: 0.7; }
+    /* Нативный список <option> в тёмной теме — иначе браузер рисует белые пункты */
+    [data-theme="dark"] select option { background-color: var(--surface-solid); color: var(--text); }
+
     /* Чекбоксы групп */
     .groups-checks { display: flex; flex-wrap: wrap; gap: 10px; }
     .check {
@@ -2856,7 +2878,7 @@
     .btn-primary {
       border: none;
       color: #ffffff;
-      background: var(--role, var(--accent));
+      background: var(--role-solid, var(--role, var(--accent)));
     }
     .btn-primary:hover { filter: brightness(1.07); box-shadow: 0 8px 20px var(--role-soft, rgba(99, 102, 241, 0.4)); }
     .btn-primary:active { transform: scale(0.98); }
@@ -2866,6 +2888,17 @@
       border: 1.5px solid var(--surface-border);
     }
     .btn-ghost:hover { border-color: var(--role, var(--accent)); color: var(--role, var(--accent)); }
+    /* Промт №38: второстепенная кнопка в тёмной теме получает лёгкую заливку,
+       чтобы её граница и текст не «растворялись» на тёмном фоне. */
+    [data-theme="dark"] .btn-ghost {
+      background: rgba(255, 255, 255, 0.045);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+    [data-theme="dark"] .btn-ghost:hover {
+      background: var(--hover-bg);
+      border-color: var(--role, var(--accent));
+      color: var(--role, var(--accent));
+    }
 
     /* ============================================================
        6.10 СОЗДАНИЕ ТЕСТА. ШАГ 2: КОНСТРУКТОР ВОПРОСОВ (Промт №13)
@@ -3661,7 +3694,7 @@
       justify-content: center;
       border-radius: 11px;
       color: #ffffff;
-      background: var(--role, var(--accent));
+      background: var(--role-solid, var(--role, var(--accent)));
       font-size: 0.72rem;
       font-weight: 800;
     }
@@ -4056,6 +4089,29 @@
       .admin-group-card { padding: 14px; }
       .app-header { padding-top: 10px; padding-bottom: 10px; }
     }
+
+    /* ============================================================
+       ПРОМТ №38: СКРОЛЛБАРЫ В ТЁМНОЙ ТЕМЕ
+       Нативный светлый скроллбар выбивался из тёмного интерфейса.
+       Правила только для [data-theme="dark"] — светлая тема не меняется.
+       ============================================================ */
+    [data-theme="dark"] {
+      scrollbar-color: rgba(148, 163, 184, 0.45) rgba(255, 255, 255, 0.04);
+      scrollbar-width: thin;
+    }
+    [data-theme="dark"] ::-webkit-scrollbar { width: 10px; height: 10px; }
+    [data-theme="dark"] ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.04); }
+    [data-theme="dark"] ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.42);
+      border: 2px solid transparent;
+      border-radius: 999px;
+      background-clip: content-box;
+    }
+    [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.62);
+      background-clip: content-box;
+    }
+    [data-theme="dark"] ::-webkit-scrollbar-corner { background: transparent; }
   </style>
   <!-- KaTeX: рендер математических формул ($...$ / $$...$$) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
@@ -6626,7 +6682,8 @@
       currentTheme = currentTheme === 'light' ? 'dark' : 'light';
       localStorage.setItem('unitest_theme', currentTheme);   // сохраняем выбор
       applyTheme();
-      console.log("Тема переключена на:", currentTheme);
+      // Промт №38: понятный лог смены темы (проверка в консоли браузера)
+      console.log("Тема изменена на:", currentTheme, "Все компоненты перекрашены");
     }
 
     function applyTheme() {
@@ -6749,6 +6806,34 @@
           console.warn("Не переведен текст:", text.slice(0, 120));
         }
       }
+    }
+
+    // Промт №38: аудит тёмной темы.
+    // Ищет инлайновые «жёсткие» светлые цвета (background:#fff, color:#000,
+    // white/black и rgba(255,255,255,…)) — в тёмной теме такие элементы дают
+    // белые блоки или невидимый текст. Возвращает найденные узлы (для тестов).
+    const DARK_HARD_COLOR_RE = /(?:^|;)\s*(?:background|background-color|color|border(?:-[a-z]+)?(?:-color)?)\s*:\s*(?:#fff(?:fff)?|white|#000(?:000)?|black|rgba?\(\s*255\s*,\s*255\s*,\s*255[^)]*\))\s*(?:!important)?\s*(?:;|$)/i;
+
+    function auditDarkTheme(root) {
+      // Проверяем только тёмную тему: в светлой белый фон — норма.
+      if (document.documentElement.getAttribute('data-theme') !== 'dark') return [];
+      const scope = root && typeof root.querySelectorAll === 'function'
+        ? root
+        : document.getElementById('sectionContent');
+      if (!scope) return [];
+
+      const found = [];
+      scope.querySelectorAll('[style]').forEach(el => {
+        const styleAttr = el.getAttribute('style') || '';
+        if (DARK_HARD_COLOR_RE.test(styleAttr)) {
+          found.push(el);
+          console.warn("Найден жестко заданный цвет:", el);
+        }
+      });
+      if (found.length) {
+        console.warn("Аудит тёмной темы: элементов с жёсткими цветами —", found.length);
+      }
+      return found;
     }
 
     // Переводит названия пунктов меню (они генерируются динамически)
@@ -6914,6 +6999,8 @@
         if (mockStudent && mockStudent.group) {
           console.log("Профиль студента отрисован. Группа:", mockStudent.group);
         }
+        // Промт №38: аудит тёмной темы после отрисовки профиля
+        auditDarkTheme(box);
         return;
       }
 
@@ -7026,6 +7113,8 @@
       if (currentRole === 'admin' && currentSection === 'dashboard') {
         box.innerHTML = renderAdminDashboard();
         auditTranslations(box);
+        // Промт №38: аудит тёмной темы после отрисовки дашборда
+        auditDarkTheme(box);
         return;
       }
 
@@ -12280,6 +12369,9 @@
             { left: '$$', right: '$$', display: true },
             { left: '$', right: '$', display: false }
           ],
+          // Промт №38: битая формула в тёмной теме — светло-красным,
+          // иначе стандартный тёмно-красный KaTeX почти не читается.
+          errorColor: currentTheme === 'dark' ? '#f87171' : '#cc0000',
           throwOnError: false   // одна битая формула → красная подсказка KaTeX,
                                 // но НЕ срывает рендер остальных формул на экране
         });
