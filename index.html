@@ -162,7 +162,9 @@
     }
     .lang-btn:hover { color: var(--text); }
     .lang-btn.active {
-      background: var(--accent);
+      /* Аудит q5: на --accent (#6366f1) белый текст давал 4.47:1 — чуть ниже AA.
+         #5b5ee8 — тот же индиго, но 4.98:1. */
+      background: #5b5ee8;
       color: #ffffff;
       box-shadow: 0 2px 8px rgba(99, 102, 241, 0.40);
     }
@@ -323,6 +325,13 @@
     [data-theme="dark"] .role-manager { --role-solid: #1d4ed8; }
     [data-theme="dark"] .role-teacher { --role-solid: #047857; }
     [data-theme="dark"] .role-student { --role-solid: #b45309; }
+    /* Аудит q5: насыщенный --role как ЦВЕТ ТЕКСТА на мягкой подложке --role-soft
+       в тёмной теме давал 2.5–4.4:1 (хуже AA). Для текста на подложках берём
+       светлый оттенок роли; в светлой теме остаётся прежний --role (fallback). */
+    [data-theme="dark"] .role-admin   { --role-text: #c4b5fd; }
+    [data-theme="dark"] .role-manager { --role-text: #93c5fd; }
+    [data-theme="dark"] .role-teacher { --role-text: #6ee7b7; }
+    [data-theme="dark"] .role-student { --role-text: #fbbf24; }
 
     /* ============================================================
        6. КАРКАС ПАНЕЛИ (Sidebar + Header + Main)
@@ -413,7 +422,7 @@
     }
     .sidebar-user-role {
       font-size: 0.78rem;
-      color: var(--role, var(--accent));
+      color: var(--role-text, var(--role, var(--accent)));
       font-weight: 600;
     }
 
@@ -465,7 +474,8 @@
       height: 20px;
       padding: 0 6px;
       border-radius: 999px;
-      background: #ef4444;
+      /* Аудит q5: #ef4444 с белым текстом давал 3.76:1; #dc2626 — 4.84:1 (AA). */
+      background: #dc2626;
       color: #ffffff;
       font-size: 0.72rem;
       font-weight: 700;
@@ -834,6 +844,8 @@
       background: rgba(99, 102, 241, 0.12);
       color: var(--accent);
     }
+    /* Аудит q5: в тёмной теме #6366f1 на 12%-подложке — 3.48:1, берём светлый индиго. */
+    [data-theme="dark"] .badges-count { color: #c7d2fe; }
     .badges-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1605,6 +1617,11 @@
     .type-lecture  .schedule-type { background: rgba(59, 130, 246, 0.14); color: #3b82f6; }
     .type-practice .schedule-type { background: rgba(16, 185, 129, 0.14); color: #10b981; }
     .type-lab      .schedule-type { background: rgba(245, 158, 11, 0.16); color: #d97706; }
+    /* Аудит q5: на тёмной карточке эти насыщенные цвета давали 4.0–4.2:1.
+       Светлые оттенки тех же типов занятий дают ≥ 7:1. */
+    [data-theme="dark"] .type-lecture  .schedule-type { color: #93c5fd; }
+    [data-theme="dark"] .type-practice .schedule-type { color: #6ee7b7; }
+    [data-theme="dark"] .type-lab      .schedule-type { color: #fbbf24; }
 
     /* Планшет: 3 колонки в ряд (до 1200px — на 1024 с sidebar 6 колонок не влезают) */
     @media (max-width: 1199.98px) {
@@ -2379,7 +2396,8 @@
       padding: 4px 10px;
       border-radius: 999px;
       background: var(--role-soft, rgba(99, 102, 241, 0.16));
-      color: var(--role, var(--accent));
+      /* На мягкой подложке читаемее светлый --role-text (аудит q5). */
+      color: var(--role-text, var(--role, var(--accent)));
       font-size: 0.76rem;
       font-weight: 800;
       white-space: nowrap;

@@ -21,6 +21,21 @@ function hexLum(hex) {
   return 0.2126 * f(rgb[0]) + 0.7152 * f(rgb[1]) + 0.0722 * f(rgb[2]);
 }
 function contrastWithWhite(hex) { return 1.05 / (hexLum(hex) + 0.05); }
+function hexRgb(hex) {
+  const h = hex.replace("#", "");
+  const full = h.length === 3 ? h.split("").map(x => x + x).join("") : h;
+  return [0, 2, 4].map(i => parseInt(full.slice(i, i + 2), 16));
+}
+/* Полупрозрачный цвет поверх тёмной карточки → непрозрачный hex. */
+function mixHex(fgHex, alpha, bgHex) {
+  const f = hexRgb(fgHex), b = hexRgb(bgHex);
+  const c = f.map((v, i) => Math.round(v * alpha + b[i] * (1 - alpha)));
+  return "#" + c.map(v => v.toString(16).padStart(2, "0")).join("");
+}
+function contrastHex(a, b) {
+  const l1 = hexLum(a), l2 = hexLum(b);
+  return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+}
 
 console.log("\n[1] Переменные тем");
 T("тёмная тема меняет основной текст", cssHas(/\[data-theme="dark"\]\s*\{[^}]*--text:\s*#e5e7eb/i));
@@ -126,7 +141,45 @@ const themeLog = app.logs.slice(before).find(l => l.includes("Тема изме�
 T("лог «Тема изменена на: … Все компоненты перекрашены»", !!themeLog && themeLog.includes("Все компоненты перекрашены"), themeLog || "");
 app.eval("currentTheme = 'light'; applyTheme();");
 
-console.log("\n[11] Консоль");
+console.log("\n[11] Контраст текстовых бейджей в тёмной теме (аудит q5)");
+const DARK_CARD = "#171b3a";                       // типичный непрозрачный фон карточки
+const ROLE_SOFT = { admin: ["#8b5cf6", 0.35], manager: ["#3b82f6", 0.35], teacher: ["#10b981", 0.35], student: ["#f59e0b", 0.35] };
+for (const role of ["admin", "manager", "teacher", "student"]) {
+  const m = css.match(new RegExp(`\\[data-theme="dark"\\]\\s*\\.role-${role}\\s*\\{[^}]*--role-text:\\s*(#[0-9a-f]{6})`, "i"));
+  const bg = mixHex(ROLE_SOFT[role][0], ROLE_SOFT[role][1], DARK_CARD);
+  const cr = m ? contrastHex(m[1], bg) : 0;
+  T(`--role-text (${role}) на --role-soft ≥ 4.5:1`, !!m && cr >= 4.5, m ? `${m[1]} / ${bg} = ${cr.toFixed(2)}` : "нет значения");
+}
+T(".sidebar-user-role использует --role-text", /\.sidebar-user-role\s*\{[^}]*color:\s*var\(--role-text/i.test(css));
+T(".admin-direction-count использует --role-text", /\.admin-direction-count\s*\{[^}]*color:\s*var\(--role-text/i.test(css));
+
+const badgeCount = css.match(/\[data-theme="dark"\]\s*\.badges-count\s*\{[^}]*color:\s*(#[0-9a-f]{6})/i);
+const badgeBg = mixHex("#6366f1", 0.12, DARK_CARD);
+T("счётчик бейджей в тёмной теме ≥ 4.5:1",
+  !!badgeCount && contrastHex(badgeCount[1], badgeBg) >= 4.5,
+  badgeCount ? `${badgeCount[1]} / ${badgeBg} = ${contrastHex(badgeCount[1], badgeBg).toFixed(2)}` : "нет значения");
+
+T("счётчик меню: белый на #dc2626 ≥ 4.5:1",
+  /\.menu-badge\s*\{[^}]*background:\s*#dc2626/i.test(css) && contrastHex("#ffffff", "#dc2626") >= 4.5,
+  contrastHex("#ffffff", "#dc2626").toFixed(2));
+
+const langActive = css.match(/\.lang-btn\.active\s*\{[^}]*background:\s*(#[0-9a-f]{6})/i);
+T("активный языковой чип: белый текст ≥ 4.5:1",
+  !!langActive && contrastHex("#ffffff", langActive[1]) >= 4.5,
+  langActive ? `${langActive[1]} = ${contrastHex("#ffffff", langActive[1]).toFixed(2)}` : "нет значения");
+
+for (const [cls, rgba, alpha] of [
+  ["type-lecture", "#3b82f6", 0.14],
+  ["type-practice", "#10b981", 0.14],
+  ["type-lab", "#f59e0b", 0.16]
+]) {
+  const m = css.match(new RegExp(`\\[data-theme="dark"\\]\\s*\\.${cls}\\s+\\.schedule-type\\s*\\{[^}]*color:\\s*(#[0-9a-f]{6})`, "i"));
+  const bg = mixHex(rgba, alpha, DARK_CARD);
+  const cr = m ? contrastHex(m[1], bg) : 0;
+  T(`бейдж ${cls} в тёмной теме ≥ 4.5:1`, !!m && cr >= 4.5, m ? `${m[1]} / ${bg} = ${cr.toFixed(2)}` : "нет значения");
+}
+
+console.log("\n[12] Консоль");
 T("console.error пуст", app.errors.length === 0, app.errors.slice(0, 3).join(" | "));
 
 console.log(`\n=== TEST38: пройдено ${pass}, провалено ${fail} ===`);
