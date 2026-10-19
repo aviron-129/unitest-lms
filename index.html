@@ -1875,6 +1875,71 @@
     .admin-empty { margin-top: 14px; font-size: 0.84rem; color: var(--text-muted); }
 
     /* ============================================================
+       6.8.1 ПАНЕЛЬ АДМИНИСТРАТОРА: СПИСОК ПОЛЬЗОВАТЕЛЕЙ (Промт №24)
+       ============================================================ */
+    /* Панель фильтров: на мобильном — друг под другом, на десктопе — в ряд */
+    .admin-users-toolbar { display: flex; flex-direction: column; gap: 10px; margin: 20px 0 16px; }
+    .admin-users-search { position: relative; display: flex; align-items: center; min-width: 0; }
+    .admin-users-search > i {
+      position: absolute;
+      left: 14px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .admin-users-search .field-input { padding-left: 38px; }
+    .admin-users-toolbar .btn-primary { white-space: nowrap; }
+    @media (min-width: 768px) {
+      .admin-users-toolbar { flex-direction: row; align-items: center; }
+      .admin-users-search { flex: 1 1 280px; max-width: 440px; }
+      .admin-users-toolbar #adminUserRole { width: 200px; flex: 0 0 auto; }
+      .admin-users-toolbar .btn-primary { margin-left: auto; }
+    }
+
+    /* Кликабельные строки таблицы */
+    .admin-users-table tbody tr { cursor: pointer; }
+    .admin-users-table td { vertical-align: middle; }
+    .admin-user-name { font-weight: 600; overflow-wrap: anywhere; }
+
+    /* Цветные бейджи ролей: студент — оранжевый, преподаватель — зелёный,
+       менеджер — синий (как в правилах проекта). */
+    .admin-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .admin-role-badge i { font-size: 0.68rem; }
+    .admin-role-student { background: rgba(245, 158, 11, 0.16); color: #b45309; }
+    .admin-role-teacher { background: rgba(16, 185, 129, 0.16); color: #047857; }
+    .admin-role-manager { background: rgba(59, 130, 246, 0.16); color: #1d4ed8; }
+    [data-theme="dark"] .admin-role-student { background: rgba(245, 158, 11, 0.22); color: #fbbf24; }
+    [data-theme="dark"] .admin-role-teacher { background: rgba(16, 185, 129, 0.22); color: #6ee7b7; }
+    [data-theme="dark"] .admin-role-manager { background: rgba(59, 130, 246, 0.24); color: #93c5fd; }
+
+    /* Статус «Активен» */
+    .admin-user-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #10b981;
+      white-space: nowrap;
+    }
+    .admin-user-status i { font-size: 0.5rem; }
+    [data-theme="dark"] .admin-user-status { color: #34d399; }
+
+    /* Мобильные карточки: те же данные, что в таблице */
+    .admin-user-card { min-width: 0; }
+    .admin-user-card .results-card-name { overflow-wrap: anywhere; }
+    .admin-user-card .results-card-row { overflow-wrap: anywhere; }
+
+    /* ============================================================
        6.9 СОЗДАНИЕ ТЕСТА. ШАГ 1: ОСНОВНЫЕ НАСТРОЙКИ (Промт №12)
        ============================================================ */
     /* Форма: на мобильном 1 колонка, на десктопе — max-width 800px по центру */
@@ -2981,6 +3046,7 @@
         subj_math:        "Математика",
         subj_programming: "Программирование",
         subj_english:     "Английский язык",
+        subj_russian:     "Русский язык",
         subj_physics:     "Физика",
         subj_history:     "История",
         // Экран прохождения теста (Промт №5)
@@ -3199,7 +3265,16 @@
         adminTimeYesterday:    "вчера",
         adminDirectionGroups:  "Групп: {0}",
         adminNoEvents:         "Пока нет событий",
-        adminNoDirections:     "Пока нет направлений"
+        adminNoDirections:     "Пока нет направлений",
+        // Панель администратора: список пользователей (Промт №24)
+        adminRole:             "Роль",
+        adminAllRoles:         "Все роли",
+        adminExtraInfo:        "Доп. информация",
+        adminStatus:           "Статус",
+        adminAddUser:          "Добавить пользователя",
+        adminAddUserDev:       "Форма добавления в разработке",
+        adminUserCardDev:      "Карточка пользователя в разработке: {0}",
+        adminUsersNotFound:    "Пользователи не найдены. Измените параметры поиска"
       },
       uz: {
         welcome:        "Xush kelibsiz",
@@ -3257,6 +3332,7 @@
         subj_math:        "Matematika",
         subj_programming: "Dasturlash",
         subj_english:     "Ingliz tili",
+        subj_russian:     "Rus tili",
         subj_physics:     "Fizika",
         subj_history:     "Tarix",
         // Экран прохождения теста (Промт №5)
@@ -3475,7 +3551,16 @@
         adminTimeYesterday:    "kecha",
         adminDirectionGroups:  "Guruhlar: {0}",
         adminNoEvents:         "Hozircha voqealar yo'q",
-        adminNoDirections:     "Hozircha yo'nalishlar yo'q"
+        adminNoDirections:     "Hozircha yo'nalishlar yo'q",
+        // Панель администратора: список пользователей (Промт №24)
+        adminRole:             "Rol",
+        adminAllRoles:         "Barcha rollar",
+        adminExtraInfo:        "Qo'shimcha ma'lumot",
+        adminStatus:           "Holat",
+        adminAddUser:          "Foydalanuvchi qo'shish",
+        adminAddUserDev:       "Foydalanuvchi qo'shish formasi ishlab chiqilmoqda",
+        adminUserCardDev:      "Foydalanuvchi kartasi ishlab chiqilmoqda: {0}",
+        adminUsersNotFound:    "Foydalanuvchilar topilmadi. Qidiruv parametrlarini o'zgartiring"
       },
       en: {
         welcome:        "Welcome",
@@ -3533,6 +3618,7 @@
         subj_math:        "Mathematics",
         subj_programming: "Programming",
         subj_english:     "English",
+        subj_russian:     "Russian",
         subj_physics:     "Physics",
         subj_history:     "History",
         // Экран прохождения теста (Промт №5)
@@ -3751,7 +3837,16 @@
         adminTimeYesterday:    "yesterday",
         adminDirectionGroups:  "Groups: {0}",
         adminNoEvents:         "No events yet",
-        adminNoDirections:     "No directions yet"
+        adminNoDirections:     "No directions yet",
+        // Панель администратора: список пользователей (Промт №24)
+        adminRole:             "Role",
+        adminAllRoles:         "All roles",
+        adminExtraInfo:        "Additional info",
+        adminStatus:           "Status",
+        adminAddUser:          "Add user",
+        adminAddUserDev:       "The add user form is under development",
+        adminUserCardDev:      "User card is under development: {0}",
+        adminUsersNotFound:    "No users found. Change the search parameters"
       }
     };
 
@@ -4580,6 +4675,13 @@
         return;
       }
 
+      // Панель администратора: список пользователей (Промт №24)
+      if (currentRole === 'admin' && currentSection === 'users') {
+        box.innerHTML = renderAdminUsers();
+        bindAdminUsers();
+        return;
+      }
+
       // Панель менеджера: Дашборд / Группы / Преподаватели / Студенты (Промты №18–20)
       if (currentRole === 'manager' && currentSection === 'dashboard') {
         box.innerHTML = renderManagerDashboard();
@@ -5387,9 +5489,13 @@
       direction: 'programming'           // менеджер направления «Программирование»
     };
 
+    // Все менеджеры (Промт №24): пока один — тот же mockManager.
+    // Админ видит всех; название направления переводится по ключу (dirProgramming).
+    const mockAllManagers = [mockManager];
+
     const mockAllTeachers = [
       { id: 't1', name: mockTeacher.name, subject: 'math' },
-      { id: 't2', name: 'Ivanova E.P.', subject: 'Русский язык' },
+      { id: 't2', name: 'Ivanova E.P.', subject: 'russian' },
       { id: 't3', name: 'Kim O.V.', subject: 'physics' }
     ];
 
@@ -5530,6 +5636,196 @@
             ${directionsHTML}
           </section>
         </div>`;
+    }
+
+    /* ============================================================
+       ПАНЕЛЬ АДМИНИСТРАТОРА: СПИСОК ПОЛЬЗОВАТЕЛЕЙ (Промт №24)
+       ============================================================ */
+    // Единый список пользователей: студенты + преподаватели + менеджеры.
+    // role — ключ перевода (role_student / role_teacher / role_manager), а не русская строка.
+    // extraKind определяет, как переводить «Доп. информацию»:
+    //   group — номер группы студента (как есть, '101-PR');
+    //   subject — ключ предмета (subj_math → «Математика»);
+    //   direction — ключ направления (dirProgramming → «Программирование»).
+    let allUsers = [];
+
+    function getAdminAllUsers() {
+      const students = (Array.isArray(mockAllStudents) ? mockAllStudents : []).map(s => ({
+        id: s.id,
+        name: s.name || "",
+        role: 'student',
+        extra: s.group || "",
+        extraKind: 'group'
+      }));
+      const teachers = (Array.isArray(mockAllTeachers) ? mockAllTeachers : []).map(t => ({
+        id: t.id,
+        name: t.name || "",
+        role: 'teacher',
+        extra: t.subject || "",
+        extraKind: 'subject'
+      }));
+      const managers = (Array.isArray(mockAllManagers) ? mockAllManagers : []).map(m => ({
+        id: m.id,
+        name: m.name || "",
+        role: 'manager',
+        extra: m.direction || "",
+        extraKind: 'direction'
+      }));
+
+      return [...students, ...teachers, ...managers];
+    }
+
+    // Подпись роли: всегда из переводов (без хардкода).
+    function adminUserRoleLabel(user) {
+      const dict = translations[currentLang];
+      return dict['role_' + user.role] || user.role;
+    }
+
+    // «Доп. информация»: группа / переведённый предмет / переведённое направление.
+    function adminUserExtraLabel(user) {
+      const dict = translations[currentLang];
+      if (user.extraKind === 'subject') return dict['subj_' + user.extra] || user.extra;
+      if (user.extraKind === 'direction') return dict['dir' + capitalize(user.extra)] || user.extra;
+      return user.extra;
+    }
+
+    function adminUserRowHTML(user) {
+      const roleIcon = user.role === 'student' ? 'fa-user-graduate'
+        : user.role === 'teacher' ? 'fa-chalkboard-user'
+        : 'fa-user-tie';
+      return `
+        <tr data-admin-user="${escapeHtml(user.name)}" data-user-role="${escapeHtml(user.role)}">
+          <td><span class="admin-user-name">${escapeHtml(user.name)}</span></td>
+          <td>
+            <span class="admin-role-badge admin-role-${escapeHtml(user.role)}">
+              <i class="fas ${roleIcon}"></i>${escapeHtml(adminUserRoleLabel(user))}
+            </span>
+          </td>
+          <td>${escapeHtml(adminUserExtraLabel(user))}</td>
+          <td><span class="admin-user-status"><i class="fas fa-circle"></i>${escapeHtml(translations[currentLang].statusActive)}</span></td>
+        </tr>`;
+    }
+
+    function adminUserCardHTML(user) {
+      const dict = translations[currentLang];
+      const roleIcon = user.role === 'student' ? 'fa-user-graduate'
+        : user.role === 'teacher' ? 'fa-chalkboard-user'
+        : 'fa-user-tie';
+      return `
+        <article class="results-card admin-user-card" data-admin-user="${escapeHtml(user.name)}" data-user-role="${escapeHtml(user.role)}">
+          <div class="results-card-top">
+            <span class="results-card-name">${escapeHtml(user.name)}</span>
+            <span class="admin-role-badge admin-role-${escapeHtml(user.role)}">
+              <i class="fas ${roleIcon}"></i>${escapeHtml(adminUserRoleLabel(user))}
+            </span>
+          </div>
+          <div class="results-card-row"><i class="fas fa-circle-info"></i>${escapeHtml(adminUserExtraLabel(user))}</div>
+          <div class="results-card-bottom">
+            <span class="admin-user-status"><i class="fas fa-circle"></i>${escapeHtml(dict.statusActive)}</span>
+          </div>
+        </article>`;
+    }
+
+    // Раздел «Пользователи»: фильтры, таблица (десктоп) и карточки (мобильный).
+    function renderAdminUsers() {
+      const dict = translations[currentLang];
+      allUsers = getAdminAllUsers();
+      console.log("Всего пользователей в системе:", allUsers.length);
+
+      return `
+        <div class="admin-users-toolbar">
+          <div class="admin-users-search">
+            <i class="fas fa-magnifying-glass"></i>
+            <input type="text" class="field-input" id="adminUserSearch"
+                   placeholder="${escapeHtml(dict.searchByName)}" aria-label="${escapeHtml(dict.searchByName)}">
+          </div>
+          <select class="field-input" id="adminUserRole" aria-label="${escapeHtml(dict.adminRole)}">
+            <option value="">${escapeHtml(dict.adminAllRoles)}</option>
+            <option value="student">${escapeHtml(dict.role_student)}</option>
+            <option value="teacher">${escapeHtml(dict.role_teacher)}</option>
+            <option value="manager">${escapeHtml(dict.role_manager)}</option>
+          </select>
+          <button type="button" class="btn-primary" data-admin-action="add-user">
+            <i class="fas fa-plus"></i> ${escapeHtml(dict.adminAddUser)}
+          </button>
+        </div>
+
+        <div class="results-table-wrap admin-users-table-wrap">
+          <table class="results-table admin-users-table">
+            <thead>
+              <tr>
+                <th>${escapeHtml(dict.fullName)}</th>
+                <th>${escapeHtml(dict.adminRole)}</th>
+                <th>${escapeHtml(dict.adminExtraInfo)}</th>
+                <th>${escapeHtml(dict.adminStatus)}</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersRows"></tbody>
+          </table>
+        </div>
+        <div class="results-cards admin-user-cards" id="adminUsersCards"></div>`;
+    }
+
+    // Поиск + фильтр по роли работают вместе.
+    function filterUsers() {
+      const dict = translations[currentLang];
+      const searchEl = document.getElementById('adminUserSearch');
+      const roleEl = document.getElementById('adminUserRole');
+      const query = (searchEl ? searchEl.value : '').trim().toLowerCase();
+      const role = roleEl ? roleEl.value : '';
+
+      const filteredUsers = allUsers.filter(user =>
+        (!role || user.role === role) &&
+        (user.name || '').toLowerCase().includes(query)
+      );
+      console.log("Отфильтровано пользователей:", filteredUsers.length);
+
+      const rowsEl = document.getElementById('adminUsersRows');
+      const cardsEl = document.getElementById('adminUsersCards');
+      if (!rowsEl || !cardsEl) return filteredUsers;
+
+      if (!filteredUsers.length) {
+        rowsEl.innerHTML = `<tr><td colspan="4">
+          <div class="content-placeholder">
+            <i class="fas fa-user-slash"></i>
+            <span>${dict.adminUsersNotFound}</span>
+          </div>
+        </td></tr>`;
+        cardsEl.innerHTML = `<div class="content-placeholder">
+          <i class="fas fa-user-slash"></i>
+          <span>${dict.adminUsersNotFound}</span>
+        </div>`;
+        return filteredUsers;
+      }
+
+      rowsEl.innerHTML = filteredUsers.map(adminUserRowHTML).join("");
+      cardsEl.innerHTML = filteredUsers.map(adminUserCardHTML).join("");
+      return filteredUsers;
+    }
+
+    // Обработчики: поиск, фильтр по роли, «Добавить пользователя» и клик по строке.
+    function bindAdminUsers() {
+      const dict = translations[currentLang];
+      const searchEl = document.getElementById('adminUserSearch');
+      const roleEl = document.getElementById('adminUserRole');
+      if (searchEl) searchEl.addEventListener('input', filterUsers);
+      if (roleEl) roleEl.addEventListener('change', filterUsers);
+      filterUsers();
+
+      const box = document.getElementById('sectionContent');
+      if (!box) return;
+      box.onclick = (e) => {
+        const addBtn = e.target.closest('[data-admin-action="add-user"]');
+        if (addBtn) {
+          e.preventDefault();
+          alert(dict.adminAddUserDev);
+          return;
+        }
+        const row = e.target.closest('[data-admin-user]');
+        if (row) {
+          alert(dict.adminUserCardDev.replace('{0}', row.dataset.adminUser || ''));
+        }
+      };
     }
 
     /* ---- Панель менеджера: данные и рендеры (Промты №18–20) ---- */

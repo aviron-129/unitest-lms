@@ -8,7 +8,7 @@
 node tests/run-all.js
 ```
 
-Сейчас: **11/11 наборов, 877 проверок** — синтаксис, функциональные тесты №13–21.1,
+Сейчас: **14/14 наборов, 997 проверок** — синтаксис, функциональные тесты №13–24,
 статика/i18n и smoke по всем ролям/разделам/языкам/темам.
 
 ## Проверка по скриншотам
@@ -39,6 +39,7 @@ node tests/verify-screens.js --task-json "night-prompts/q1.task.json"
 node tests/check.js
 node tests/test15.js
 node tests/test22.js
+node tests/test25.js
 node tests/static.js
 node tests/smoke.js
 ```
