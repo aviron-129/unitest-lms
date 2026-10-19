@@ -343,6 +343,15 @@ if (-not $DryRun) {
   } else {
     Ok "Стартовый регресс: зелёный"
   }
+
+  # Фиксируем любые незакоммиченные правки, чтобы откат не потерял их
+  $dirty = (& git status --porcelain) -join "`n"
+  if ($dirty.Trim().Length -gt 0) {
+    Step "Фиксирую незакоммиченные изменения перед стартом..."
+    & git add -A 2>&1 | Out-Null
+    & git commit -m "checkpoint: перед ночной сессией" 2>&1 | Out-Null
+    Ok "Checkpoint создан"
+  }
 }
 
 Write-Host ""
