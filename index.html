@@ -6433,10 +6433,32 @@
     /* ============================================================
        2. СОСТОЯНИЕ ПРИЛОЖЕНИЯ
        ============================================================ */
+    // Промт q8: язык и тема хранятся в localStorage простыми строками, поэтому
+    // испорченное значение (ручная правка, старый импорт, чужой бэкап) раньше
+    // роняло запуск: translations[bad] === undefined → applyLanguage() падал на
+    // dict.appTitle, и initApp не доходил до навешивания обработчиков.
+    // Невалидный ключ считаем отсутствующим и удаляем — тогда применится
+    // значение по умолчанию из системных настроек.
+    function readStoredLang() {
+      const saved = storageGet('unitest_lang');
+      if (saved == null || Object.prototype.hasOwnProperty.call(translations, saved)) return saved;
+      dbg("Испорченный язык в localStorage — сброшен на значение по умолчанию:", saved);
+      try { localStorage.removeItem('unitest_lang'); } catch (e) {}
+      return null;
+    }
+
+    function readStoredTheme() {
+      const saved = storageGet('unitest_theme');
+      if (saved == null || saved === 'light' || saved === 'dark') return saved;
+      dbg("Испорченная тема в localStorage — сброшена на значение по умолчанию:", saved);
+      try { localStorage.removeItem('unitest_theme'); } catch (e) {}
+      return null;
+    }
+
     let currentRole = null;                                   // выбранная роль
     let currentSection = null;                                // текущий раздел панели
-    let currentLang = storageGet('unitest_lang') || 'ru';
-    let currentTheme = storageGet('unitest_theme') || 'light';
+    let currentLang = readStoredLang() || 'ru';
+    let currentTheme = readStoredTheme() === 'dark' ? 'dark' : 'light';
 
     // Возвращает перевод текущего языка с подстановкой {0}, {1}, …
     function trf(key, ...args) {
@@ -7331,6 +7353,9 @@
     }
 
     function applyLanguage() {
+      // Промт q8: вторая линия защиты — даже если currentLang подменили в
+      // рантайме (консоль/другая вкладка), рендер не падает на dict.appTitle.
+      if (!Object.prototype.hasOwnProperty.call(translations, currentLang)) currentLang = 'ru';
       const dict = translations[currentLang];
       document.documentElement.lang = currentLang;           // атрибут <html lang>
       document.title = dict.appTitle || "UniTest";           // заголовок вкладки
@@ -10902,7 +10927,12 @@
       let count = 0;
       try {
         keys.forEach(key => {
-          localStorage.setItem(key, JSON.stringify(entries[key]));
+          const value = entries[key];
+          // Промт q8: простые строки (unitest_lang/unitest_theme) в бэкапе
+          // лежат как есть — повторный JSON.stringify превращал "ru" в "\"ru\"",
+          // после reload язык считался битым и initApp падал. Массивы и
+          // объекты по-прежнему сериализуем.
+          localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
           count++;
         });
       } catch (e) {

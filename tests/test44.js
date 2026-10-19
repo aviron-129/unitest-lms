@@ -178,6 +178,18 @@ T("запись об импорте в журнале",
   w2.eval("systemLogs[0].actionKey") === "adminLogImport", w2.eval("systemLogs[0]"));
 T("console.error пуст (импорт)", app2.errors.length === 0, app2.errors);
 
+// Промт q8: простые строки (язык/тема) не должны кодироваться повторно —
+// иначе в localStorage попадало "\"ru\"", и после reload initApp падал.
+T("unitest_lang из импорта — строка без лишних кавычек",
+  w2.localStorage.getItem("unitest_lang") === "ru",
+  w2.localStorage.getItem("unitest_lang"));
+const themePreview = w2.handleImportText(JSON.stringify({ storage: { unitest_theme: "dark" } }), "theme.json");
+T("импорт одного ключа темы открыт", themePreview.ok && !!d2.getElementById("adminImportOverlay"));
+d2.getElementById("adminImportConfirm").click();
+T("unitest_theme из импорта — строка без лишних кавычек",
+  w2.localStorage.getItem("unitest_theme") === "dark",
+  w2.localStorage.getItem("unitest_theme"));
+
 // Отмена не пишет данные
 app2.alerts.length = 0;
 const before = w2.localStorage.getItem("unitestalltests");
@@ -205,6 +217,16 @@ T("плоский: пользователи разложены по ключам
   Array.isArray(flat.storage.unitest_managers));
 T("не-объект отклонён", w2.normalizeImportPayload([]).ok === false);
 T("null отклонён", w2.normalizeImportPayload(null).ok === false);
+
+// Промт q8: в бэкап язык/тема попадают простыми строками (а не JSON-строками),
+// поэтому после импорта их не нужно кодировать второй раз.
+w2.changeLanguage("en");
+w2.switchTheme();
+const ownBackup = w2.adminBackupData();
+T("backup: unitest_lang — простая строка", ownBackup.storage.unitest_lang === "en",
+  ownBackup.storage.unitest_lang);
+T("backup: unitest_theme — простая строка", ownBackup.storage.unitest_theme === "dark",
+  ownBackup.storage.unitest_theme);
 app2.close();
 
 /* ---------- 5. Печать зачётки ---------- */

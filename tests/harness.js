@@ -24,6 +24,13 @@ function createApp(opts = {}) {
       window.console.error = (...a) => errors.push(a.map(String).join(" "));
       window.alert = (m) => alerts.push(String(m));
       window.confirm = () => true;
+      // Предзаполнение localStorage до выполнения скрипта приложения —
+      // нужно для проверок запуска с сохранёнными/испорченными настройками.
+      if (opts.storage && typeof opts.storage === 'object') {
+        Object.keys(opts.storage).forEach(key => {
+          try { window.localStorage.setItem(key, String(opts.storage[key])); } catch (e) {}
+        });
+      }
       if (opts.fakeTimers) {
         window.setInterval = () => 1;
         window.clearInterval = () => {};

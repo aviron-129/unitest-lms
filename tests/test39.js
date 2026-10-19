@@ -242,6 +242,68 @@ if (StorageProto && typeof StorageProto.setItem === "function") {
 T("проверка квоты выполнена", quotaChecked);
 app.errors.length = 0;
 
+console.log("\n[7.1] Испорченные язык/тема в localStorage");
+// Промт q8: невалидный unitest_lang раньше ронял applyLanguage() на dict.appTitle,
+// а unitest_theme="blue" оставлял приложение в неизвестной теме.
+const bootWithStorage = (storage) => {
+  try { return { app: createApp({ storage }), error: null }; }
+  catch (e) { return { app: null, error: String((e && e.message) || e) }; }
+};
+
+const badLang = bootWithStorage({ unitest_lang: "de", unitest_theme: "light" });
+T("битый язык: initApp не падает", !!badLang.app && !badLang.error, badLang.error);
+if (badLang.app) {
+  const bw = badLang.app.window, bd = badLang.app.document;
+  T("битый язык: откат на ru", bw.eval("currentLang") === "ru", bw.eval("currentLang"));
+  T("битый язык: html lang = ru", bd.documentElement.lang === "ru", bd.documentElement.lang);
+  T("битый язык: заголовок вкладки переведён", !!bd.title && !/undefined/.test(bd.title), bd.title);
+  T("битый язык: испорченный ключ удалён", bw.localStorage.getItem("unitest_lang") === null);
+  bw.selectRole("student");
+  bw.navigate("profile");
+  T("битый язык: вход и навигация работают",
+    bw.eval("currentRole") === "student" &&
+    String(bd.getElementById("sectionContent").textContent || "").trim().length > 0);
+  T("битый язык: без console.error", badLang.app.errors.length === 0, badLang.app.errors.slice(0, 3));
+  badLang.app.close();
+}
+
+const badTheme = bootWithStorage({ unitest_lang: "ru", unitest_theme: "blue" });
+T("битая тема: initApp не падает", !!badTheme.app && !badTheme.error, badTheme.error);
+if (badTheme.app) {
+  const tw = badTheme.app.window, td = badTheme.app.document;
+  T("битая тема: откат на light", tw.eval("currentTheme") === "light", tw.eval("currentTheme"));
+  T("битая тема: data-theme=light", td.documentElement.getAttribute("data-theme") === "light",
+    td.documentElement.getAttribute("data-theme"));
+  T("битая тема: испорченный ключ удалён", tw.localStorage.getItem("unitest_theme") === null);
+  badTheme.app.close();
+}
+
+// Так выглядел localStorage после старого импорта: значение закодировано дважды.
+const quoted = bootWithStorage({ unitest_lang: '"ru"', unitest_theme: '"dark"' });
+T("двойное кодирование из старого импорта: initApp не падает",
+  !!quoted.app && !quoted.error, quoted.error);
+if (quoted.app) {
+  const qw = quoted.app.window;
+  T("двойное кодирование: язык откатан на ru", qw.eval("currentLang") === "ru", qw.eval("currentLang"));
+  T("двойное кодирование: тема откатана на light", qw.eval("currentTheme") === "light", qw.eval("currentTheme"));
+  quoted.app.close();
+}
+
+const goodLocale = bootWithStorage({ unitest_lang: "en", unitest_theme: "dark" });
+T("валидные язык/тема: initApp не падает", !!goodLocale.app && !goodLocale.error, goodLocale.error);
+if (goodLocale.app) {
+  const gw = goodLocale.app.window, gd = goodLocale.app.document;
+  T("валидные язык/тема: en + dark",
+    gw.eval("currentLang") === "en" && gw.eval("currentTheme") === "dark",
+    `${gw.eval("currentLang")}/${gw.eval("currentTheme")}`);
+  T("валидные язык/тема: не удалены из localStorage",
+    gw.localStorage.getItem("unitest_lang") === "en" &&
+    gw.localStorage.getItem("unitest_theme") === "dark");
+  T("валидные язык/тема: html lang и data-theme",
+    gd.documentElement.lang === "en" && gd.documentElement.getAttribute("data-theme") === "dark");
+  goodLocale.app.close();
+}
+
 console.log("\n[8] Глобальный обработчик ошибок");
 const globalBefore = app.errors.length;
 w.dispatchEvent(new w.ErrorEvent("error", { message: "Тестовая глобальная ошибка 39" }));
