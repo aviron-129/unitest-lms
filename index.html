@@ -1785,6 +1785,96 @@
     [data-theme="dark"] .legend-regular { background: rgba(255, 255, 255, 0.35); }
 
     /* ============================================================
+       ДАШБОРД АДМИНИСТРАТОРА (Промт №23)
+       ============================================================ */
+    /* 4 карточки: мобильный — 1, планшет — 2, десктоп — 4 в ряд */
+    .admin-stats { grid-template-columns: 1fr; }
+    @media (min-width: 480px)  { .admin-stats { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .admin-stats { grid-template-columns: repeat(4, 1fr); } }
+
+    /* Десктоп: лента событий + направления в 2 колонки, мобильный — столбиком */
+    .admin-dash-grid { display: grid; gap: 16px; margin-top: 20px; }
+    @media (min-width: 1024px) {
+      .admin-dash-grid { grid-template-columns: 1.35fr 1fr; align-items: start; }
+    }
+    .admin-panel {
+      padding: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      min-width: 0;
+    }
+    .admin-panel h3 {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+    }
+    .admin-panel h3 i { color: var(--role, var(--accent)); }
+    .admin-events,
+    .admin-directions { list-style: none; margin: 16px 0 0; padding: 0; }
+    .admin-event {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .admin-event:first-child { padding-top: 0; }
+    .admin-event:last-child { padding-bottom: 0; border-bottom: none; }
+    .admin-event-icon {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: var(--role-soft, rgba(99, 102, 241, 0.16));
+      color: var(--role, var(--accent));
+      font-size: 0.9rem;
+    }
+    .admin-event-body { min-width: 0; }
+    .admin-event-text { font-size: 0.88rem; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+    .admin-event-time { margin-top: 4px; font-size: 0.74rem; color: var(--text-muted); }
+    .admin-direction {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .admin-direction:first-child { padding-top: 0; }
+    .admin-direction:last-child { padding-bottom: 0; border-bottom: none; }
+    .admin-direction-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+    .admin-direction-name i { color: var(--role, var(--accent)); }
+    .admin-direction-count {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--role-soft, rgba(99, 102, 241, 0.16));
+      color: var(--role, var(--accent));
+      font-size: 0.76rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .admin-empty { margin-top: 14px; font-size: 0.84rem; color: var(--text-muted); }
+
+    /* ============================================================
        6.9 СОЗДАНИЕ ТЕСТА. ШАГ 1: ОСНОВНЫЕ НАСТРОЙКИ (Промт №12)
        ============================================================ */
     /* Форма: на мобильном 1 колонка, на десктопе — max-width 800px по центру */
@@ -3092,7 +3182,24 @@
         ptTitle:           "Периодическая таблица элементов",
         ptSearch:          "Поиск: символ, номер или название",
         ptHint:            "Кликните по элементу — символ вставится в поле",
-        statusActive:      "Активен"
+        statusActive:      "Активен",
+        // Панель администратора: дашборд (Промт №23)
+        adminRoleLabel:        "Супер-админ",
+        adminTotalStudents:    "Всего студентов",
+        adminTotalTeachers:    "Всего преподавателей",
+        adminTotalGroups:      "Всего групп",
+        adminTotalTests:       "Всего тестов",
+        adminRecentEvents:     "Последние события",
+        adminActiveDirections: "Активные направления",
+        adminEventTestCreated: "{0} создал тест «{1}»",
+        adminEventGroupAdded:  "Менеджер {0} добавил группу {1}",
+        adminEventTestPassed:  "Студент {0} сдал тест на {1}",
+        adminTime2h:           "2 часа назад",
+        adminTime5h:           "5 часов назад",
+        adminTimeYesterday:    "вчера",
+        adminDirectionGroups:  "Групп: {0}",
+        adminNoEvents:         "Пока нет событий",
+        adminNoDirections:     "Пока нет направлений"
       },
       uz: {
         welcome:        "Xush kelibsiz",
@@ -3351,7 +3458,24 @@
         ptTitle:           "Elementlar davriy jadvali",
         ptSearch:          "Qidiruv: belgi, raqam yoki nom",
         ptHint:            "Elementni bosing — belgi maydonga kiritiladi",
-        statusActive:      "Faol"
+        statusActive:      "Faol",
+        // Панель администратора: дашборд (Промт №23)
+        adminRoleLabel:        "Super administrator",
+        adminTotalStudents:    "Jami talabalar",
+        adminTotalTeachers:    "Jami o'qituvchilar",
+        adminTotalGroups:      "Jami guruhlar",
+        adminTotalTests:       "Jami testlar",
+        adminRecentEvents:     "So'nggi voqealar",
+        adminActiveDirections: "Faol yo'nalishlar",
+        adminEventTestCreated: "{0} «{1}» testini yaratdi",
+        adminEventGroupAdded:  "Menejer {0} {1} guruhini qo'shdi",
+        adminEventTestPassed:  "Talaba {0} testni {1} bahoga topshirdi",
+        adminTime2h:           "2 soat oldin",
+        adminTime5h:           "5 soat oldin",
+        adminTimeYesterday:    "kecha",
+        adminDirectionGroups:  "Guruhlar: {0}",
+        adminNoEvents:         "Hozircha voqealar yo'q",
+        adminNoDirections:     "Hozircha yo'nalishlar yo'q"
       },
       en: {
         welcome:        "Welcome",
@@ -3610,7 +3734,24 @@
         ptTitle:           "Periodic table of elements",
         ptSearch:          "Search: symbol, number or name",
         ptHint:            "Click an element — the symbol is inserted into the field",
-        statusActive:      "Active"
+        statusActive:      "Active",
+        // Панель администратора: дашборд (Промт №23)
+        adminRoleLabel:        "Super admin",
+        adminTotalStudents:    "Total students",
+        adminTotalTeachers:    "Total teachers",
+        adminTotalGroups:      "Total groups",
+        adminTotalTests:       "Total tests",
+        adminRecentEvents:     "Recent events",
+        adminActiveDirections: "Active directions",
+        adminEventTestCreated: "{0} created the test “{1}”",
+        adminEventGroupAdded:  "Manager {0} added group {1}",
+        adminEventTestPassed:  "Student {0} passed the test with grade {1}",
+        adminTime2h:           "2 hours ago",
+        adminTime5h:           "5 hours ago",
+        adminTimeYesterday:    "yesterday",
+        adminDirectionGroups:  "Groups: {0}",
+        adminNoEvents:         "No events yet",
+        adminNoDirections:     "No directions yet"
       }
     };
 
@@ -4430,6 +4571,12 @@
       // Расписание преподавателя — только для роли teacher (Промт №16)
       if (currentRole === 'teacher' && currentSection === 'schedule') {
         renderTeacherSchedule();                             // только свои пары, в карточке — группа
+        return;
+      }
+
+      // Панель администратора: дашборд вуза (Промт №23)
+      if (currentRole === 'admin' && currentSection === 'dashboard') {
+        box.innerHTML = renderAdminDashboard();
         return;
       }
 
@@ -5255,6 +5402,135 @@
       { id: 's6', name: 'Karimov Aziz',   group: '201-PR', course: 2, form: 'full', category: 'archer' },
       { id: 's7', name: 'Volkova Olga',   group: '202-DZ', course: 2, form: 'part', category: 'regular' }
     ];
+
+    /* ============================================================
+       ПАНЕЛЬ АДМИНИСТРАТОРА: ДАШБОРД ВУЗА (Промт №23)
+       ============================================================ */
+    // Админ один: имя берём из MOCK_USERS, чтобы шапка и дашборд не расходились.
+    const mockAdmin = {
+      id: 'a1',
+      name: MOCK_USERS.admin.name,       // "Aziz Karimov"
+      role: 'superAdmin'                 // ключ перевода adminRoleLabel
+    };
+
+    // Лента последних действий (демо). Текст собирается из переводов,
+    // имена/группы — из существующих mock-данных.
+    const mockAdminEvents = [
+      { id: 'ae1', type: 'testCreated', actor: mockTeacher.name, subject: 'math', timeKey: 'adminTime2h' },
+      { id: 'ae2', type: 'groupAdded',  actor: mockManager.name, group: '202-DZ', timeKey: 'adminTime5h' },
+      { id: 'ae3', type: 'testPassed',  actor: mockStudent.firstName + ' ' + mockStudent.lastName, grade: 5, timeKey: 'adminTimeYesterday' }
+    ];
+
+    // Название направления по ключу (programming → dirProgramming)
+    function adminDirectionLabel(direction) {
+      const dict = translations[currentLang];
+      return dict["dir" + capitalize(direction)] || direction;
+    }
+
+    // Текст одного события ленты: шаблон из dict + подставленные данные
+    function adminEventText(event) {
+      const dict = translations[currentLang];
+      const actor = escapeHtml(event.actor || "");
+      if (event.type === 'testCreated') {
+        const subject = dict["subj_" + event.subject] || event.subject || "";
+        return dict.adminEventTestCreated.replace("{0}", actor).replace("{1}", escapeHtml(subject));
+      }
+      if (event.type === 'groupAdded') {
+        return dict.adminEventGroupAdded.replace("{0}", actor).replace("{1}", escapeHtml(event.group || ""));
+      }
+      if (event.type === 'testPassed') {
+        return dict.adminEventTestPassed.replace("{0}", actor).replace("{1}", String(event.grade != null ? event.grade : ""));
+      }
+      return "";
+    }
+
+    // HTML: дашборд администратора — приветствие, 4 карточки, события, направления
+    function renderAdminDashboard() {
+      const dict = translations[currentLang];
+
+      // Самопроверка: если массива нет или он пуст — показываем 0, а не undefined
+      const studentsCount = Array.isArray(mockAllStudents) ? mockAllStudents.length : 0;
+      const teachersCount = Array.isArray(mockAllTeachers) ? mockAllTeachers.length : 0;
+      const groups = Array.isArray(mockTeacherGroups) ? mockTeacherGroups : [];
+      const testsCount = Array.isArray(mockTests) ? mockTests.length : 0;
+
+      // Уникальные направления + количество групп в каждом
+      const directionsStats = {};
+      groups.forEach(g => {
+        if (!g || !g.direction) return;
+        directionsStats[g.direction] = (directionsStats[g.direction] || 0) + 1;
+      });
+
+      console.log("Статистика Админа - Студентов:", studentsCount, "Групп:", groups.length);
+      console.log("Направления и количество групп:", directionsStats);
+
+      const events = Array.isArray(mockAdminEvents) ? mockAdminEvents : [];
+      const eventsHTML = events.length
+        ? `<ul class="admin-events">${events.map(event => {
+            const icon = event.type === 'groupAdded' ? 'fa-people-group'
+              : event.type === 'testPassed' ? 'fa-circle-check'
+              : 'fa-file-circle-plus';
+            return `
+              <li class="admin-event">
+                <span class="admin-event-icon"><i class="fas ${icon}"></i></span>
+                <div class="admin-event-body">
+                  <div class="admin-event-text">${adminEventText(event)}</div>
+                  <div class="admin-event-time">${dict[event.timeKey] || ""}</div>
+                </div>
+              </li>`;
+          }).join("")}</ul>`
+        : `<div class="admin-empty">${dict.adminNoEvents}</div>`;
+
+      const directionRows = Object.keys(directionsStats).map(direction => `
+        <li class="admin-direction">
+          <span class="admin-direction-name">
+            <i class="fas fa-compass-drafting"></i>${escapeHtml(adminDirectionLabel(direction))}
+          </span>
+          <span class="admin-direction-count">${dict.adminDirectionGroups.replace("{0}", directionsStats[direction])}</span>
+        </li>`).join("");
+
+      const directionsHTML = Object.keys(directionsStats).length
+        ? `<ul class="admin-directions">${directionRows}</ul>`
+        : `<div class="admin-empty">${dict.adminNoDirections}</div>`;
+
+      return `
+        <div class="dash-welcome">${dict.welcome}, ${escapeHtml(mockAdmin.name)}</div>
+        <p class="dash-subject"><i class="fas fa-shield-halved"></i> ${dict.adminRoleLabel}</p>
+
+        <div class="stats-row admin-stats">
+          <div class="stat-card">
+            <i class="fas fa-user-graduate"></i>
+            <div class="stat-value">${studentsCount}</div>
+            <div class="stat-label">${dict.adminTotalStudents}</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-chalkboard-user"></i>
+            <div class="stat-value">${teachersCount}</div>
+            <div class="stat-label">${dict.adminTotalTeachers}</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-people-group"></i>
+            <div class="stat-value">${groups.length}</div>
+            <div class="stat-label">${dict.adminTotalGroups}</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-file-pen"></i>
+            <div class="stat-value">${testsCount}</div>
+            <div class="stat-label">${dict.adminTotalTests}</div>
+          </div>
+        </div>
+
+        <div class="admin-dash-grid">
+          <section class="admin-panel">
+            <h3><i class="fas fa-clock-rotate-left"></i> ${dict.adminRecentEvents}</h3>
+            ${eventsHTML}
+          </section>
+          <section class="admin-panel">
+            <h3><i class="fas fa-compass"></i> ${dict.adminActiveDirections}</h3>
+            ${directionsHTML}
+          </section>
+        </div>`;
+    }
 
     /* ---- Панель менеджера: данные и рендеры (Промты №18–20) ---- */
     let managerStudentsBase = [];
