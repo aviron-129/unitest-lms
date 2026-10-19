@@ -2078,6 +2078,11 @@
     .admin-modal-close:hover { color: var(--role, var(--accent)); border-color: var(--role, var(--accent)); }
     .admin-modal .form-grid { gap: 14px; }
     .admin-modal .form-actions { margin-top: 20px; }
+    /* Динамические поля по роли (Промт №26): скрытые группы не занимают место */
+    .admin-role-fields { min-width: 0; }
+    .admin-role-fields[hidden] { display: none; }
+    .admin-role-fields .form-grid { gap: 14px; }
+    .admin-user-modal .field-input[type="number"] { min-width: 0; }
     @media (max-width: 479.98px) {
       .admin-modal-overlay { padding: 0; }
       .admin-modal { width: 100%; max-height: 100vh; min-height: 100vh; border-radius: 0; }
@@ -3471,6 +3476,19 @@
         adminAddUserDev:       "Форма добавления в разработке",
         adminUserCardDev:      "Карточка пользователя в разработке: {0}",
         adminUsersNotFound:    "Пользователи не найдены. Измените параметры поиска",
+        // Панель администратора: добавление пользователя (Промт №26)
+        adminUserNamePh:       "Например, Иванов Иван",
+        adminUserGroup:        "Группа",
+        adminUserGroupPh:      "Выберите группу",
+        adminUserCategory:     "Категория",
+        adminUserSubject:      "Предмет",
+        adminUserSubjectPh:    "Например, Информатика",
+        adminErrUserName:      "Введите ФИО",
+        adminErrUserGroup:     "Выберите группу",
+        adminErrUserSubject:   "Введите предмет",
+        adminUserCreated:      "Пользователь создан: {0}",
+        adminUserStudentsNow:  "Всего студентов теперь: {0}",
+        adminUserTeachersNow:  "Всего преподавателей теперь: {0}",
         // Панель администратора: управление группами (Промт №25)
         adminCreateGroup:      "Создать группу",
         adminEditGroup:        "Редактировать",
@@ -3784,6 +3802,19 @@
         adminAddUserDev:       "Foydalanuvchi qo'shish formasi ishlab chiqilmoqda",
         adminUserCardDev:      "Foydalanuvchi kartasi ishlab chiqilmoqda: {0}",
         adminUsersNotFound:    "Foydalanuvchilar topilmadi. Qidiruv parametrlarini o'zgartiring",
+        // Панель администратора: добавление пользователя (Промт №26)
+        adminUserNamePh:       "Masalan, Ivanov Ivan",
+        adminUserGroup:        "Guruh",
+        adminUserGroupPh:      "Guruhni tanlang",
+        adminUserCategory:     "Toifa",
+        adminUserSubject:      "Fan",
+        adminUserSubjectPh:    "Masalan, Informatika",
+        adminErrUserName:      "F.I.Sh.ni kiriting",
+        adminErrUserGroup:     "Guruhni tanlang",
+        adminErrUserSubject:   "Fanni kiriting",
+        adminUserCreated:      "Foydalanuvchi yaratildi: {0}",
+        adminUserStudentsNow:  "Jami talabalar soni: {0}",
+        adminUserTeachersNow:  "Jami o'qituvchilar soni: {0}",
         // Панель администратора: управление группами (Промт №25)
         adminCreateGroup:      "Guruh yaratish",
         adminEditGroup:        "Tahrirlash",
@@ -4097,6 +4128,19 @@
         adminAddUserDev:       "The add user form is under development",
         adminUserCardDev:      "User card is under development: {0}",
         adminUsersNotFound:    "No users found. Change the search parameters",
+        // Панель администратора: добавление пользователя (Промт №26)
+        adminUserNamePh:       "For example, Ivan Ivanov",
+        adminUserGroup:        "Group",
+        adminUserGroupPh:      "Select a group",
+        adminUserCategory:     "Category",
+        adminUserSubject:      "Subject",
+        adminUserSubjectPh:    "For example, Computer Science",
+        adminErrUserName:      "Enter the full name",
+        adminErrUserGroup:     "Select a group",
+        adminErrUserSubject:   "Enter the subject",
+        adminUserCreated:      "User created: {0}",
+        adminUserStudentsNow:  "Total students now: {0}",
+        adminUserTeachersNow:  "Total teachers now: {0}",
         // Панель администратора: управление группами (Промт №25)
         adminCreateGroup:      "Create group",
         adminEditGroup:        "Edit",
@@ -4246,6 +4290,10 @@
     const ALL_TESTS_KEY = "unitestalltests";
     // Ключ справочника групп (Промт №25): сохранённые/созданные админом группы
     const GROUPS_KEY = "unitest_groups";
+    // Ключи пользователей админки (Промт №26): студенты и преподаватели,
+    // добавленные через модальное окно. Храним ПОЛНЫЕ массивы (демо + новые).
+    const ADMIN_STUDENTS_KEY = "uniteststudents";
+    const ADMIN_TEACHERS_KEY = "unitestteachers";
 
     // Исторические результаты (Промт №15): прошлые прохождения из других систем.
     // К ним при слиянии добавляются записи из localStorage unitest_results.
@@ -4331,6 +4379,68 @@
       } catch (e) {
         console.error("Не удалось сохранить группы в localStorage:", e);
         const dict = translations[currentLang];
+        alert(dict.storageFull || "Не хватает места в localStorage");
+        return false;
+      }
+    }
+
+    /* ---- Пользователи админки (Промт №26) ---- */
+    // Восстанавливает студентов/преподавателей из localStorage. Если ключа нет —
+    // остаются демо-массивы mockAllStudents / mockAllTeachers.
+    function loadAdminUsersFromStorage() {
+      try {
+        const rawStudents = localStorage.getItem(ADMIN_STUDENTS_KEY);
+        if (rawStudents != null) {
+          const savedStudents = JSON.parse(rawStudents);
+          if (Array.isArray(savedStudents)) {
+            mockAllStudents.length = 0;             // массив const — меняем содержимое
+            savedStudents.forEach((s, index) => {
+              if (!s || typeof s !== 'object' || !String(s.name || '').trim()) return;
+              const course = Number(s.course);
+              mockAllStudents.push({
+                id: s.id || ('s_' + index + '_' + Date.now()),
+                name: String(s.name).trim(),
+                group: String(s.group || ''),
+                course: (course >= 1 && course <= 5) ? course : 1,
+                form: s.form === 'part' ? 'part' : 'full',
+                category: s.category === 'archer' ? 'archer' : 'regular'
+              });
+            });
+            console.log("Студенты восстановлены из localStorage:", mockAllStudents.length);
+          }
+        }
+
+        const rawTeachers = localStorage.getItem(ADMIN_TEACHERS_KEY);
+        if (rawTeachers != null) {
+          const savedTeachers = JSON.parse(rawTeachers);
+          if (Array.isArray(savedTeachers)) {
+            mockAllTeachers.length = 0;
+            savedTeachers.forEach((t, index) => {
+              if (!t || typeof t !== 'object' || !String(t.name || '').trim()) return;
+              mockAllTeachers.push({
+                id: t.id || ('t_' + index + '_' + Date.now()),
+                name: String(t.name).trim(),
+                subject: String(t.subject || '').trim()
+              });
+            });
+            console.log("Преподаватели восстановлены из localStorage:", mockAllTeachers.length);
+          }
+        }
+      } catch (e) {
+        console.error("Не удалось прочитать пользователей из localStorage:", e);
+      }
+    }
+
+    // Полная перезапись обоих массивов (создание пользователя в админке).
+    // Сохраняем и студентов, и преподавателей — при F5 оба списка на месте.
+    function saveAdminUsersToStorage() {
+      const dict = translations[currentLang];
+      try {
+        localStorage.setItem(ADMIN_STUDENTS_KEY, JSON.stringify(mockAllStudents));
+        localStorage.setItem(ADMIN_TEACHERS_KEY, JSON.stringify(mockAllTeachers));
+        return true;
+      } catch (e) {
+        console.error("Не удалось сохранить пользователей в localStorage:", e);
         alert(dict.storageFull || "Не хватает места в localStorage");
         return false;
       }
@@ -6150,6 +6260,217 @@
       return filteredUsers;
     }
 
+    /* ---- Добавление пользователя (Промт №26) ---- */
+    // Закрывает модалку и снимает Esc-обработчик (как в модалке групп).
+    function closeAdminUserModal() {
+      const overlay = document.getElementById('adminAddUserOverlay');
+      if (overlay) overlay.remove();
+      document.removeEventListener('keydown', adminUserModalKeydown);
+    }
+
+    function adminUserModalKeydown(e) {
+      if (e.key === 'Escape') closeAdminUserModal();
+    }
+
+    // Показывает поля выбранной роли и сбрасывает невидимые значения.
+    function syncAdminUserFields(role) {
+      const studentFields = document.getElementById('adminStudentFields');
+      const teacherFields = document.getElementById('adminTeacherFields');
+      const groupSelect = document.getElementById('adminNewUserGroup');
+      const courseInput = document.getElementById('adminNewUserCourse');
+      const formSelect = document.getElementById('adminNewUserForm');
+      const categorySelect = document.getElementById('adminNewUserCategory');
+      const subjectInput = document.getElementById('adminNewUserSubject');
+      if (!studentFields || !teacherFields) return;
+
+      const isStudent = role !== 'teacher';
+      studentFields.hidden = !isStudent;
+      teacherFields.hidden = isStudent;
+
+      // При смене роли значения скрытых полей сбрасываются.
+      if (groupSelect) groupSelect.value = '';
+      if (courseInput) courseInput.value = '1';
+      if (formSelect) formSelect.value = 'full';
+      if (categorySelect) categorySelect.value = 'archer';
+      if (subjectInput) subjectInput.value = '';
+    }
+
+    // Модальное окно «Добавить пользователя»: роль, ФИО и поля по роли.
+    function openAdminUserModal() {
+      const dict = translations[currentLang];
+      const old = document.getElementById('adminAddUserOverlay');
+      if (old) old.remove();
+      document.removeEventListener('keydown', adminUserModalKeydown);
+
+      const groups = Array.isArray(mockTeacherGroups) ? mockTeacherGroups : [];
+      const groupOptions = groups.map(group => `
+        <option value="${escapeHtml(group.name)}">${escapeHtml(group.name)}</option>`).join('');
+      const courseOptions = [1, 2, 3, 4, 5].map(course => `
+        <option value="${course}">${course}</option>`).join('');
+
+      const overlay = document.createElement('div');
+      overlay.className = 'admin-modal-overlay';
+      overlay.id = 'adminAddUserOverlay';
+      overlay.innerHTML = `
+        <div class="admin-modal admin-user-modal" role="dialog" aria-modal="true" aria-labelledby="adminAddUserTitle">
+          <div class="admin-modal-head">
+            <h3 class="admin-modal-title" id="adminAddUserTitle">${escapeHtml(dict.adminAddUser)}</h3>
+            <button type="button" class="admin-modal-close" id="adminNewUserClose"
+                    aria-label="${escapeHtml(dict.close)}" title="${escapeHtml(dict.close)}">✕</button>
+          </div>
+          <form class="admin-modal-form" id="adminAddUserForm" novalidate>
+            <div class="form-grid">
+              <label class="field">
+                <span class="field-label">${escapeHtml(dict.adminRole)} <span class="req">*</span></span>
+                <select class="field-input" id="adminNewUserRole">
+                  <option value="student">${escapeHtml(dict.role_student)}</option>
+                  <option value="teacher">${escapeHtml(dict.role_teacher)}</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field-label">${escapeHtml(dict.fullName)} <span class="req">*</span></span>
+                <input type="text" class="field-input" id="adminNewUserName" maxlength="80"
+                       placeholder="${escapeHtml(dict.adminUserNamePh)}" autocomplete="off">
+              </label>
+
+              <div class="admin-role-fields field-full" id="adminStudentFields">
+                <div class="form-grid">
+                  <label class="field">
+                    <span class="field-label">${escapeHtml(dict.adminUserGroup)} <span class="req">*</span></span>
+                    <select class="field-input" id="adminNewUserGroup">
+                      <option value="">${escapeHtml(dict.adminUserGroupPh)}</option>
+                      ${groupOptions}
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span class="field-label">${escapeHtml(dict.adminGroupCourse)} <span class="req">*</span></span>
+                    <input type="number" class="field-input" id="adminNewUserCourse" min="1" max="5" step="1" value="1">
+                  </label>
+                  <label class="field">
+                    <span class="field-label">${escapeHtml(dict.adminGroupForm)}</span>
+                    <select class="field-input" id="adminNewUserForm">
+                      <option value="full">${escapeHtml(dict.formFull)}</option>
+                      <option value="part">${escapeHtml(dict.formPart)}</option>
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span class="field-label">${escapeHtml(dict.adminUserCategory)}</span>
+                    <select class="field-input" id="adminNewUserCategory">
+                      <option value="archer">${escapeHtml(dict.catArcher)}</option>
+                      <option value="regular">${escapeHtml(dict.regular)}</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+
+              <div class="admin-role-fields field-full" id="adminTeacherFields" hidden>
+                <label class="field">
+                  <span class="field-label">${escapeHtml(dict.adminUserSubject)} <span class="req">*</span></span>
+                  <input type="text" class="field-input" id="adminNewUserSubject" maxlength="60"
+                         placeholder="${escapeHtml(dict.adminUserSubjectPh)}" autocomplete="off">
+                </label>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-ghost" id="adminNewUserCancel">${escapeHtml(dict.cancel)}</button>
+              <button type="submit" class="btn-primary" id="adminNewUserSave">
+                <i class="fas fa-floppy-disk"></i> ${escapeHtml(dict.adminSave)}
+              </button>
+            </div>
+          </form>
+        </div>`;
+
+      document.body.appendChild(overlay);
+
+      const roleSelect = document.getElementById('adminNewUserRole');
+      if (roleSelect) {
+        roleSelect.value = 'student';
+        syncAdminUserFields('student');
+        roleSelect.addEventListener('change', () => {
+          const selectedRole = roleSelect.value;
+          console.log("Выбрана роль:", selectedRole);
+          syncAdminUserFields(selectedRole);
+          const focusEl = selectedRole === 'teacher'
+            ? document.getElementById('adminNewUserSubject')
+            : document.getElementById('adminNewUserGroup');
+          if (focusEl) focusEl.focus();
+        });
+      }
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay ||
+            (e.target.closest && (e.target.closest('#adminNewUserClose') || e.target.closest('#adminNewUserCancel')))) {
+          closeAdminUserModal();
+        }
+      });
+      document.getElementById('adminAddUserForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        saveAdminUser();
+      });
+      document.addEventListener('keydown', adminUserModalKeydown);
+
+      const nameInput = document.getElementById('adminNewUserName');
+      if (nameInput) nameInput.focus();
+    }
+
+    // Валидация и сохранение нового пользователя (студент или преподаватель).
+    function saveAdminUser() {
+      const dict = translations[currentLang];
+      const roleSelect = document.getElementById('adminNewUserRole');
+      const nameInput = document.getElementById('adminNewUserName');
+      const groupSelect = document.getElementById('adminNewUserGroup');
+      const courseInput = document.getElementById('adminNewUserCourse');
+      const formSelect = document.getElementById('adminNewUserForm');
+      const categorySelect = document.getElementById('adminNewUserCategory');
+      const subjectInput = document.getElementById('adminNewUserSubject');
+      if (!roleSelect || !nameInput) return;
+
+      const role = roleSelect.value === 'teacher' ? 'teacher' : 'student';
+      const name = (nameInput.value || '').trim();
+      if (!name) { alert(dict.adminErrUserName); nameInput.focus(); return; }
+
+      let newUser = null;
+      if (role === 'student') {
+        const group = groupSelect ? groupSelect.value : '';
+        const course = courseInput ? Number(courseInput.value) : 0;
+        if (!group) { alert(dict.adminErrUserGroup); if (groupSelect) groupSelect.focus(); return; }
+        if (!course || course < 1 || course > 5) {
+          alert(dict.adminErrGroupCourse);
+          if (courseInput) courseInput.focus();
+          return;
+        }
+        newUser = {
+          id: 's_' + Date.now(),
+          name,
+          group,
+          course,
+          form: formSelect && formSelect.value === 'part' ? 'part' : 'full',
+          category: categorySelect && categorySelect.value === 'regular' ? 'regular' : 'archer'
+        };
+        mockAllStudents.push(newUser);
+      } else {
+        const subject = subjectInput ? (subjectInput.value || '').trim() : '';
+        if (!subject) { alert(dict.adminErrUserSubject); if (subjectInput) subjectInput.focus(); return; }
+        newUser = { id: 't_' + Date.now(), name, subject };
+        mockAllTeachers.push(newUser);
+      }
+
+      saveAdminUsersToStorage();                       // uniteststudents + unitestteachers
+      // Логи самопроверки — как в промте (не UI, поэтому без перевода).
+      console.log("Пользователь создан:", newUser);
+      if (role === 'student') {
+        console.log("Всего студентов теперь:", mockAllStudents.length);
+      } else {
+        console.log("Всего преподавателей теперь:", mockAllTeachers.length);
+      }
+
+      closeAdminUserModal();
+      allUsers = getAdminAllUsers();
+      if (currentRole === 'admin' && currentSection === 'users') {
+        navigate('users', false);                      // таблица и карточки перерисовываются
+      }
+    }
+
     // Обработчики: поиск, фильтр по роли, «Добавить пользователя» и клик по строке.
     function bindAdminUsers() {
       const dict = translations[currentLang];
@@ -6165,7 +6486,7 @@
         const addBtn = e.target.closest('[data-admin-action="add-user"]');
         if (addBtn) {
           e.preventDefault();
-          alert(dict.adminAddUserDev);
+          openAdminUserModal();
           return;
         }
         const row = e.target.closest('[data-admin-user]');
@@ -9878,6 +10199,8 @@
       loadTestsFromStorage();
       // Восстанавливаем группы из unitest_groups (созданные админом, Промт №25)
       loadGroupsFromStorage();
+      // Восстанавливаем пользователей из uniteststudents / unitestteachers (Промт №26)
+      loadAdminUsersFromStorage();
       // Демо-тесты (формулы и схемы) — только при открытии через file://
       ensureFormulaDemoTest();
       ensureDiagramDemoTest();

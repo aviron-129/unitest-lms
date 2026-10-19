@@ -2,8 +2,8 @@
    Проверяем: объединение студентов/преподавателей/менеджеров (allUsers),
    таблицу на десктопе и карточки на мобильном, цветные бейджи ролей,
    «доп. информацию» (группа/предмет/направление), совместную работу поиска
-   и фильтра по роли, пустую заглушку, логи, alert'ы кнопки/строки,
-   переводы ru/uz/en и регресс других панелей. */
+   и фильтра по роли, пустую заглушку, логи, модалку добавления (Промт №26)
+   и alert клика по строке, переводы ru/uz/en и регресс других панелей. */
 const fs = require("fs");
 const { JSDOM } = require("jsdom");
 const HTML = require("path").join(__dirname, "..", "index.html");
@@ -120,13 +120,18 @@ T("заглушка в карточках", txt(D.getElementById("adminUsersCard
 T("лог 0", hasLog("Отфильтровано пользователей: 0"), logs.log.slice(-2).join(" | "));
 setFilter("", "");
 
-console.log("\n[5] Кнопка «Добавить пользователя» и клик по строке");
+console.log("\n[5] Кнопка «Добавить пользователя» (модалка) и клик по строке");
 const addBtn = D.querySelector('[data-admin-action="add-user"]');
 T("кнопка с data-admin-action=add-user", !!addBtn);
 T("текст кнопки", txt(addBtn).includes("Добавить пользователя"), txt(addBtn));
 alerts.length = 0;
 addBtn.click();
-T("клик по кнопке показывает alert", alerts.length === 1 && alerts[0].includes("в разработке"), safe(alerts));
+T("клик открывает модалку (не alert)", !!D.getElementById("adminAddUserOverlay"));
+T("alert при открытии не показывается", alerts.length === 0, safe(alerts));
+T("заголовок модалки", txt(D.getElementById("adminAddUserOverlay")).includes("Добавить пользователя"));
+D.getElementById("adminNewUserCancel").click();
+T("«Отмена» закрывает модалку", !D.getElementById("adminAddUserOverlay"));
+
 alerts.length = 0;
 const firstName = rows()[0].dataset.adminUser;
 rows()[0].click();
