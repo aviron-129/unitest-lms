@@ -313,6 +313,36 @@ $state.tasks = $stateTasks
 if (-not $DryRun) { Write-Text $StatePath ($state | ConvertTo-Json -Depth 10) }
 
 # ---------------------------------------------------------------------------
+# 1.0 Если предыдущий запуск был прерван — сохраняем WIP и откатываем к checkpoint
+# ---------------------------------------------------------------------------
+if (-not $DryRun) {
+  $runningIds = @($stateTasks.Keys | Where-Object { $stateTasks[$_].status -eq "running" })
+  foreach ($rid in $runningIds) {
+    $entry = $stateTasks[$rid]
+    $cp = $null
+    if ($entry.checkpoint) { $cp = [string]$entry.checkpoint }
+    if ($cp) {
+      $istamp = Get-Date -Format "yyyyMMdd-HHmmss"
+      & git add -A 2>&1 | Out-Null
+      $idirty = (& git status --porcelain) -join "`n"
+      if ($idirty.Trim().Length -gt 0) {
+        & git commit -m "wip($rid): прервано" 2>&1 | Out-Null
+      }
+      $ibr = "wip/$rid/interrupted-$istamp"
+      & git branch $ibr HEAD 2>$null | Out-Null
+      & git reset --hard $cp 2>&1 | Out-Null
+      Ok "Прерванная задача #${rid}: WIP в $ibr, откат к $cp"
+    }
+    if ($rid -like "q*") { $entry.status = "failed"; $entry.interrupted = $true }
+    else { $entry.status = "pending" }
+  }
+  if ($runningIds.Count -gt 0) {
+    $state.tasks = $stateTasks
+    Write-Text $StatePath ($state | ConvertTo-Json -Depth 10)
+  }
+}
+
+# ---------------------------------------------------------------------------
 # 1.1 Проверка здоровья базы: синтаксис + полный регресс
 # ---------------------------------------------------------------------------
 if (-not $DryRun) {
