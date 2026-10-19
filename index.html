@@ -2107,6 +2107,42 @@
     .admin-manager-card .admin-manager-assign { align-self: flex-start; margin-top: 10px; }
     .admin-manager-modal .field-input { width: 100%; }
 
+    /* ============================================================
+       6.8.3 ПАНЕЛЬ АДМИНИСТРАТОРА: ГЛОБАЛЬНЫЕ ОТЧЁТЫ (Промт №28)
+       ============================================================ */
+    /* Фильтры: мобильный — столбиком, десктоп — в одну строку */
+    .admin-reports-toolbar { display: flex; flex-direction: column; gap: 10px; margin: 20px 0 16px; }
+    .admin-reports-toolbar .field-input { min-width: 0; }
+    .admin-reports-toolbar .btn-ghost { white-space: nowrap; }
+    @media (min-width: 768px) {
+      .admin-reports-toolbar { flex-direction: row; align-items: center; flex-wrap: wrap; }
+      .admin-reports-toolbar .field-input { flex: 0 0 220px; }
+      .admin-reports-toolbar .btn-ghost { margin-left: auto; }
+    }
+
+    /* Две карточки сводки: мобильный — 1, планшет/десктоп — 2 */
+    .admin-report-stats { grid-template-columns: 1fr; }
+    @media (min-width: 640px) { .admin-report-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .admin-report-stats .stat-card { margin: 0; }
+
+    /* Прогресс-бар успеваемости: ширина = средний балл / 5, цвет — по порогам */
+    .admin-report-progress { display: flex; align-items: center; gap: 10px; min-width: 120px; }
+    .admin-report-progress .progress-track { flex: 1 1 auto; min-width: 80px; margin-top: 0; }
+    .admin-report-pct {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .progress-fill--green  { background: linear-gradient(90deg, #10b981, #34d399); }
+    .progress-fill--blue   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .progress-fill--orange { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .progress-fill--gray   { background: rgba(148, 163, 184, 0.55); }
+    [data-theme="dark"] .progress-fill--gray { background: rgba(148, 163, 184, 0.40); }
+    .admin-report-card .progress-track { margin-top: 10px; }
+    .admin-report-card .admin-report-progress { margin-top: 10px; }
+    .admin-report-card .admin-report-progress .progress-track { margin-top: 0; }
+
     /* Справочники факультетов и курсов */
     .admin-ref-subtitle { margin: 4px 0 18px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
     .admin-ref-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
@@ -3517,6 +3553,19 @@
         adminErrManager:        "Выберите менеджера или освободите должность",
         adminManagerActions:    "Действия",
         adminManagerModalTitle: "Назначить менеджера на «{0}»",
+        // Панель администратора: глобальные отчёты (Промт №28)
+        adminReportsSubtitle:       "Сводные отчёты по вузу: группы, студенты и успеваемость",
+        adminReportsAllCourses:     "Все курсы",
+        adminReportsAllDirections:  "Все направления",
+        adminReportsExport:         "Экспорт в Excel",
+        adminReportsExportDev:      "Экспорт в Excel в разработке",
+        adminReportsTotalPassed:    "Всего сдано тестов",
+        adminReportsGlobalAvg:      "Средний балл по вузу",
+        adminReportsGroup:          "Группа",
+        adminReportsStudents:       "Кол-во студентов",
+        adminReportsPerformance:    "Успеваемость",
+        adminReportsNoData:         "Нет данных",
+        adminReportsNoGroups:       "По выбранным фильтрам группы не найдены",
         // Панель администратора: управление группами (Промт №25)
         adminCreateGroup:      "Создать группу",
         adminEditGroup:        "Редактировать",
@@ -3853,6 +3902,19 @@
         adminErrManager:        "Menejerni tanlang yoki lavozimni bo'shating",
         adminManagerActions:    "Amallar",
         adminManagerModalTitle: "«{0}» yo'nalishiga menejer tayinlash",
+        // Панель администратора: глобальные отчёты (Промт №28)
+        adminReportsSubtitle:       "Universitet bo'yicha jamlanma hisobotlar: guruhlar, talabalar va o'zlashtirish",
+        adminReportsAllCourses:     "Barcha kurslar",
+        adminReportsAllDirections:  "Barcha yo'nalishlar",
+        adminReportsExport:         "Excelga eksport",
+        adminReportsExportDev:      "Excelga eksport hozircha ishlab chiqilmoqda",
+        adminReportsTotalPassed:    "Jami topshirilgan testlar",
+        adminReportsGlobalAvg:      "Universitet bo'yicha o'rtacha baho",
+        adminReportsGroup:          "Guruh",
+        adminReportsStudents:       "Talabalar soni",
+        adminReportsPerformance:    "O'zlashtirish",
+        adminReportsNoData:         "Ma'lumot yo'q",
+        adminReportsNoGroups:       "Tanlangan filtrlar bo'yicha guruhlar topilmadi",
         // Панель администратора: управление группами (Промт №25)
         adminCreateGroup:      "Guruh yaratish",
         adminEditGroup:        "Tahrirlash",
@@ -4189,6 +4251,19 @@
         adminErrManager:        "Select a manager or vacate the position",
         adminManagerActions:    "Actions",
         adminManagerModalTitle: "Assign a manager to “{0}”",
+        // Панель администратора: глобальные отчёты (Промт №28)
+        adminReportsSubtitle:       "University-wide summary reports: groups, students and performance",
+        adminReportsAllCourses:     "All courses",
+        adminReportsAllDirections:  "All directions",
+        adminReportsExport:         "Export to Excel",
+        adminReportsExportDev:      "Export to Excel is under development",
+        adminReportsTotalPassed:    "Total tests passed",
+        adminReportsGlobalAvg:      "University average grade",
+        adminReportsGroup:          "Group",
+        adminReportsStudents:       "Students count",
+        adminReportsPerformance:    "Performance",
+        adminReportsNoData:         "No data",
+        adminReportsNoGroups:       "No groups match the selected filters",
         // Панель администратора: управление группами (Промт №25)
         adminCreateGroup:      "Create group",
         adminEditGroup:        "Edit",
@@ -5242,6 +5317,13 @@
       if (currentRole === 'admin' && currentSection === 'managers') {
         box.innerHTML = renderAdminManagers();
         bindAdminManagers();
+        return;
+      }
+
+      // Панель администратора: глобальные отчёты (Промт №28)
+      if (currentRole === 'admin' && currentSection === 'reports') {
+        box.innerHTML = renderAdminReports();
+        bindAdminReports();
         return;
       }
 
@@ -6851,6 +6933,248 @@
         e.preventDefault();
         openAdminManagerModal(btn.dataset.adminManagerAssign);
       };
+    }
+
+    /* ============================================================
+       ПАНЕЛЬ АДМИНИСТРАТОРА: ГЛОБАЛЬНЫЕ ОТЧЁТЫ (Промт №28)
+       ============================================================ */
+    // Исторические результаты хранят группу кириллицей («101-ПР»),
+    // справочник групп — латиницей («101-PR»). Приводим к одному виду.
+    function adminReportGroupKey(name) {
+      return String(name || '').replace(/ПР/g, 'PR').replace(/ДЗ/g, 'DZ');
+    }
+
+    // Все результаты вуза: исторические + сохранённые (unitest_results),
+    // нормализованные так же, как в панели менеджера/преподавателя.
+    function adminReportAllResults() {
+      const historical = Array.isArray(mockHistoricalResults) ? mockHistoricalResults : [];
+      const saved = getResults();
+      return historical.map(normalizeResult).concat(saved.map(normalizeResult));
+    }
+
+    // Опции фильтра «Курс»: «Все курсы» + 1…5.
+    function adminReportCourseOptions(selected) {
+      const dict = translations[currentLang];
+      let html = `<option value="">${escapeHtml(dict.adminReportsAllCourses)}</option>`;
+      for (let course = 1; course <= 5; course++) {
+        const sel = String(selected) === String(course) ? ' selected' : '';
+        html += `<option value="${course}"${sel}>${course} ${escapeHtml(dict.courseSuffix)}</option>`;
+      }
+      return html;
+    }
+
+    // Опции фильтра «Направление»: «Все направления» + уникальные из групп.
+    function adminReportDirectionOptions(groups, selected) {
+      const dict = translations[currentLang];
+      const keys = [];
+      groups.forEach(group => {
+        if (group && group.direction && !keys.includes(group.direction)) keys.push(group.direction);
+      });
+      let html = `<option value="">${escapeHtml(dict.adminReportsAllDirections)}</option>`;
+      keys.forEach(key => {
+        const sel = selected === key ? ' selected' : '';
+        html += `<option value="${escapeHtml(key)}"${sel}>${escapeHtml(adminDirectionLabel(key))}</option>`;
+      });
+      return html;
+    }
+
+    // Раздел «Отчёты»: панель фильтров + карточки сводки + таблица успеваемости.
+    function renderAdminReports() {
+      const dict = translations[currentLang];
+      const groups = Array.isArray(mockTeacherGroups) ? mockTeacherGroups : [];
+      console.log("Глобальные отчеты. Всего групп в вузе:", groups.length);
+
+      if (!groups.length) {
+        return `<div class="content-placeholder">
+          <i class="fas fa-chart-line"></i>
+          <span>${escapeHtml(dict.adminReportsNoGroups)}</span>
+        </div>`;
+      }
+
+      return `
+        <p class="admin-ref-subtitle">${escapeHtml(dict.adminReportsSubtitle)}</p>
+        <div class="admin-reports-toolbar">
+          <select class="field-input" id="adminReportCourse"
+                  aria-label="${escapeHtml(dict.adminGroupCourse)}">
+            ${adminReportCourseOptions('')}
+          </select>
+          <select class="field-input" id="adminReportDirection"
+                  aria-label="${escapeHtml(dict.adminGroupDirection)}">
+            ${adminReportDirectionOptions(groups, '')}
+          </select>
+          <button type="button" class="btn-ghost" id="adminReportExport" data-admin-report-export>
+            <i class="fas fa-file-arrow-down"></i> ${escapeHtml(dict.adminReportsExport)}
+          </button>
+        </div>
+        <div class="stats-row admin-report-stats" id="adminReportStats"></div>
+        <div id="adminReportTable"></div>`;
+    }
+
+    // Прогресс-бар успеваемости: ширина = средний балл / 5 (0…100 %).
+    function adminReportBarHTML(row) {
+      const dict = translations[currentLang];
+      const label = row.count
+        ? `${row.avgGrade.toFixed(2)} / 5`
+        : dict.adminReportsNoData;
+      return `
+        <div class="admin-report-progress">
+          <div class="progress-track" title="${escapeHtml(label)}">
+            <div class="progress-fill progress-fill--${row.tone}" style="width:${row.pct.toFixed(1)}%"></div>
+          </div>
+          <span class="admin-report-pct">${Math.round(row.pct)}%</span>
+        </div>`;
+    }
+
+    // Пересчитывает карточки и таблицу по выбранным курсу и направлению.
+    function applyAdminReportFilters() {
+      const dict = translations[currentLang];
+      const courseEl = document.getElementById('adminReportCourse');
+      const directionEl = document.getElementById('adminReportDirection');
+      const selectedCourse = courseEl ? courseEl.value : '';
+      const selectedDirection = directionEl ? directionEl.value : '';
+      console.log("Применены фильтры. Курс:", selectedCourse || 'all',
+        "Направление:", selectedDirection || 'all');
+
+      // 1. Группы под фильтром
+      const allGroups = Array.isArray(mockTeacherGroups) ? mockTeacherGroups : [];
+      const groups = allGroups.filter(group => group
+        && (!selectedCourse || String(group.course) === String(selectedCourse))
+        && (!selectedDirection || group.direction === selectedDirection));
+
+      // 2. Результаты только этих групп (нормализация «ПР» → «PR»)
+      const groupKeys = groups.map(group => adminReportGroupKey(group.name));
+      const allResults = adminReportAllResults();
+      const results = allResults.filter(result =>
+        groupKeys.includes(adminReportGroupKey(result.studentGroup)));
+
+      // 3. Средний балл по вузу (в рамках фильтра)
+      const grades = results
+        .map(result => Number(result.grade))
+        .filter(grade => Number.isFinite(grade));
+      const globalAvg = grades.length
+        ? grades.reduce((sum, grade) => sum + grade, 0) / grades.length
+        : 0;
+      console.log("Общий средний балл по вузу:", grades.length ? Number(globalAvg.toFixed(2)) : 0);
+
+      const stats = document.getElementById('adminReportStats');
+      if (stats) {
+        stats.innerHTML = `
+          <div class="stat-card">
+            <i class="fas fa-file-circle-check"></i>
+            <div class="stat-value">${results.length}</div>
+            <div class="stat-label">${escapeHtml(dict.adminReportsTotalPassed)}</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-star-half-stroke"></i>
+            <div class="stat-value">${grades.length ? globalAvg.toFixed(2) : '—'}</div>
+            <div class="stat-label">${escapeHtml(dict.adminReportsGlobalAvg)}</div>
+          </div>`;
+      }
+
+      const tableBox = document.getElementById('adminReportTable');
+      if (!tableBox) return;
+
+      if (!groups.length) {
+        tableBox.innerHTML = `
+          <div class="content-placeholder">
+            <i class="fas fa-filter-circle-xmark"></i>
+            <span>${escapeHtml(dict.adminReportsNoGroups)}</span>
+          </div>`;
+        return;
+      }
+
+      // 4. Строка на каждую группу: средний балл и число результатов
+      const rows = groups.map(group => {
+        const groupResults = results.filter(result =>
+          adminReportGroupKey(result.studentGroup) === adminReportGroupKey(group.name));
+        const groupGrades = groupResults
+          .map(result => Number(result.grade))
+          .filter(grade => Number.isFinite(grade));
+        const avgGrade = groupGrades.length
+          ? groupGrades.reduce((sum, grade) => sum + grade, 0) / groupGrades.length
+          : 0;
+        console.log("Группа:", group.name, "Средний балл:",
+          avgGrade ? Number(avgGrade.toFixed(2)) : 0, "Результатов:", groupResults.length);
+
+        const pct = groupGrades.length
+          ? Math.max(0, Math.min(100, (avgGrade / 5) * 100))
+          : 0;
+        const tone = !groupGrades.length ? 'gray'
+          : avgGrade > 4.5 ? 'green'
+          : avgGrade > 3.5 ? 'blue'
+          : 'orange';
+
+        return { group, avgGrade, count: groupResults.length, pct, tone };
+      });
+
+      tableBox.innerHTML = `
+        <div class="results-table-wrap admin-reports-table-wrap">
+          <table class="results-table admin-reports-table">
+            <thead>
+              <tr>
+                <th>${escapeHtml(dict.adminReportsGroup)}</th>
+                <th>${escapeHtml(dict.adminGroupCourse)}</th>
+                <th>${escapeHtml(dict.adminGroupDirection)}</th>
+                <th>${escapeHtml(dict.adminReportsStudents)}</th>
+                <th>${escapeHtml(dict.avgGrade)}</th>
+                <th>${escapeHtml(dict.adminReportsPerformance)}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map(row => `
+                <tr>
+                  <td><strong>${escapeHtml(row.group.name)}</strong></td>
+                  <td>${escapeHtml(String(row.group.course))} ${escapeHtml(dict.courseSuffix)}</td>
+                  <td>${escapeHtml(adminDirectionLabel(row.group.direction))}</td>
+                  <td>${adminGroupStudentCount(row.group)}</td>
+                  <td>${row.count ? row.avgGrade.toFixed(2) : escapeHtml(dict.adminReportsNoData)}</td>
+                  <td>${adminReportBarHTML(row)}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="results-cards admin-report-cards">
+          ${rows.map(row => `
+            <article class="results-card admin-report-card">
+              <div class="results-card-top">
+                <span class="results-card-name">${escapeHtml(row.group.name)}</span>
+                <span class="course-badge">${escapeHtml(String(row.group.course))} ${escapeHtml(dict.courseSuffix)}</span>
+              </div>
+              <div class="results-card-row">
+                <i class="fas fa-compass-drafting"></i>${escapeHtml(adminDirectionLabel(row.group.direction))}
+              </div>
+              <div class="results-card-row">
+                <i class="fas fa-user-group"></i>${adminGroupStudentCount(row.group)} ${escapeHtml(studentsWord(adminGroupStudentCount(row.group)))}
+              </div>
+              <div class="report-stats">
+                <div class="report-stat">
+                  <span>${escapeHtml(dict.avgGrade)}</span>
+                  <strong>${row.count ? row.avgGrade.toFixed(2) : escapeHtml(dict.adminReportsNoData)}</strong>
+                </div>
+                <div class="report-stat">
+                  <span>${escapeHtml(dict.testsPassed)}</span>
+                  <strong>${row.count}</strong>
+                </div>
+              </div>
+              ${adminReportBarHTML(row)}
+            </article>`).join('')}
+        </div>`;
+    }
+
+    // Обработчики отчётов: смена фильтров пересчитывает сводку, экспорт — заглушка.
+    function bindAdminReports() {
+      const dict = translations[currentLang];
+      const courseEl = document.getElementById('adminReportCourse');
+      const directionEl = document.getElementById('adminReportDirection');
+      if (courseEl) courseEl.addEventListener('change', applyAdminReportFilters);
+      if (directionEl) directionEl.addEventListener('change', applyAdminReportFilters);
+
+      const exportBtn = document.getElementById('adminReportExport');
+      if (exportBtn) {
+        exportBtn.addEventListener('click', () => alert(dict.adminReportsExportDev));
+      }
+
+      applyAdminReportFilters();
     }
 
     /* ============================================================
