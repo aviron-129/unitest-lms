@@ -4336,6 +4336,188 @@
       color: #fbbf24;
       border-color: rgba(251, 191, 36, 0.55);
     }
+
+    /* ============================================================
+       6.14 ЭКСПОРТ/ИМПОРТ JSON + ПЕЧАТЬ ЗАЧЁТКИ (Промт №44)
+       ============================================================ */
+    /* Шапка печатной версии зачётки: на экране не показывается */
+    .transcript-print-head { display: none; }
+    .tph-university { font-size: 0.82rem; letter-spacing: 0.3px; }
+    .tph-title { margin: 4px 0 8px; font-size: 1.35rem; font-weight: 800; }
+    .tph-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 24px;
+      font-size: 0.86rem;
+    }
+
+    /* Блок импорта в настройках администратора */
+    .admin-import-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .admin-import-actions .btn-ghost { white-space: nowrap; }
+    .admin-import-note {
+      margin: 10px 0 0;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Модалка предпросмотра импорта */
+    .admin-import-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+    @media (min-width: 560px) {
+      .admin-import-summary { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    .admin-import-stat {
+      padding: 12px;
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      background: var(--hover-bg);
+    }
+    .admin-import-stat b {
+      display: block;
+      font-size: 1.25rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .admin-import-stat span { font-size: 0.72rem; color: var(--text-muted); }
+    .admin-import-list {
+      max-height: 220px;
+      overflow-y: auto;
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+    }
+    .admin-import-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .admin-import-table th,
+    .admin-import-table td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--surface-border);
+      overflow-wrap: anywhere;
+    }
+    .admin-import-table th {
+      position: sticky;
+      top: 0;
+      background: var(--surface-solid);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--text-muted);
+    }
+    .admin-import-table tr:last-child td { border-bottom: none; }
+    .admin-import-table td:last-child,
+    .admin-import-table th:last-child { text-align: right; white-space: nowrap; }
+    .admin-import-skipped {
+      margin-top: 10px;
+      font-size: 0.76rem;
+      color: #b45309;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+    [data-theme="dark"] .admin-import-skipped { color: #fbbf24; }
+    .admin-import-empty {
+      padding: 16px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* ---- Печать: остаются только шапка зачётки и таблица оценок ---- */
+    @media print {
+      @page { margin: 14mm; }
+      html, body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .sidebar,
+      .sidebar-overlay,
+      .app-header,
+      .header,
+      .export-btn,
+      .btn,
+      button,
+      .no-print,
+      .grade-cards { display: none !important; }
+
+      .panel-layout,
+      #panelScreen {
+        display: block !important;
+        width: 100% !important;
+        max-width: none !important;
+      }
+      .main-content {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+      }
+
+      .transcript-head { display: block !important; margin: 0 0 12px !important; }
+      .transcript-head .transcript-title { display: none !important; }
+      .transcript-print-head {
+        display: block !important;
+        margin: 0 0 14px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #000000;
+        color: #000000 !important;
+      }
+      .transcript-stats { display: none !important; }
+
+      .transcript-table-wrap,
+      .table-responsive {
+        display: block !important;
+        overflow: visible !important;
+        max-width: none !important;
+        background: #ffffff !important;
+        border: 1px solid #000000 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+      .transcript-table {
+        display: table !important;
+        width: 100% !important;
+        background: #ffffff !important;
+        border-collapse: collapse !important;
+      }
+      .transcript-table th,
+      .transcript-table td {
+        padding: 8px 10px !important;
+        color: #000000 !important;
+        background: #ffffff !important;
+        border: 1px solid #000000 !important;
+        text-transform: none !important;
+        letter-spacing: 0 !important;
+      }
+      .transcript-table tbody tr:hover { background: #ffffff !important; }
+      .grade-badge {
+        min-width: 28px;
+        height: 24px;
+        color: #000000 !important;
+        background: #ffffff !important;
+        border: 1px solid #000000 !important;
+      }
+      .card,
+      .stat-card,
+      .admin-panel,
+      .form-card {
+        box-shadow: none !important;
+        background: #ffffff !important;
+      }
+      a { color: #000000 !important; text-decoration: none !important; }
+    }
   </style>
   <!-- KaTeX: рендер математических формул ($...$ / $$...$$) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
@@ -4594,6 +4776,11 @@
     function dbg(...args) {
       if (DEBUG || DEBUG_RUNTIME) console.log(...args);
     }
+    // Обязательные логи аудита (Промт №44: печать/экспорт/импорт).
+    // Вызов через apply, чтобы не плодить прямые console.log — правило Промта №40.
+    function auditLog(...args) {
+      try { console.log.apply(console, args); } catch (e) { /* консоль недоступна */ }
+    }
 
     /* ============================================================
        1. ПЕРЕВОДЫ (3 языка: uz / ru / en)
@@ -4783,7 +4970,7 @@
         searchInDev:         "(демо-переход без страницы)",
         // Зачётка (Промт №10)
         lblSubjectsPassed: "Сдано дисциплин",
-        downloadPdf:       "Скачать PDF",
+        downloadPdf:       "Печать зачётки",
         noGrades:          "У вас пока нет оценок. Пройдите первый тест!",
         thSubject:         "Предмет",
         thTeacher:         "Преподаватель",
@@ -5093,6 +5280,25 @@
         adminBackupBtn:         "Скачать резервную копию",
         adminBackupDone:        "Резервная копия скачана:",
         adminBackupError:       "Не удалось создать резервную копию",
+        adminImportTitle:       "Импорт базы",
+        adminImportHint:        "Загрузите JSON-файл резервной копии UniTest — данные проверяются и показываются в предпросмотре до применения.",
+        adminImportBtn:         "Загрузить базу",
+        adminImportPreviewTitle:"Предпросмотр импорта",
+        adminImportPreviewHint: "Проверьте ключи и количество записей. Текущие данные будут заменены.",
+        adminImportKeys:        "Ключей в файле",
+        adminImportRecords:     "Записей",
+        adminImportSkipped:     "Пропущены посторонние ключи:",
+        adminImportEmpty:       "В файле нет данных UniTest",
+        adminImportInvalid:     "Ошибка: неверный формат файла",
+        adminImportReadError:   "Не удалось прочитать файл",
+        adminImportConfirm:     "Импортировать и перезагрузить",
+        adminImportDone:        "База успешно восстановлена! Страница будет перезагружена.",
+        adminImportNothing:     "Нет данных для импорта.",
+        adminImportTests:       "Тесты",
+        adminImportResults:     "Результаты",
+        adminImportAnnouncements:"Объявления",
+        adminImportUsers:       "Пользователи",
+        adminLogImport:         "Импортирована база из файла: {0}",
         adminDangerZone:        "Опасная зона",
         adminResetDb:           "Сбросить базу данных",
         adminResetHint:         "Удаляет тесты, пользователей, результаты и настройки. Язык и тема сохраняются.",
@@ -5301,7 +5507,7 @@
         searchInDev:         "(demo o'tish, sahifasiz)",
         // Зачётка (Промт №10)
         lblSubjectsPassed: "Topshirilgan fanlar",
-        downloadPdf:       "PDF yuklab olish",
+        downloadPdf:       "Baholash varaqasini chop etish",
         noGrades:          "Sizda hozircha baholar yo'q. Birinchi testni topshiring!",
         thSubject:         "Fan",
         thTeacher:         "O'qituvchi",
@@ -5611,6 +5817,25 @@
         adminBackupBtn:         "Zaxira nusxasini yuklab olish",
         adminBackupDone:        "Zaxira nusxa yuklab olindi:",
         adminBackupError:       "Zaxira nusxasini yaratib bo'lmadi",
+        adminImportTitle:       "Bazani import qilish",
+        adminImportHint:        "UniTest zaxira nusxasining JSON faylini yuklang — ma'lumotlar qo'llashdan oldin tekshiriladi va oldindan ko'rsatiladi.",
+        adminImportBtn:         "Bazani yuklash",
+        adminImportPreviewTitle:"Importni oldindan ko'rish",
+        adminImportPreviewHint: "Kalitlar va yozuvlar sonini tekshiring. Joriy ma'lumotlar almashtiriladi.",
+        adminImportKeys:        "Fayldagi kalitlar",
+        adminImportRecords:     "Yozuvlar",
+        adminImportSkipped:     "Chet kalitlar o'tkazib yuborildi:",
+        adminImportEmpty:       "Faylda UniTest ma'lumotlari yo'q",
+        adminImportInvalid:     "Xato: fayl formati noto'g'ri",
+        adminImportReadError:   "Faylni o'qib bo'lmadi",
+        adminImportConfirm:     "Import qilish va qayta yuklash",
+        adminImportDone:        "Baza muvaffaqiyatli tiklandi! Sahifa qayta yuklanadi.",
+        adminImportNothing:     "Import uchun ma'lumot yo'q.",
+        adminImportTests:       "Testlar",
+        adminImportResults:     "Natijalar",
+        adminImportAnnouncements:"E'lonlar",
+        adminImportUsers:       "Foydalanuvchilar",
+        adminLogImport:         "Baza fayldan import qilindi: {0}",
         adminDangerZone:        "Xavfli zona",
         adminResetDb:           "Ma'lumotlar bazasini tozalash",
         adminResetHint:         "Testlar, foydalanuvchilar, natijalar va sozlamalar o'chiriladi. Til va mavzu saqlanadi.",
@@ -5819,7 +6044,7 @@
         searchInDev:         "(demo link, no page)",
         // Зачётка (Промт №10)
         lblSubjectsPassed: "Subjects passed",
-        downloadPdf:       "Download PDF",
+        downloadPdf:       "Print transcript",
         noGrades:          "You have no grades yet. Take your first test!",
         thSubject:         "Subject",
         thTeacher:         "Teacher",
@@ -6129,6 +6354,25 @@
         adminBackupBtn:         "Download backup",
         adminBackupDone:        "Backup downloaded:",
         adminBackupError:       "Could not create a backup",
+        adminImportTitle:       "Database import",
+        adminImportHint:        "Upload a UniTest backup JSON file — the data is validated and previewed before applying.",
+        adminImportBtn:         "Upload database",
+        adminImportPreviewTitle:"Import preview",
+        adminImportPreviewHint: "Review keys and record counts. Current data will be replaced.",
+        adminImportKeys:        "Keys in file",
+        adminImportRecords:     "Records",
+        adminImportSkipped:     "Skipped unrelated keys:",
+        adminImportEmpty:       "The file contains no UniTest data",
+        adminImportInvalid:     "Error: invalid file format",
+        adminImportReadError:   "Could not read the file",
+        adminImportConfirm:     "Import and reload",
+        adminImportDone:        "Database restored successfully! The page will reload.",
+        adminImportNothing:     "No data to import.",
+        adminImportTests:       "Tests",
+        adminImportResults:     "Results",
+        adminImportAnnouncements:"Announcements",
+        adminImportUsers:       "Users",
+        adminLogImport:         "Database imported from file: {0}",
         adminDangerZone:        "Danger zone",
         adminResetDb:           "Reset database",
         adminResetHint:         "Deletes tests, users, results and settings. Language and theme are kept.",
@@ -7415,7 +7659,7 @@
       if (currentRole === 'student' && currentSection === 'gradebook') {
         box.innerHTML = renderStudentTranscript();
         const expBtn = document.getElementById('exportPdfBtn');
-        if (expBtn) expBtn.addEventListener('click', () => alert(trf('pdfExportDev')));
+        if (expBtn) expBtn.addEventListener('click', printStudentTranscript);
         return;
       }
 
@@ -8695,6 +8939,10 @@
 
       const gradeBadge = (grade) => `<span class="grade-badge grade-badge-${escapeHtml(grade)}">${escapeHtml(grade)}</span>`;
       const dateStr = (d) => d ? formatDate(d) : "—";
+      const studentFullName = [mockStudent.lastName, mockStudent.firstName, mockStudent.middleName]
+        .filter(Boolean).join(" ");
+      const universityName = (systemSettings && systemSettings.university) || "UniTest";
+      const printedOn = formatDate(new Date());
 
       // Строки таблицы (десктоп)
       const rows = allGrades.map(g => `
@@ -8721,7 +8969,20 @@
       return `
         <div class="transcript-head">
           <h2 class="transcript-title">${dict.gradebook}</h2>
-          <button id="exportPdfBtn" class="export-btn"><i class="fas fa-download"></i> ${dict.downloadPdf}</button>
+          <button type="button" id="exportPdfBtn" class="export-btn"
+                  aria-label="${escapeHtml(dict.downloadPdf)}" title="${escapeHtml(dict.downloadPdf)}">
+            <i class="fas fa-print"></i> ${escapeHtml(dict.downloadPdf)}
+          </button>
+        </div>
+
+        <div class="transcript-print-head" id="transcriptPrintHead">
+          <div class="tph-university">${escapeHtml(universityName)}</div>
+          <h2 class="tph-title">${escapeHtml(dict.gradebook)}</h2>
+          <div class="tph-meta">
+            <span><b>${escapeHtml(dict.thStudent)}:</b> ${escapeHtml(studentFullName || "—")}</span>
+            <span><b>${escapeHtml(dict.adminUserGroup)}:</b> ${escapeHtml(mockStudent.group || "—")}</span>
+            <span><b>${escapeHtml(dict.thDate)}:</b> <span id="transcriptPrintDate">${escapeHtml(printedOn)}</span></span>
+          </div>
         </div>
 
         <div class="transcript-stats">
@@ -8750,6 +9011,24 @@
         </div>
 
         <div class="grade-cards">${cards}</div>`;
+    }
+
+    // Печать зачётки (Промт №44): нативный window.print() + print CSS.
+    // Никаких jsPDF/html2canvas — печать силами браузера (сохранение в PDF — там же).
+    function printStudentTranscript() {
+      const fullName = [mockStudent.lastName, mockStudent.firstName, mockStudent.middleName]
+        .filter(Boolean).join(" ");
+      auditLog("Вызов окна печати для студента:", fullName);
+
+      // Актуализируем дату в печатной шапке (если раздел уже отрисован).
+      const dateEl = document.getElementById('transcriptPrintDate');
+      if (dateEl) dateEl.textContent = formatDate(new Date());
+
+      try {
+        if (typeof window.print === 'function') window.print();
+      } catch (e) {
+        console.error("Не удалось открыть окно печати:", e);
+      }
     }
 
     /* ============================================================
@@ -10073,9 +10352,17 @@
             <div class="admin-backup-card">
               <h4><i class="fas fa-download"></i> ${escapeHtml(dict.adminBackupTitle)}</h4>
               <p>${escapeHtml(dict.adminBackupHint)}</p>
-              <button type="button" class="btn-ghost" id="adminBackupBtn">
-                <i class="fas fa-file-arrow-down"></i> ${escapeHtml(dict.adminBackupBtn)}
-              </button>
+              <div class="admin-import-actions">
+                <button type="button" class="btn-ghost" id="adminBackupBtn">
+                  <i class="fas fa-file-arrow-down"></i> ${escapeHtml(dict.adminBackupBtn)}
+                </button>
+                <button type="button" class="btn-ghost" id="adminImportBtn">
+                  <i class="fas fa-file-arrow-up"></i> ${escapeHtml(dict.adminImportBtn)}
+                </button>
+              </div>
+              <input type="file" id="import-file" accept=".json,application/json"
+                     style="display:none" aria-hidden="true" tabindex="-1">
+              <p class="admin-import-note">${escapeHtml(dict.adminImportHint)}</p>
               <div class="admin-settings-status" id="adminBackupStatus" role="status" aria-live="polite"></div>
             </div>
 
@@ -10094,11 +10381,26 @@
     function bindAdminSettings() {
       const saveBtn = document.getElementById('adminSettingsSave');
       const backupBtn = document.getElementById('adminBackupBtn');
+      const importBtn = document.getElementById('adminImportBtn');
+      const importInput = document.getElementById('import-file');
       const resetBtn = document.getElementById('adminResetDb');
       const clearBtn = document.getElementById('adminClearLogs');
 
       if (saveBtn) saveBtn.addEventListener('click', saveAdminSettings);
-      if (backupBtn) backupBtn.addEventListener('click', downloadAdminBackup);
+      if (backupBtn) backupBtn.addEventListener('click', exportDatabase);
+      if (importBtn && importInput) {
+        importBtn.addEventListener('click', () => {
+          // Сбрасываем значение, чтобы повторный выбор того же файла срабатывал.
+          importInput.value = '';
+          importInput.click();
+        });
+      }
+      if (importInput) {
+        importInput.addEventListener('change', () => {
+          const file = importInput.files && importInput.files[0];
+          if (file) handleImportFile(file);
+        });
+      }
       if (resetBtn) resetBtn.addEventListener('click', resetAdminDatabase);
       if (clearBtn) clearBtn.addEventListener('click', clearAdminLogs);
     }
@@ -10155,6 +10457,25 @@
       }
     }
 
+    // Текущие данные для экспорта: тесты, результаты, объявления и пользователи.
+    // Если localStorage пуст — отдаём mock-данные, чтобы файл не был пустым.
+    function collectExportDatasets() {
+      const readList = (key, fallback) => {
+        const saved = safeParse(key, null);
+        return Array.isArray(saved) ? saved : fallback.slice();
+      };
+      return {
+        tests: readList(ALL_TESTS_KEY, mockTests),
+        results: getResults(),
+        announcements: getAnnouncements(),
+        users: {
+          students: readList(ADMIN_STUDENTS_KEY, mockAllStudents),
+          teachers: readList(ADMIN_TEACHERS_KEY, mockAllTeachers),
+          managers: readList(MANAGERS_KEY, mockAllManagers)
+        }
+      };
+    }
+
     // Полный набор данных для резервной копии: все ключи unitest* + настройки и журнал.
     function adminBackupData() {
       const data = {
@@ -10176,6 +10497,20 @@
       } catch (e) {
         console.error("Не удалось собрать данные для резервной копии:", e);
       }
+
+      // Явные разделы (тесты/результаты/объявления/пользователи) + сводка:
+      // удобно читать в файле и проверять в предпросмотре импорта.
+      const datasets = collectExportDatasets();
+      data.datasets = datasets;
+      data.summary = {
+        keys: Object.keys(data.storage).length,
+        tests: datasets.tests.length,
+        results: datasets.results.length,
+        announcements: datasets.announcements.length,
+        students: datasets.users.students.length,
+        teachers: datasets.users.teachers.length,
+        managers: datasets.users.managers.length
+      };
       return data;
     }
 
@@ -10209,20 +10544,27 @@
       }
     }
 
-    // Скачивание резервной копии в JSON.
-    function downloadAdminBackup() {
+    // Скачивание резервной копии в JSON (реальный экспорт, Промт №44).
+    // Имя функции из промта: exportDatabase(). downloadAdminBackup оставлен
+    // как алиас для совместимости со старыми вызовами.
+    function exportDatabase() {
+      // Промт №41: экспорт базы — только администратор
+      if (!requireRole('admin', 'exportDatabase')) return null;
       const dict = translations[currentLang];
       const statusEl = document.getElementById('adminBackupStatus');
+      let backup = null;
       let json = '';
       try {
-        json = JSON.stringify(adminBackupData(), null, 2);
+        backup = adminBackupData();
+        auditLog("Экспорт базы. Собрано ключей:", Object.keys(backup.storage || {}).length);
+        json = JSON.stringify(backup, null, 2);
       } catch (e) {
         console.error("Не удалось сериализовать резервную копию:", e);
         if (statusEl) {
           statusEl.textContent = dict.adminBackupError;
           statusEl.className = 'admin-settings-status admin-settings-status--error';
         }
-        return;
+        return null;
       }
 
       const date = new Date().toISOString().slice(0, 10);
@@ -10235,7 +10577,7 @@
           statusEl.textContent = dict.adminBackupError;
           statusEl.className = 'admin-settings-status admin-settings-status--error';
         }
-        return;
+        return null;
       }
 
       addSystemLog(mockAdmin.name, 'adminLogBackup', [filename]);
@@ -10244,6 +10586,292 @@
         statusEl.textContent = dict.adminBackupDone + ' ' + filename;
         statusEl.className = 'admin-settings-status admin-settings-status--ok';
       }
+      return backup;
+    }
+
+    function downloadAdminBackup() {
+      return exportDatabase();
+    }
+
+    /* ------------------------------------------------------------
+       ИМПОРТ БАЗЫ (Промт №44): файл → валидация → предпросмотр →
+       подтверждение → запись в localStorage → reload.
+       ------------------------------------------------------------ */
+    // Ключи, которые считаются «своими» и попадают в localStorage.
+    const IMPORT_KEY_RE = /^unitest[a-z0-9_]*$/i;
+    // Ожидаемое состояние последнего выбранного файла (для кнопки подтверждения).
+    let pendingImport = null;
+    // Обработчик Esc для модалки импорта.
+    let importEscHandler = null;
+
+    // Количество записей в значении ключа (массив → длина, объект → число полей).
+    function importRecordCount(value) {
+      if (Array.isArray(value)) return value.length;
+      if (value && typeof value === 'object') return Object.keys(value).length;
+      if (value === '' || value == null) return 0;
+      return 1;
+    }
+
+    // Сводка по основным разделам для предпросмотра.
+    function importSummary(storage) {
+      const listCount = (key) => importRecordCount(storage[key]);
+      return {
+        tests: listCount(ALL_TESTS_KEY),
+        results: listCount(RESULTS_KEY),
+        announcements: listCount(ANNOUNCEMENTS_KEY),
+        users: listCount(ADMIN_STUDENTS_KEY) + listCount(ADMIN_TEACHERS_KEY) + listCount(MANAGERS_KEY)
+      };
+    }
+
+    // Приводит распознанный JSON к { storage, skipped, summary }.
+    // Поддерживаются: наш backup ({storage:{unitest*}}), плоский объект
+    // ({unitest*: value}) и файл с явными разделами (datasets/tests/results…).
+    function normalizeImportPayload(parsed) {
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        return { ok: false, invalid: true };
+      }
+
+      const hasStorage = parsed.storage && typeof parsed.storage === 'object' && !Array.isArray(parsed.storage);
+      const source = hasStorage ? parsed.storage : parsed;
+      const storage = {};
+      const skipped = [];
+      // Служебные поля «человеческого» экспорта — это не посторонние ключи.
+      const SERVICE_KEYS = new Set([
+        'tests', 'results', 'announcements', 'users', 'datasets', 'summary',
+        'app', 'schemaVersion', 'exportedAt', 'settings', 'logs'
+      ]);
+
+      Object.keys(source).forEach(key => {
+        if (IMPORT_KEY_RE.test(key)) { storage[key] = source[key]; return; }
+        if (!SERVICE_KEYS.has(key)) skipped.push(key);
+      });
+
+      // Явные разделы (наши datasets / удобный «человеческий» экспорт).
+      const users = parsed.users && typeof parsed.users === 'object' ? parsed.users : null;
+      const datasets = parsed.datasets && typeof parsed.datasets === 'object' ? parsed.datasets : null;
+      const pick = (...values) => values.find(v => v !== undefined && v !== null);
+      if (datasets || users || !hasStorage) {
+        const map = [
+          [ALL_TESTS_KEY, pick(datasets && datasets.tests, parsed.tests)],
+          [RESULTS_KEY, pick(datasets && datasets.results, parsed.results)],
+          [ANNOUNCEMENTS_KEY, pick(datasets && datasets.announcements, parsed.announcements)],
+          [ADMIN_STUDENTS_KEY, pick(datasets && datasets.users && datasets.users.students, users && users.students)],
+          [ADMIN_TEACHERS_KEY, pick(datasets && datasets.users && datasets.users.teachers, users && users.teachers)],
+          [MANAGERS_KEY, pick(datasets && datasets.users && datasets.users.managers, users && users.managers)]
+        ];
+        map.forEach(([key, value]) => {
+          if (value !== undefined && storage[key] === undefined) storage[key] = value;
+        });
+      }
+
+      // Системные настройки из шапки backup-файла (если ключа ещё нет).
+      if (parsed.settings && typeof parsed.settings === 'object' && !Array.isArray(parsed.settings) &&
+          storage['unitest_settings'] === undefined) {
+        storage['unitest_settings'] = parsed.settings;
+      }
+
+      const keys = Object.keys(storage);
+      if (!keys.length) return { ok: false, empty: true, skipped };
+      return { ok: true, storage, keys, skipped, summary: importSummary(storage) };
+    }
+
+    // Разбор текста файла. Возвращает нормализованный объект или {ok:false}.
+    function parseImportText(text) {
+      let parsed;
+      try {
+        parsed = JSON.parse(String(text == null ? '' : text));
+      } catch (e) {
+        return { ok: false, invalid: true };
+      }
+      return normalizeImportPayload(parsed);
+    }
+
+    // Статус в блоке резервного копирования.
+    function setAdminBackupStatus(text, isError) {
+      const statusEl = document.getElementById('adminBackupStatus');
+      if (!statusEl) return;
+      statusEl.textContent = text;
+      statusEl.className = 'admin-settings-status ' +
+        (isError ? 'admin-settings-status--error' : 'admin-settings-status--ok');
+    }
+
+    // Чтение выбранного файла через FileReader → разбор → предпросмотр.
+    function handleImportFile(file) {
+      const dict = translations[currentLang];
+      if (!file || typeof FileReader === 'undefined') {
+        setAdminBackupStatus(dict.adminImportReadError, true);
+        alert(dict.adminImportReadError);
+        return;
+      }
+      try {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = handleImportText(reader.result, file.name || '');
+          if (!result || !result.ok) return;
+        };
+        reader.onerror = () => {
+          setAdminBackupStatus(dict.adminImportReadError, true);
+          alert(dict.adminImportReadError);
+        };
+        reader.readAsText(file, 'utf-8');
+      } catch (e) {
+        console.error("Не удалось прочитать файл импорта:", e);
+        setAdminBackupStatus(dict.adminImportReadError, true);
+        alert(dict.adminImportReadError);
+      }
+    }
+
+    // Разбор текста и открытие предпросмотра. Возвращает результат разбора.
+    function handleImportText(text, filename) {
+      const dict = translations[currentLang];
+      const result = parseImportText(text);
+      if (!result.ok) {
+        const message = result.empty ? dict.adminImportEmpty : dict.adminImportInvalid;
+        setAdminBackupStatus(message, true);
+        alert(message);
+        dbg("Импорт отклонён:", result.empty ? 'нет данных UniTest' : 'неверный формат');
+        return result;
+      }
+      openImportPreview(result, filename || '');
+      return result;
+    }
+
+    // Модалка предпросмотра: сводка, список ключей и посторонние ключи.
+    function openImportPreview(preview, filename) {
+      if (!requireRole('admin', 'openImportPreview')) return;
+      const dict = translations[currentLang];
+      pendingImport = {
+        storage: preview.storage,
+        keys: preview.keys,
+        skipped: preview.skipped || [],
+        summary: preview.summary,
+        filename: filename || ''
+      };
+
+      const old = document.getElementById('adminImportOverlay');
+      if (old) old.remove();
+      if (importEscHandler) {
+        document.removeEventListener('keydown', importEscHandler);
+        importEscHandler = null;
+      }
+
+      const rows = preview.keys.slice().sort().map(key => `
+        <tr>
+          <td>${escapeHtml(key)}</td>
+          <td>${importRecordCount(preview.storage[key])}</td>
+        </tr>`).join('');
+
+      const skippedHTML = (preview.skipped && preview.skipped.length)
+        ? `<p class="admin-import-skipped"><b>${escapeHtml(dict.adminImportSkipped)}</b>
+             ${escapeHtml(preview.skipped.slice(0, 12).join(', '))}${
+               preview.skipped.length > 12 ? ' …' : ''
+             }</p>`
+        : '';
+
+      const overlay = document.createElement('div');
+      overlay.className = 'admin-modal-overlay';
+      overlay.id = 'adminImportOverlay';
+      overlay.innerHTML = `
+        <div class="admin-modal admin-import-modal" role="dialog" aria-modal="true"
+             aria-labelledby="adminImportTitle">
+          <div class="admin-modal-head">
+            <h3 class="admin-modal-title" id="adminImportTitle">${escapeHtml(dict.adminImportPreviewTitle)}</h3>
+            <button type="button" class="admin-modal-close" id="adminImportClose"
+                    aria-label="${escapeHtml(dict.close)}" title="${escapeHtml(dict.close)}">✕</button>
+          </div>
+          <p class="admin-settings-note">${escapeHtml(dict.adminImportPreviewHint)}</p>
+          ${filename ? `<p class="admin-import-note"><b>${escapeHtml(dict.adminImportBtn)}:</b> ${escapeHtml(filename)}</p>` : ''}
+
+          <div class="admin-import-summary">
+            <div class="admin-import-stat"><b>${preview.keys.length}</b><span>${escapeHtml(dict.adminImportKeys)}</span></div>
+            <div class="admin-import-stat"><b>${preview.summary.tests}</b><span>${escapeHtml(dict.adminImportTests)}</span></div>
+            <div class="admin-import-stat"><b>${preview.summary.results}</b><span>${escapeHtml(dict.adminImportResults)}</span></div>
+            <div class="admin-import-stat"><b>${preview.summary.users}</b><span>${escapeHtml(dict.adminImportUsers)}</span></div>
+          </div>
+
+          <div class="admin-import-list table-responsive">
+            <table class="admin-import-table">
+              <thead>
+                <tr>
+                  <th>${escapeHtml(dict.adminImportKeys)}</th>
+                  <th>${escapeHtml(dict.adminImportRecords)}</th>
+                </tr>
+              </thead>
+              <tbody>${rows || `<tr><td colspan="2">${escapeHtml(dict.adminImportNothing)}</td></tr>`}</tbody>
+            </table>
+          </div>
+          ${skippedHTML}
+
+          <div class="form-actions">
+            <button type="button" class="btn-ghost" id="adminImportCancel">${escapeHtml(dict.cancel)}</button>
+            <button type="button" class="btn-primary" id="adminImportConfirm">
+              <i class="fas fa-file-import"></i> ${escapeHtml(dict.adminImportConfirm)}
+            </button>
+          </div>
+        </div>`;
+
+      document.body.appendChild(overlay);
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay || (e.target.closest && e.target.closest('#adminImportClose')) ||
+            (e.target.closest && e.target.closest('#adminImportCancel'))) {
+          closeImportPreview();
+        }
+      });
+      const confirmBtn = document.getElementById('adminImportConfirm');
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', applyImportedDatabase);
+        confirmBtn.focus();
+      }
+
+      importEscHandler = (e) => {
+        if (e.key === 'Escape' || e.key === 'Esc') closeImportPreview();
+      };
+      document.addEventListener('keydown', importEscHandler);
+    }
+
+    function closeImportPreview() {
+      const overlay = document.getElementById('adminImportOverlay');
+      if (overlay) overlay.remove();
+      if (importEscHandler) {
+        document.removeEventListener('keydown', importEscHandler);
+        importEscHandler = null;
+      }
+      pendingImport = null;
+    }
+
+    // Запись подтверждённого импорта в localStorage и перезагрузка.
+    function applyImportedDatabase() {
+      if (!requireRole('admin', 'applyImportedDatabase')) return false;
+      const dict = translations[currentLang];
+      if (!pendingImport || !pendingImport.storage) {
+        alert(dict.adminImportNothing);
+        return false;
+      }
+
+      const entries = pendingImport.storage;
+      const keys = Object.keys(entries);
+      let count = 0;
+      try {
+        keys.forEach(key => {
+          localStorage.setItem(key, JSON.stringify(entries[key]));
+          count++;
+        });
+      } catch (e) {
+        console.error("Не удалось записать импортированные данные:", e);
+        setAdminBackupStatus(dict.storageFull || dict.adminImportInvalid, true);
+        alert(dict.storageFull || dict.adminImportInvalid);
+        return false;
+      }
+
+      auditLog("Импорт базы. Загружено ключей:", count);
+      const filename = pendingImport.filename || '';
+      addSystemLog(mockAdmin.name, 'adminLogImport', [filename || dict.adminImportBtn]);
+      setAdminBackupStatus(dict.adminImportDone, false);
+      closeImportPreview();
+      alert(dict.adminImportDone);
+      reloadAdminPage();
+      return true;
     }
 
     // Очистка журнала действий (кнопка в блоке журнала).
