@@ -222,6 +222,7 @@ T("Esc закрывает апелляцию", appealOverlay.classList.contains(
 console.log("\n[8.1] Модалка уведомления: доступное имя и фокус");
 w.toggleNotifications();
 const notifLink = d.querySelector('#notifList [data-notif-id][role="button"]');
+const openedNotifId = notifLink ? notifLink.dataset.notifId : "";
 T("в панели есть уведомление с подробностями", !!notifLink);
 if (notifLink) {
   notifLink.focus();
@@ -240,10 +241,21 @@ if (notifLink) {
   T("у кнопки закрытия модалки есть aria-label",
     d.getElementById("notifModalClose").getAttribute("aria-label") === translations.ru.close,
     d.getElementById("notifModalClose").getAttribute("aria-label"));
+  // Аудит q20: открытие статьи сразу помечает уведомление прочитанным.
+  T("открытие статьи помечает уведомление прочитанным",
+    app.eval(`isNotificationRead(findNotification(${JSON.stringify(openedNotifId)}))`));
+  const storedRead = JSON.parse(w.localStorage.getItem("unitestreadnotifications") || "[]");
+  T("прочитанный id сохранён в localStorage",
+    storedRead.map(String).includes(String(openedNotifId)), JSON.stringify(storedRead));
   d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
   T("Esc закрывает модалку уведомления", notifModal.classList.contains("hidden"));
   T("фокус возвращается на колокольчик", d.activeElement === d.getElementById("bellBtn"),
     d.activeElement && (d.activeElement.id || d.activeElement.className));
+  w.toggleNotifications();
+  const reopenedNotif = d.querySelector(`#notifList [data-notif-id="${openedNotifId}"]`);
+  T("после прочтения у уведомления нет класса unread",
+    !!reopenedNotif && !reopenedNotif.classList.contains("unread"));
+  w.closeNotifications();
 }
 
 console.log("\n[8.2] Кликабельные строки/карточки доступны с клавиатуры");

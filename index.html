@@ -8614,6 +8614,24 @@
         ${sourceText ? `<div class="notif-source">${dict.sourceLabel}: ${escapeHtml(sourceText)}</div>` : ''}`;
     }
 
+    // Аудит q20: просмотр статьи — это и есть «прочтение». Раньше после
+    // открытия новости/события оставались красная точка на колокольчике и
+    // подсветка unread, и пользователь не видел, что уведомление уже прочитано.
+    function markNotificationRead(id) {
+      const n = findNotification(id);
+      if (!n || isNotificationRead(n)) return false;
+      n.read = true;
+      const key = String(n.id);
+      if (!readNotificationIds.includes(key)) {
+        readNotificationIds.push(key);
+        saveReadNotifications();
+      }
+      updateBellDot();
+      renderNotifications();                         // снимаем unread и обновляем «Отметить все»
+      dbg("Уведомление прочитано:", key);
+      return true;
+    }
+
     // Открывает модальное окно с подробностями (только news/event — у них есть details)
     function openNotifDetail(id) {
       const n = findNotification(id);
@@ -8621,6 +8639,7 @@
       const modal = document.getElementById('notifModal');
       const box = document.getElementById('notifModalBody');
       if (!modal || !box) return;
+      markNotificationRead(n.id);                    // аудит q20: точка и unread гаснут сразу
       box.innerHTML = notifDetailHTML(n);
       modal.classList.remove('hidden');
       currentNotifId = n.id;
