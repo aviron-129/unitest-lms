@@ -246,6 +246,49 @@ if (notifLink) {
     d.activeElement && (d.activeElement.id || d.activeElement.className));
 }
 
+console.log("\n[8.2] Кликабельные строки/карточки доступны с клавиатуры");
+w.selectRole("admin");
+w.navigate("users");
+const adminRow = d.querySelector("#adminUsersRows tr[data-admin-user]");
+const adminOpenBtn = adminRow && adminRow.querySelector(".row-open-btn");
+T("в строке пользователя есть кнопка профиля", !!adminOpenBtn);
+T("кнопка профиля — нативный button (Enter/Space)",
+  !!adminOpenBtn && adminOpenBtn.tagName === "BUTTON");
+T("у кнопки профиля есть доступное имя",
+  !!adminOpenBtn && String(adminOpenBtn.getAttribute("aria-label") || "").includes(adminRow.dataset.adminUser),
+  adminOpenBtn && adminOpenBtn.getAttribute("aria-label"));
+const adminCardOpenBtn = d.querySelector("#adminUsersCards .admin-user-card .row-open-btn");
+T("в мобильной карточке пользователя есть кнопка профиля", !!adminCardOpenBtn);
+if (adminOpenBtn) {
+  app.alerts.length = 0;
+  adminOpenBtn.focus();
+  adminOpenBtn.click();                       // нативный Enter/Space даёт click
+  T("кнопка профиля открывает демо-профиль",
+    app.alerts.length === 1 && app.alerts[0].includes(adminRow.dataset.adminUser),
+    app.alerts[0]);
+}
+
+w.selectRole("manager");
+w.navigate("students");
+const studentRow = d.querySelector("#managerStudentsRows tr[data-student-name]");
+const studentOpenBtn = studentRow && studentRow.querySelector(".row-open-btn");
+T("в строке студента есть кнопка профиля", !!studentOpenBtn);
+T("кнопка профиля студента — нативный button",
+  !!studentOpenBtn && studentOpenBtn.tagName === "BUTTON");
+T("у кнопки профиля студента есть доступное имя",
+  !!studentOpenBtn && String(studentOpenBtn.getAttribute("aria-label") || "").includes(studentRow.dataset.studentName),
+  studentOpenBtn && studentOpenBtn.getAttribute("aria-label"));
+const studentCardOpenBtn = d.querySelector("#managerStudentsCards .results-card .row-open-btn");
+T("в мобильной карточке студента есть кнопка профиля", !!studentCardOpenBtn);
+if (studentOpenBtn) {
+  app.alerts.length = 0;
+  studentOpenBtn.focus();
+  studentOpenBtn.click();
+  T("кнопка профиля студента открывает демо-профиль",
+    app.alerts.length === 1 && app.alerts[0].includes(studentRow.dataset.studentName),
+    app.alerts[0]);
+}
+
 console.log("\n[9] Переводы и консоль");
 for (const lang of ["ru", "uz", "en"]) {
   T(`testNoQuestions есть (${lang})`, !!(translations[lang] && String(translations[lang].testNoQuestions || "").trim()),
@@ -253,6 +296,10 @@ for (const lang of ["ru", "uz", "en"]) {
 }
 T("uz/en без кириллицы",
   !/[А-Яа-яЁё]/.test(translations.uz.testNoQuestions) && !/[А-Яа-яЁё]/.test(translations.en.testNoQuestions));
+T("openProfile есть в ru/uz/en",
+  ["ru", "uz", "en"].every(lang => typeof translations[lang].openProfile === "string"));
+T("openProfile содержит плейсхолдер {0}",
+  ["ru", "uz", "en"].every(lang => translations[lang].openProfile.includes("{0}")));
 T("консоль без console.error", app.errors.length === 0, app.errors.slice(0, 3).join(" | "));
 
 console.log(`\n=== TEST43: пройдено ${pass}, провалено ${fail} ===`);

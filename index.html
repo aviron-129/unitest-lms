@@ -2445,6 +2445,22 @@
 
     /* Кликабельные строки таблицы */
     .admin-users-table tbody tr { cursor: pointer; }
+    /* q17: клавиатурный доступ к кликабельным строкам/карточкам.
+       Внутри строки — настоящая кнопка, поэтому Enter/Space работают
+       без отдельных keydown-обработчиков. */
+    .row-open-btn {
+      appearance: none;
+      -webkit-appearance: none;
+      background: none;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .row-open-btn:hover { text-decoration: underline; }
     .admin-users-table td { vertical-align: middle; }
     .admin-user-name { font-weight: 600; overflow-wrap: anywhere; }
 
@@ -5143,6 +5159,7 @@
         assignGroupDev: "Демо: группы назначает администратор.",
         addStudentDev: "Демо: студентов добавляет администратор.",
         studentProfileDev: "Профиль студента: {0}. Демо-данные без редактирования.",
+        openProfile: "Открыть профиль: {0}",
         allTeachers: "Все преподаватели",
         author: "Автор",
         viewResults: "Посмотреть результаты",
@@ -5696,6 +5713,7 @@
         assignGroupDev: "Demo: guruhlarni administrator tayinlaydi.",
         addStudentDev: "Demo: talabalarni administrator qo'shadi.",
         studentProfileDev: "Talaba profili: {0}. Demo ma'lumotlar, tahrirlashsiz.",
+        openProfile: "Profilni ochish: {0}",
         allTeachers: "Barcha o'qituvchilar",
         author: "Muallif",
         viewResults: "Natijalarni ko'rish",
@@ -6250,6 +6268,7 @@
         assignGroupDev: "Demo: the administrator assigns groups.",
         addStudentDev: "Demo: the administrator adds students.",
         studentProfileDev: "Student profile: {0}. Demo data, read-only.",
+        openProfile: "Open profile: {0}",
         allTeachers: "All teachers",
         author: "Author",
         viewResults: "View results",
@@ -9603,12 +9622,18 @@
     }
 
     function adminUserRowHTML(user) {
+      const dict = translations[currentLang];
       const roleIcon = user.role === 'student' ? 'fa-user-graduate'
         : user.role === 'teacher' ? 'fa-chalkboard-user'
         : 'fa-user-tie';
       return `
         <tr data-admin-user="${escapeHtml(user.name)}" data-user-role="${escapeHtml(user.role)}">
-          <td><span class="admin-user-name">${escapeHtml(user.name)}</span></td>
+          <td>
+            <button type="button" class="row-open-btn"
+                    aria-label="${escapeHtml(dict.openProfile.replace('{0}', user.name))}">
+              <span class="admin-user-name">${escapeHtml(user.name)}</span>
+            </button>
+          </td>
           <td>
             <span class="admin-role-badge admin-role-${escapeHtml(user.role)}">
               <i class="fas ${roleIcon}"></i>${escapeHtml(adminUserRoleLabel(user))}
@@ -9627,7 +9652,10 @@
       return `
         <article class="results-card admin-user-card" data-admin-user="${escapeHtml(user.name)}" data-user-role="${escapeHtml(user.role)}">
           <div class="results-card-top">
-            <span class="results-card-name">${escapeHtml(user.name)}</span>
+            <button type="button" class="row-open-btn"
+                    aria-label="${escapeHtml(dict.openProfile.replace('{0}', user.name))}">
+              <span class="results-card-name">${escapeHtml(user.name)}</span>
+            </button>
             <span class="admin-role-badge admin-role-${escapeHtml(user.role)}">
               <i class="fas ${roleIcon}"></i>${escapeHtml(adminUserRoleLabel(user))}
             </span>
@@ -11747,7 +11775,12 @@
 
       rowsEl.innerHTML = result.map(s => `
         <tr data-student-name="${escapeHtml(s.name)}">
-          <td>${escapeHtml(s.name)}</td>
+          <td>
+            <button type="button" class="row-open-btn"
+                    aria-label="${escapeHtml(dict.openProfile.replace('{0}', s.name))}">
+              <span class="admin-user-name">${escapeHtml(s.name)}</span>
+            </button>
+          </td>
           <td>${escapeHtml(s.group)}</td>
           <td>${escapeHtml(s.course)} ${dict.courseSuffix}</td>
           <td>${formLabel(s)}</td>
@@ -11757,7 +11790,10 @@
       cardsEl.innerHTML = result.map(s => `
         <article class="results-card" data-student-name="${escapeHtml(s.name)}">
           <div class="results-card-top">
-            <span class="results-card-name">${escapeHtml(s.name)}</span>
+            <button type="button" class="row-open-btn"
+                    aria-label="${escapeHtml(dict.openProfile.replace('{0}', s.name))}">
+              <span class="results-card-name">${escapeHtml(s.name)}</span>
+            </button>
             <span class="course-badge">${escapeHtml(s.group)}</span>
           </div>
           <div class="results-card-row"><i class="fas fa-book"></i> ${escapeHtml(s.course)} ${dict.courseSuffix} · ${formLabel(s)}</div>
