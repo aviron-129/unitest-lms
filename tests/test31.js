@@ -145,7 +145,29 @@ T("UZ подсказка", resultText().includes("Kamida 2 ta belgi kiriting"), 
 w.changeLanguage("ru");
 w.closeSearch();
 
-console.log("\n[9] Регресс");
+console.log("\n[9] Производительность: ввод не перерисовывает панель на каждый символ");
+w.selectRole("student");
+w.openSearch();
+const perfInput = d.getElementById("searchInput");
+const realPerformSearch = w.performSearch;
+let searchRenders = 0;
+w.performSearch = function (...args) {
+  searchRenders++;
+  return realPerformSearch.apply(w, args);
+};
+// Сбрасываем окно склейки, чтобы первый ввод серии был ведущим.
+w.eval("if (searchInputTimer) { clearTimeout(searchInputTimer); searchInputTimer = null; } searchInputLastRun = 0; searchLastQuery = null;");
+["м", "ма", "мат"].forEach(value => {
+  perfInput.value = value;
+  perfInput.dispatchEvent(new w.Event("input", { bubbles: true }));
+});
+T("три быстрых ввода — один рендер", searchRenders === 1, searchRenders);
+T("финальное значение отрисуется отложенно", !!w.eval("searchInputTimer"));
+w.closeSearch();
+T("закрытие отменяет отложенный рендер", w.eval("searchInputTimer") === null);
+w.performSearch = realPerformSearch;
+
+console.log("\n[10] Регресс");
 T("уведомления на месте", !!d.getElementById("bellBtn") && !!d.getElementById("notifDropdown"));
 T("панель профиля студента не сломана", (w.navigate("profile"), txt(d.getElementById("sectionContent")).includes("Tosheva")));
 T("console.error пуст", app.errors.length === 0, app.errors);

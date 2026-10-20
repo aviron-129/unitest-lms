@@ -8819,12 +8819,49 @@
       };
     }
 
+    /* Аудит q19: результаты поиска строятся заново на каждый символ, причём
+       каждый рендер заново собирает область поиска (тесты, группы, пользователи,
+       объявления) и перефильтровывает её. На быстром наборе это N полных
+       перерисовок выпадающей панели. Склеиваем серию ввода:
+       — первый символ серии рисуем сразу (ведущий вызов, без задержки);
+       — хвост серии — один отложенный рендер, только если значение изменилось. */
+    const SEARCH_INPUT_DELAY = 180;
+    let searchInputTimer = null;
+    let searchInputLastRun = 0;
+    let searchLastQuery = null;
+
+    // Планирует перерисовку результатов поиска без лишних рендеров.
+    function scheduleSearchInput(value) {
+      const query = String(value == null ? "" : value);
+      const now = Date.now();
+      if (now - searchInputLastRun >= SEARCH_INPUT_DELAY) {
+        searchInputLastRun = now;
+        performSearch(query);                       // ведущий рендер — без задержки
+      }
+      if (searchInputTimer) clearTimeout(searchInputTimer);
+      searchInputTimer = setTimeout(() => {
+        searchInputTimer = null;
+        const input = document.getElementById('searchInput');
+        const current = input ? input.value : query;
+        // Ведущий вызов уже отрисовал это значение — второй рендер не нужен.
+        if (current === searchLastQuery) return;
+        searchInputLastRun = Date.now();
+        performSearch(current);
+      }, SEARCH_INPUT_DELAY);
+    }
+
     // Поиск по введённому тексту: нечувствителен к регистру, от 2 символов.
     function performSearch(rawQuery) {
       const dict = translations[currentLang];
       const box = document.getElementById('searchResults');
       if (!box) return;
       const query = String(rawQuery == null ? "" : rawQuery).trim();
+      // Явный вызов отменяет отложенный рендер устаревшего запроса.
+      if (searchInputTimer) {
+        clearTimeout(searchInputTimer);
+        searchInputTimer = null;
+      }
+      searchLastQuery = query;
       dbg("Поиск по запросу:", query, "Роль:", currentRole);
 
       // По одной букве не ищем (самопроверка №2)
@@ -8897,6 +8934,7 @@
         input.focus();
         input.select();
       }
+      searchInputLastRun = 0;            // первый символ после открытия — сразу
       performSearch(input ? input.value : "");
       dbg("Поиск открыт. Роль:", currentRole);
     }
@@ -8905,6 +8943,14 @@
     function closeSearch() {
       const dd = document.getElementById('searchDropdown');
       if (dd) dd.classList.add('hidden');
+      // Аудит q19: отменяем отложенный рендер, чтобы он не вернул результаты
+      // в уже закрытую панель (и не перерисовывал её зря).
+      if (searchInputTimer) {
+        clearTimeout(searchInputTimer);
+        searchInputTimer = null;
+      }
+      searchInputLastRun = 0;
+      searchLastQuery = null;
       const input = document.getElementById('searchInput');
       if (input) input.value = "";
       const box = document.getElementById('searchResults');
@@ -16123,7 +16169,7 @@
       document.getElementById('searchClose').addEventListener('click', closeSearch);
 
       const searchInput = document.getElementById('searchInput');
-      searchInput.addEventListener('input', () => performSearch(searchInput.value));
+      searchInput.addEventListener('input', () => scheduleSearchInput(searchInput.value));
 
       const searchResults = document.getElementById('searchResults');
       searchResults.addEventListener('click', (e) => {
