@@ -69,6 +69,27 @@ T("navigate → timerId = null", w.eval("timerId") === null, w.eval("timerId"));
 T("navigate → clearInterval вызван", clearedIds.includes(timer1), clearedIds.join(","));
 T("navigate → интервалов не осталось", intervals.size === 0, intervals.size);
 
+console.log("\n[2.1] Смена языка не глушит таймер теста (аудит q22)");
+// Аудит q22: applyLanguage() вызывает navigate(), а тот останавливает таймер
+// (Промт №42). Раньше смена языка на экране прохождения замораживала отсчёт.
+resetTestState();
+w.selectRole("student");
+w.startTest(1);
+const timerLang = w.eval("timerId");
+const secondsLang = w.eval("secondsLeft");
+w.changeLanguage("en");
+T("после смены языка таймер жив", w.eval("timerId") !== null, w.eval("timerId"));
+T("интервал перезапущен ровно один", intervals.size === 1, intervals.size);
+T("таймер перезапущен заново", w.eval("timerId") !== timerLang, w.eval("timerId"));
+T("остаток времени не потерян", w.eval("secondsLeft") === secondsLang, w.eval("secondsLeft"));
+const beforeLangTick = w.eval("secondsLeft");
+tick();
+T("отсчёт продолжается", w.eval("secondsLeft") === beforeLangTick - 1, w.eval("secondsLeft"));
+T("экран теста не закрыт", !D.getElementById("testScreen").classList.contains("hidden"));
+w.changeLanguage("ru");
+T("возврат языка снова не останавливает таймер", w.eval("timerId") !== null, w.eval("timerId"));
+w.closeTestScreen();
+
 console.log("\n[3] Таймер: logout");
 resetTestState();
 w.selectRole("student");

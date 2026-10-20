@@ -7514,6 +7514,11 @@
       document.getElementById('themeToggle').title = dict.switchTheme;
       document.getElementById('themeTogglePanel').title = dict.switchTheme;
 
+      // Аудит q22: navigate() внутри applyLanguage глушит таймер теста (Промт №42).
+      // Смена языка прямо на экране прохождения не должна «замораживать» отсчёт —
+      // запоминаем, что таймер работал, и запускаем его снова после перерисовки.
+      const timerWasRunning = !!timerId && !!activeTest && !testSessionFinished;
+
       // Если вошли в роль — обновляем имя роли в sidebar и заголовок раздела
       if (currentRole) {
         document.getElementById('sidebarRoleName').textContent = dict['role_' + currentRole];
@@ -7523,6 +7528,13 @@
 
       // Если открыт экран теста — перерисовываем вопрос на новом языке
       if (activeTest) renderQuestion();
+
+      // Аудит q22: возвращаем таймер, остановленный navigate(). Нулевое/битое
+      // время не запускаем — тест уже завершён или должен завершиться сам.
+      if (timerWasRunning && activeTest && !testSessionFinished && timerId === null && secondsLeft > 0) {
+        startTimer(secondsLeft);
+        dbg("Таймер возобновлён после смены языка. Осталось:", secondsLeft, "c");
+      }
 
       // Если открыт экран результата — перерисовываем его на новом языке (Промт №7)
       const rs = document.getElementById('resultScreen');
