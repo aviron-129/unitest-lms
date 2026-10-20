@@ -19,6 +19,10 @@
        ============================================================ */
     :root {
       --accent: #6366f1;          /* акцентный цвет платформы */
+      /* Аудит q15: --accent как ЦВЕТ ТЕКСТА на мягкой акцентной подложке
+         даёт 3.7–3.9:1. Для текста берём более глубокий оттенок; заливки
+         кнопок/меню продолжают использовать --accent. */
+      --accent-text: #4f46e5;
       --radius: 16px;             /* радиус скругления */
       /* Единая сетка панели (десктоп): макс. ширина рабочей области и боковые отступы.
          Заголовок (app-header) и контент используют одни и те же значения,
@@ -54,6 +58,8 @@
       --surface-solid: #161a36;                  /* непрозрачный фон попапов (уведомления) */
       --surface-border: rgba(255, 255, 255, 0.16);
       --overlay-bg: #0f132e;
+      /* Аудит q15: светлый акцент для текста на тёмной подложке (5.0:1+). */
+      --accent-text: #818cf8;
       color-scheme: dark;
     }
 
@@ -485,7 +491,9 @@
       justify-content: center;
       flex-shrink: 0;
     }
-    .menu-item.active .menu-badge { background: #ffffff; color: var(--role, #6366f1); }
+    /* Аудит q15: на белом бейдже активного пункта насыщенный --role давал
+       всего 2.5:1 (учитель) — счётчик почти не читался. Тёмный текст — 16:1. */
+    .menu-item.active .menu-badge { background: #ffffff; color: #111827; }
     .menu-badge.hidden { display: none; }
 
     /* Кнопка «Выйти» внизу sidebar */
@@ -2512,7 +2520,9 @@
       padding: 4px 10px;
       border-radius: 999px;
       background: var(--role-soft, rgba(99, 102, 241, 0.16));
-      color: var(--role, var(--accent));
+      /* Аудит q15: как и .admin-direction-count (q5), на мягкой подложке
+         читаемее светлый --role-text; насыщенный --role давал 2.77:1. */
+      color: var(--role-text, var(--role, var(--accent)));
       font-size: 0.74rem;
       font-weight: 800;
       white-space: nowrap;
@@ -3727,7 +3737,9 @@
       border-radius: 999px;
       border: 1px solid rgba(99, 102, 241, 0.28);
       background: rgba(99, 102, 241, 0.12);
-      color: var(--accent);
+      /* Аудит q15: --accent на мягкой подложке давал 3.45:1 (dark) / 3.85:1
+         (light) — используем токен читаемого акцентного текста. */
+      color: var(--accent-text, var(--accent));
       font-size: 0.72rem;
       font-weight: 700;
       white-space: nowrap;
@@ -3942,7 +3954,8 @@
       padding: 0 7px;
       border-radius: 999px;
       background: rgba(99, 102, 241, 0.14);
-      color: var(--accent);
+      /* Аудит q15: см. .chat-demo-badge — тот же читаемый акцентный текст. */
+      color: var(--accent-text, var(--accent));
       font-size: 0.74rem;
       letter-spacing: 0;
     }

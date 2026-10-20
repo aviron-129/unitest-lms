@@ -179,6 +179,39 @@ for (const [cls, rgba, alpha] of [
   T(`бейдж ${cls} в тёмной теме ≥ 4.5:1`, !!m && cr >= 4.5, m ? `${m[1]} / ${bg} = ${cr.toFixed(2)}` : "нет значения");
 }
 
+console.log("\n[13] Контраст мягких бейджей (аудит q15)");
+const accentTextLight = (css.match(/:root\s*\{[^}]*--accent-text:\s*(#[0-9a-f]{6})/i) || [])[1] || "";
+const accentTextDark = (darkBlock.match(/--accent-text:\s*(#[0-9a-f]{6})/i) || [])[1] || "";
+T("--accent-text задан в светлой теме", !!accentTextLight, accentTextLight);
+T("--accent-text задан в тёмной теме", !!accentTextDark, accentTextDark);
+
+const LIGHT_CARD = "#ffffff";
+for (const [name, alpha, cls] of [["chat-demo-badge", 0.12, ".chat-demo-badge"], ["chat-groups-count", 0.14, ".chat-groups-count"]]) {
+  const lightBg = mixHex("#6366f1", alpha, LIGHT_CARD);
+  const darkBg = mixHex("#6366f1", alpha, DARK_CARD);
+  T(`.${name} использует --accent-text`,
+    new RegExp(`\\.${name}\\s*\\{[^}]*color:\\s*var\\(--accent-text`).test(css));
+  T(`${name}: светлая тема ≥ 4.5:1`,
+    !!accentTextLight && contrastHex(accentTextLight, lightBg) >= 4.5,
+    `${accentTextLight} / ${lightBg} = ${contrastHex(accentTextLight, lightBg).toFixed(2)}`);
+  T(`${name}: тёмная тема ≥ 4.5:1`,
+    !!accentTextDark && contrastHex(accentTextDark, darkBg) >= 4.5,
+    `${accentTextDark} / ${darkBg} = ${contrastHex(accentTextDark, darkBg).toFixed(2)}`);
+}
+
+T(".admin-direction-block-count использует --role-text",
+  /\.admin-direction-block-count\s*\{[^}]*color:\s*var\(--role-text/i.test(css));
+const blockCountBg = mixHex("#8b5cf6", 0.35, DARK_CARD);
+const adminText = css.match(/\[data-theme="dark"\]\s*\.role-admin\s*\{[^}]*--role-text:\s*(#[0-9a-f]{6})/i);
+T(".admin-direction-block-count: тёмная тема ≥ 4.5:1",
+  !!adminText && contrastHex(adminText[1], blockCountBg) >= 4.5,
+  adminText ? `${adminText[1]} / ${blockCountBg} = ${contrastHex(adminText[1], blockCountBg).toFixed(2)}` : "нет значения");
+
+const activeBadge = css.match(/\.menu-item\.active\s+\.menu-badge\s*\{[^}]*color:\s*(#[0-9a-f]{6})/i);
+T("бейдж активного пункта меню: тёмный текст на белом ≥ 4.5:1",
+  !!activeBadge && contrastHex(activeBadge[1], "#ffffff") >= 4.5,
+  activeBadge ? `${activeBadge[1]} = ${contrastHex(activeBadge[1], "#ffffff").toFixed(2)}` : "нет значения");
+
 console.log("\n[12] Консоль");
 T("console.error пуст", app.errors.length === 0, app.errors.slice(0, 3).join(" | "));
 
