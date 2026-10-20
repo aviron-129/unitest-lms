@@ -12384,6 +12384,13 @@
         console.error("Тест не найден:", testId);
         return;
       }
+      // Аудит q21: студент может запускать только тесты, назначенные его
+      // курсу/направлению/группе/форме. Раньше прямой вызов startTest(id)
+      // открывал скрытые тесты чужого курса/направления (id 5 и 6).
+      if (!isTestMatch(test)) {
+        console.warn("startTest: тест не назначен студенту", testId);
+        return;
+      }
       // Промт №43: тест без вопросов не запускаем. Раньше пустой массив
       // подменялся mockQuestions — студент видел чужие вопросы.
       const testQuestions = Array.isArray(test.questions) ? test.questions : mockQuestions;

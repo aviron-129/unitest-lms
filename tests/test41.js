@@ -118,6 +118,22 @@ console.log("\n[6] Проверка ролей в действиях");
 w.eval(`selectRole('teacher'); activeTest = null; document.getElementById('testScreen').classList.add('hidden'); startTest(1);`);
 T("startTest заблокирован для преподавателя", D.getElementById("testScreen").classList.contains("hidden") && w.eval("activeTest") === null);
 
+// Аудит q21: студент не должен запускать тесты, не назначенные его курсу/направлению.
+T("startTest проверяет isTestMatch(test)", /function startTest\(testId\)[\s\S]{0,900}isTestMatch\(test\)/.test(html));
+w.eval(`mockTests.push(
+  { id: 'sec_hidden', title: 'Чужой тест', subject: 'math', teacher: 'T', questionsCount: 1, timeLimit: 5,
+    targetCourse: 3, targetDirection: 'programming', targetGroup: ['301-PR'], targetForm: ['full'],
+    questions: [{ text: 'Q', options: ['a','b','c','d'], correct: 0 }] },
+  { id: 'sec_ok', title: 'Свой тест', subject: 'math', teacher: 'T', questionsCount: 1, timeLimit: 5,
+    targetCourse: 1, targetDirection: 'programming', targetGroup: ['101-PR'], targetForm: ['full'],
+    questions: [{ text: 'Q', options: ['a','b','c','d'], correct: 0 }] }
+);`);
+w.eval(`selectRole('student'); activeTest = null; document.getElementById('testScreen').classList.add('hidden'); startTest('sec_hidden');`);
+T("startTest не запускает тест чужого курса", D.getElementById("testScreen").classList.contains("hidden") && w.eval("activeTest") === null);
+w.eval(`activeTest = null; document.getElementById('testScreen').classList.add('hidden'); startTest('sec_ok');`);
+T("startTest запускает назначенный студенту тест", !D.getElementById("testScreen").classList.contains("hidden") && w.eval("activeTest && activeTest.id") === "sec_ok");
+w.eval(`closeTestScreen(); ['sec_hidden','sec_ok'].forEach(id => { const i = mockTests.findIndex(t => t.id === id); if (i >= 0) mockTests.splice(i, 1); });`);
+
 w.eval(`selectRole('student'); window.__mtBefore = mockTests.length; currentTestDraft = { title: 'x', subject: 'math', course: 1, groups: ['101-PR'], questionsCount: 1, timeLimit: 5, questions: [], access: 'all', form: 'full' }; saveTestToDB();`);
 T("saveTestToDB заблокирован для студента", w.eval("mockTests.length") === w.eval("window.__mtBefore") && w.eval("currentTestDraft") !== null);
 w.eval(`currentTestDraft = null;`);
