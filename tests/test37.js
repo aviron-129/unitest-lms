@@ -101,7 +101,12 @@ T("проверка при загрузке через setTimeout", /setTimeout\
 T("текст предупреждения есть в ru/uz/en",
   ["ru", "uz", "en"].every(l => translations[l] && String(translations[l].overflowWarning || "").trim()));
 
-console.log("\n[8] Консоль");
+console.log("\n[8] iOS: фокус на поле не вызывает авто-зум");
+T("на телефоне поля ввода 16px (iOS не масштабирует страницу)",
+  /@media\s*\(max-width:\s*767\.98px\)\s*\{[\s\S]*?\.field-input,[\s\S]*?\.search-input,[\s\S]*?\.chat-input,[\s\S]*?\.pt-search,[\s\S]*?\.mx-field input\s*\{[\s\S]*?font-size:\s*16px/.test(css));
+T("десктопный размер полей не изменился (0.9rem)", cssHas(/\.field-input\s*\{[^}]*font-size:\s*0\.9rem/));
+
+console.log("\n[9] Консоль");
 T("console.error пуст", app.errors.length === 0, app.errors.slice(0, 3).join(" | "));
 
 console.log(`\n=== TEST37: пройдено ${pass}, провалено ${fail} ===`);
