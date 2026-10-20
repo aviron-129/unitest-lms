@@ -200,6 +200,44 @@ w.selectRole("student");
 w.navigate("profile");
 T("после проверки профиль снова отрисован", !!section().querySelector(".profile-card"));
 
+console.log("\n[5.2] Пустые данные преподавателя");
+// Аудит q16: renderTeacherDashboard() проверял только сам объект mockTeacher,
+// поэтому пустой профиль давал «Добро пожаловать, undefined» и «Предмет: undefined».
+const teacherSnapshot = ev("JSON.stringify(mockTeacher)");
+ev("Object.keys(mockTeacher).forEach(k => delete mockTeacher[k]);");
+w.selectRole("teacher");
+app.errors.length = 0;
+w.navigate("dashboard");
+T("пустой mockTeacher: заглушка", !!section().querySelector(".empty-state")
+  && !section().querySelector(".empty-state--error"), txt(section()).slice(0, 80));
+T("пустой mockTeacher: текст dataNotFound", txt(section()).includes(ev("translations.ru.dataNotFoundTitle")));
+T("пустой mockTeacher: нет «undefined»", !txt(section()).includes("undefined"));
+T("пустой mockTeacher: без console.error", app.errors.length === 0, app.errors);
+
+ev(`Object.assign(mockTeacher, ${teacherSnapshot});`);
+ev("delete mockTeacher.subject;");
+app.errors.length = 0;
+w.navigate("dashboard");
+T("без предмета: дашборд отрисован", !!section().querySelector(".dash-welcome"));
+T("без предмета: «—» вместо undefined",
+  txt(section()).includes("—") && !txt(section()).includes("undefined"), txt(section()).slice(0, 80));
+T("без предмета: без console.error", app.errors.length === 0, app.errors);
+ev(`Object.assign(mockTeacher, ${teacherSnapshot});`);
+
+// Имя преподавателя попадает в innerHTML — проверяем экранирование.
+const teacherNameSnapshot = ev("mockTeacher.name");
+ev("mockTeacher.name = '<img src=x onerror=1>';");
+w.navigate("dashboard");
+const welcomeBox = section().querySelector(".dash-welcome");
+T("имя преподавателя экранируется", !!welcomeBox && !welcomeBox.querySelector("img")
+  && txt(welcomeBox).includes("<img src=x onerror=1>"), txt(welcomeBox));
+ev(`mockTeacher.name = ${JSON.stringify(teacherNameSnapshot)};`);
+w.selectRole("teacher");
+w.navigate("dashboard");
+T("после восстановления приветствие с именем", txt(section()).includes(teacherNameSnapshot),
+  txt(section()).slice(0, 80));
+T("дашборд преподавателя: без console.error", app.errors.length === 0, app.errors);
+
 console.log("\n[6] Битый localStorage не роняет приложение");
 const beforeTestsLen = ev("mockTests.length");
 w.localStorage.setItem("unitestalltests", "битый_текст");

@@ -11986,7 +11986,13 @@
     // HTML: дашборд преподавателя (приветствие + предмет + 3 карточки статистики)
     function renderTeacherDashboard() {
       const dict = translations[currentLang];
-      if (!mockTeacher) {
+      // Аудит q16: пустой/неполный профиль преподавателя раньше давал на экране
+      // «Добро пожаловать, undefined» и «Предмет: undefined». Проверяем обязательные
+      // поля (как renderStudentProfile), а имя экранируем — оно попадает в innerHTML.
+      const teacherName = (mockTeacher && typeof mockTeacher === 'object')
+        ? String(mockTeacher.name || '').trim()
+        : '';
+      if (!teacherName) {
         return renderEmptyState('fa-chalkboard-user', dict.dataNotFoundTitle, dict.dataNotFoundDesc);
       }
       const myGroups = getMyGroups();
@@ -11999,11 +12005,11 @@
       // Самопроверка: логируем рассчитанные значения
       dbg("Дашборд преподавателя. Групп:", myGroups.length, "Студентов:", totalStudents, "Активных тестов:", activeTestsCount);
 
-      const subject = dict["subj_" + mockTeacher.subject] || mockTeacher.subject;
+      const subject = dict["subj_" + mockTeacher.subject] || mockTeacher.subject || '—';
 
       return `
-        <div class="dash-welcome">${dict.welcome}, ${mockTeacher.name}</div>
-        <p class="dash-subject">${dict.thSubject}: ${subject}</p>
+        <div class="dash-welcome">${dict.welcome}, ${escapeHtml(teacherName)}</div>
+        <p class="dash-subject">${dict.thSubject}: ${escapeHtml(subject)}</p>
 
         <div class="stats-row">
           <div class="stat-card">
