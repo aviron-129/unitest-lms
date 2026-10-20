@@ -11085,6 +11085,12 @@
         return false;
       }
 
+      // Аудит q18: импортированный журнал (unitest_audit) не должен затираться.
+      // addSystemLog() записывает в localStorage ВЕСЬ массив systemLogs из памяти,
+      // а он был загружен до импорта — без перечитывания запись об импорте
+      // заменяла бы восстановленный журнал старыми записями текущей сессии.
+      loadAuditLogsFromStorage();
+
       auditLog("Импорт базы. Загружено ключей:", count);
       const filename = pendingImport.filename || '';
       addSystemLog(mockAdmin.name, 'adminLogImport', [filename || dict.adminImportBtn]);

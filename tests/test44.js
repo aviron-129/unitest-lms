@@ -190,6 +190,23 @@ T("unitest_theme из импорта — строка без лишних кав
   w2.localStorage.getItem("unitest_theme") === "dark",
   w2.localStorage.getItem("unitest_theme"));
 
+// Аудит q18: импортированный журнал действий не должен затираться записью
+// об импорте (раньше addSystemLog писал в localStorage устаревший systemLogs).
+console.log("\n[3.1] Импорт сохраняет журнал действий");
+const importedLogs = [
+  { id: "log_imported_1", time: "08:15", user: "Aziz Karimov", actionKey: "adminLogBackup", args: ["old-1.json"] },
+  { id: "log_imported_2", time: "08:20", user: "Aziz Karimov", actionKey: "adminLogBackup", args: ["old-2.json"] }
+];
+const auditPreview = w2.handleImportText(JSON.stringify({ storage: { unitest_audit: importedLogs } }), "audit.json");
+T("импорт журнала: предпросмотр открыт", auditPreview.ok === true && !!d2.getElementById("adminImportOverlay"));
+d2.getElementById("adminImportConfirm").click();
+const storedAudit = JSON.parse(w2.localStorage.getItem("unitest_audit") || "null");
+T("импортированные записи журнала сохранены",
+  Array.isArray(storedAudit) && importedLogs.every(x => storedAudit.some(e => e.id === x.id)), storedAudit);
+T("запись об импорте добавлена поверх импортированного журнала",
+  Array.isArray(storedAudit) && storedAudit.length === importedLogs.length + 1 &&
+  storedAudit[0].actionKey === "adminLogImport", storedAudit);
+
 // Отмена не пишет данные
 app2.alerts.length = 0;
 const before = w2.localStorage.getItem("unitestalltests");
