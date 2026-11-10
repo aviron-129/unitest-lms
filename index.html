@@ -4797,6 +4797,234 @@
     </article>
   </div>
 
+  <!-- ============================================================
+       SUPABASE SYNC (этап 1): общая БД вместо localStorage-only.
+       Скрипт стоит ДО основного приложения, чтобы успеть загрузить
+       данные из Supabase до первого чтения localStorage.
+       В jsdom-тестах и при ?nosync=1 синхронизация отключена.
+       ============================================================ -->
+  <script>
+    (function () {
+      'use strict';
+
+      const SUPABASE_URL = 'https://mpiyzstuyddlupchwsjz.supabase.co';
+      const SUPABASE_KEY = 'sb_publishable_yDAPusABXaLCUd3qY6ZzjA_MQMEghd0';
+      const TABLE = 'app_state';
+      const EXCLUDED = new Set([
+        'unitest_lang',
+        'unitest_theme',
+        'unitestreadnotifications',
+        'unitestactivetest'
+      ]);
+
+      const isJsdom = /jsdom/i.test(navigator.userAgent) || location.hostname === 'unitest.local';
+      const noSync = new URLSearchParams(location.search).has('nosync');
+      const remote = {
+        enabled: false,
+        url: SUPABASE_URL,
+        rows: 0,
+        pending: 0,
+        status: 'local',
+        flush: function () {}
+      };
+      window.__unitestRemote = remote;
+
+      if (isJsdom || noSync) {
+        remote.reason = isJsdom ? 'jsdom' : 'nosync';
+        return;
+      }
+
+      const native = window.localStorage;
+      const pending = new Map();
+      const deleted = new Set();
+      let hydrating = true;
+      let clearRequested = false;
+      let timer = null;
+      let failures = 0;
+
+      function headers(extra) {
+        return Object.assign({
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY,
+          'Content-Type': 'application/json'
+        }, extra || {});
+      }
+
+      function parseValue(raw) {
+        try { return JSON.parse(raw); }
+        catch (e) { return raw; }
+      }
+
+      function rawValue(value) {
+        return typeof value === 'string' ? value : JSON.stringify(value);
+      }
+
+      function excluded(key) {
+        return EXCLUDED.has(String(key));
+      }
+
+      function setStatus(status) {
+        remote.status = status;
+        try { document.documentElement.setAttribute('data-sync', status); } catch (e) {}
+      }
+
+      // Синхронный XHR нужен только один раз — до старта приложения.
+      function loadRemoteSync() {
+        try {
+          const xhr = new XMLHttpRequest();
+          xhr.open('GET', SUPABASE_URL + '/rest/v1/' + TABLE + '?select=key,value', false);
+          xhr.setRequestHeader('apikey', SUPABASE_KEY);
+          xhr.setRequestHeader('Authorization', 'Bearer ' + SUPABASE_KEY);
+          xhr.send(null);
+
+          if (xhr.status < 200 || xhr.status >= 300) {
+            console.warn('[UniTest sync] initial load HTTP ' + xhr.status);
+            setStatus('offline');
+            return;
+          }
+
+          const rows = JSON.parse(xhr.responseText || '[]');
+          remote.rows = rows.length;
+          rows.forEach(function (row) {
+            if (!row || !row.key || excluded(row.key)) return;
+            try { native.setItem(row.key, rawValue(row.value)); }
+            catch (e) { console.warn('[UniTest sync] localStorage write failed:', row.key); }
+          });
+          setStatus('online');
+        } catch (e) {
+          console.warn('[UniTest sync] initial load failed:', e && e.message ? e.message : e);
+          setStatus('offline');
+        }
+      }
+
+      function schedule() {
+        if (timer) return;
+        timer = setTimeout(flush, 500);
+      }
+
+      function queue(key, value) {
+        if (hydrating || excluded(key)) return;
+        pending.set(String(key), String(value));
+        deleted.delete(String(key));
+        remote.pending = pending.size + deleted.size;
+        schedule();
+      }
+
+      function queueDelete(key) {
+        if (hydrating || excluded(key)) return;
+        pending.delete(String(key));
+        deleted.add(String(key));
+        remote.pending = pending.size + deleted.size;
+        schedule();
+      }
+
+      function queueClear() {
+        if (hydrating) return;
+        pending.clear();
+        deleted.clear();
+        clearRequested = true;
+        remote.pending = 0;
+        schedule();
+      }
+
+      async function flush() {
+        timer = null;
+
+        if (clearRequested) {
+          clearRequested = false;
+          try {
+            const res = await fetch(SUPABASE_URL + '/rest/v1/' + TABLE + '?key=not.is.null', {
+              method: 'DELETE',
+              headers: headers({ 'Prefer': 'return=minimal' })
+            });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            setStatus('online');
+          } catch (e) {
+            clearRequested = true;
+            setStatus('offline');
+            console.warn('[UniTest sync] clear failed:', e.message);
+            schedule();
+            return;
+          }
+          if (pending.size || deleted.size) schedule();
+          return;
+        }
+
+        if (!pending.size && !deleted.size) { remote.pending = 0; return; }
+
+        const rows = Array.from(pending.entries()).map(function (entry) {
+          return {
+            key: entry[0],
+            value: parseValue(entry[1]),
+            updated_at: new Date().toISOString()
+          };
+        });
+        const keys = Array.from(deleted);
+        pending.clear();
+        deleted.clear();
+        remote.pending = 0;
+
+        try {
+          if (rows.length) {
+            const res = await fetch(SUPABASE_URL + '/rest/v1/' + TABLE + '?on_conflict=key', {
+              method: 'POST',
+              headers: headers({ 'Prefer': 'resolution=merge-duplicates,return=minimal' }),
+              body: JSON.stringify(rows)
+            });
+            if (!res.ok) throw new Error('HTTP ' + res.status + ' ' + (await res.text()));
+          }
+
+          for (const key of keys) {
+            const res = await fetch(
+              SUPABASE_URL + '/rest/v1/' + TABLE + '?key=eq.' + encodeURIComponent(key),
+              { method: 'DELETE', headers: headers({ 'Prefer': 'return=minimal' }) }
+            );
+            if (!res.ok) throw new Error('HTTP ' + res.status + ' ' + (await res.text()));
+          }
+
+          failures = 0;
+          setStatus('online');
+        } catch (e) {
+          failures++;
+          setStatus('offline');
+          console.warn('[UniTest sync] write failed:', e.message);
+          rows.forEach(function (row) { pending.set(row.key, rawValue(row.value)); });
+          keys.forEach(function (key) { deleted.add(key); });
+          remote.pending = pending.size + deleted.size;
+          if (failures < 20) setTimeout(flush, Math.min(30000, failures * 2000));
+        }
+      }
+
+      // Перехватываем только localStorage, не sessionStorage.
+      const proto = Storage.prototype;
+      if (!proto.__unitestRemotePatched) {
+        const origSet = proto.setItem;
+        const origRemove = proto.removeItem;
+        const origClear = proto.clear;
+
+        proto.setItem = function (key, value) {
+          origSet.call(this, key, value);
+          if (this === window.localStorage) queue(key, value);
+        };
+        proto.removeItem = function (key) {
+          origRemove.call(this, key);
+          if (this === window.localStorage) queueDelete(key);
+        };
+        proto.clear = function () {
+          origClear.call(this);
+          if (this === window.localStorage) queueClear();
+        };
+        proto.__unitestRemotePatched = true;
+      }
+
+      remote.enabled = true;
+      remote.flush = flush;
+      remote.pendingCount = function () { return pending.size + deleted.size; };
+      loadRemoteSync();
+      hydrating = false;
+    })();
+  </script>
+
   <script>
     /* ============================================================
        ПРОМТ №40: ОТЛАДОЧНЫЕ ЛОГИ
@@ -6999,10 +7227,17 @@
       { id: 5, text: "Чему равно 2³?",           options: ["6", "8", "9", "12"],   correct: 1 }
     ];
 
+    // Демо-данные добавляем при локальном открытии и на GitHub Pages.
+    // jsdom-тесты (https://unitest.local) их не видят, счётчики не меняются.
+    function isDemoSeedHost() {
+      if (typeof location === 'undefined') return false;
+      return location.protocol === 'file:' || /(^|\.)github\.io$/i.test(location.hostname);
+    }
+
     /* Готовый демо-тест из 10 вопросов: матрицы (в т.ч. неквадратные), химия,
-       производные, интеграл и дифференциальное уравнение. Добавляется только
-       при открытии index.html через file:// — jsdom-тесты (https://unitest.local)
-       его не видят, поэтому счётчики регресса не меняются. */
+       производные, интеграл и дифференциальное уравнение. Добавляется при
+       открытии index.html через file:// или на GitHub Pages — jsdom-тесты
+       (https://unitest.local) его не видят, поэтому счётчики регресса не меняются. */
     const FORMULA_DEMO_TEST = {
       id: "test_formula_demo",
       subject: "math",
@@ -7078,7 +7313,7 @@
     };
 
     function ensureFormulaDemoTest() {
-      if (typeof location === 'undefined' || location.protocol !== 'file:') return;
+      if (!isDemoSeedHost()) return;
       const flag = 'unitest_formula_demo_v2';
       try {
         if (localStorage.getItem(flag)) return;
@@ -7164,7 +7399,7 @@
     };
 
     function ensureDiagramDemoTest() {
-      if (typeof location === 'undefined' || location.protocol !== 'file:') return;
+      if (!isDemoSeedHost()) return;
       const flag = 'unitest_diagram_demo_v1';
       try {
         if (localStorage.getItem(flag)) return;
@@ -7221,7 +7456,7 @@
     };
 
     function ensureAppealDemo() {
-      if (typeof location === 'undefined' || location.protocol !== 'file:') return;
+      if (!isDemoSeedHost()) return;
       const flag = 'unitest_appeal_demo_v1';
       try {
         if (localStorage.getItem(flag)) return;

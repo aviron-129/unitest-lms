@@ -131,7 +131,7 @@ async function launchBrowser(width = 1440, height = 900) {
   }
   const port = 9400 + Math.floor(Math.random() * 500);
   const profile = path.join(os.tmpdir(), `unitest-cdp-${process.pid}-${Date.now()}`);
-  const url = pathToFileURL(HTML_PATH).href + "?v=" + Date.now();
+  const url = pathToFileURL(HTML_PATH).href + "?v=" + Date.now() + "&nosync=1";
 
   const proc = spawn(exe, [
     "--headless=new",
