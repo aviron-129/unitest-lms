@@ -1,0 +1,430 @@
+{
+  "id": "final",
+  "title": "Финальная приёмка: все роли и разделы",
+  "verify": {
+    "scenarios": [
+      {
+        "name": "final-student-profile",
+        "role": "student",
+        "section": "profile",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-student-availableTests",
+        "role": "student",
+        "section": "availableTests",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-student-schedule",
+        "role": "student",
+        "section": "schedule",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-student-announcements",
+        "role": "student",
+        "section": "announcements",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-student-chat",
+        "role": "student",
+        "section": "chat",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-student-gradebook",
+        "role": "student",
+        "section": "gradebook",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-student-appeals",
+        "role": "student",
+        "section": "appeals",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-teacher-dashboard",
+        "role": "teacher",
+        "section": "dashboard",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-teacher-myGroups",
+        "role": "teacher",
+        "section": "myGroups",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-teacher-createTest",
+        "role": "teacher",
+        "section": "createTest",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-teacher-myTests",
+        "role": "teacher",
+        "section": "myTests",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-teacher-results",
+        "role": "teacher",
+        "section": "results",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-teacher-appeals",
+        "role": "teacher",
+        "section": "appeals",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-teacher-announcements",
+        "role": "teacher",
+        "section": "announcements",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-teacher-chat",
+        "role": "teacher",
+        "section": "chat",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-teacher-schedule",
+        "role": "teacher",
+        "section": "schedule",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-manager-dashboard",
+        "role": "manager",
+        "section": "dashboard",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-manager-teachers",
+        "role": "manager",
+        "section": "teachers",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-manager-groups",
+        "role": "manager",
+        "section": "groups",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-manager-students",
+        "role": "manager",
+        "section": "students",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-manager-tests",
+        "role": "manager",
+        "section": "tests",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-manager-reports",
+        "role": "manager",
+        "section": "reports",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-manager-schedule",
+        "role": "manager",
+        "section": "schedule",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-admin-dashboard",
+        "role": "admin",
+        "section": "dashboard",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-admin-faculties",
+        "role": "admin",
+        "section": "faculties",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-admin-courses",
+        "role": "admin",
+        "section": "courses",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-admin-groups",
+        "role": "admin",
+        "section": "groups",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-admin-users",
+        "role": "admin",
+        "section": "users",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-admin-managers",
+        "role": "admin",
+        "section": "managers",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-admin-reports",
+        "role": "admin",
+        "section": "reports",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-admin-settings",
+        "role": "admin",
+        "section": "settings",
+        "width": 1440,
+        "height": 900,
+        "lang": "ru",
+        "theme": "light",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-student-mobile-uz",
+        "role": "student",
+        "section": "profile",
+        "width": 390,
+        "height": 844,
+        "lang": "uz",
+        "theme": "light",
+        "mobile": true,
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-teacher-dark-en",
+        "role": "teacher",
+        "section": "dashboard",
+        "width": 1440,
+        "height": 900,
+        "lang": "en",
+        "theme": "dark",
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-manager-mobile-ru",
+        "role": "manager",
+        "section": "schedule",
+        "width": 390,
+        "height": 844,
+        "lang": "ru",
+        "theme": "light",
+        "mobile": true,
+        "expect": {
+          "minTextLength": 20
+        }
+      },
+      {
+        "name": "final-admin-dark-en",
+        "role": "admin",
+        "section": "dashboard",
+        "width": 1440,
+        "height": 900,
+        "lang": "en",
+        "theme": "dark",
+        "expect": {
+          "minTextLength": 20
+        }
+      }
+    ]
+  }
+}

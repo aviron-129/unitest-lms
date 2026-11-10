@@ -8,8 +8,17 @@
 node tests/run-all.js
 ```
 
-Сейчас: **31/31 наборов** — синтаксис, функциональные тесты №13–41 + №43 (UI/UX),
-статика/i18n и smoke по всем ролям/разделам/языкам/темам.
+Сейчас: **33/33 набора** — синтаксис, функциональные тесты №13–44,
+статика/i18n и smoke по всем ролям/разделам/языкам/темам (560 проверок).
+
+## Финальная приёмка
+
+```powershell
+node tests/verify-screens.js --task-json tests/final-acceptance.json
+```
+
+35 сценариев: все разделы 4 ролей, мобильный, тёмная тема, ru/uz/en.
+Скриншоты — `screenshots/taskfinal/`.
 
 ## Проверка по скриншотам
 
@@ -47,6 +56,7 @@ node tests/test38.js
 node tests/test41.js
 node tests/test42.js
 node tests/test43.js
+node tests/test44.js
 node tests/static.js
 node tests/smoke.js
 ```
