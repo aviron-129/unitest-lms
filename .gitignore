@@ -9,6 +9,9 @@ night-prompts/
 night-cmd/
 screenshots/task*/
 tests/node_modules/
+supabase/.temp/
+.env
+.env.*
 НОЧНОЙ-ОТЧЁТ.md
 night-blockers.md
 
