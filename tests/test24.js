@@ -41,6 +41,13 @@ T("значения: студенты 7, преподаватели 3, груп�
 T("подписи карточек", labels().join("|") === "Всего студентов|Всего преподавателей|Всего групп|Всего тестов",
   labels().join("|"));
 T("иконки FontAwesome в карточках", cards().every(c => !!c.querySelector("i.fas")));
+T("подпись рядом с иконкой сверху", cards().every(c => {
+  const head = c.querySelector(".stat-head");
+  return !!head && head.contains(c.querySelector("i.fas")) && head.contains(c.querySelector(".stat-label"));
+}));
+T("число стоит под строкой иконки", cards().every(c =>
+  !!c.querySelector(".stat-value") && !c.querySelector(".stat-head .stat-value")
+));
 
 console.log("\n[2] Лента последних событий");
 const events = [...D.querySelectorAll("#sectionContent .admin-event")];

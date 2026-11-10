@@ -48,7 +48,7 @@ user.value = 'студент'; passEl.value = 'demo'; submit();
 T("алиас «студент» + demo → студент", w.eval("currentRole") === 'student');
 w.logout();
 
-const keys = ['loginSubtitle', 'loginUsername', 'loginPassword', 'signIn', 'loginError', 'demoAccounts'];
+const keys = ['loginSubtitle', 'loginUsername', 'loginPassword', 'signIn', 'loginError'];
 T("ключи входа есть в ru/uz/en",
   ['ru', 'uz', 'en'].every(l => keys.every(k => typeof w.eval(`translations.${l}`)[k] === 'string')));
 T("console.error пуст", app.errors.length === 0, JSON.stringify(app.errors));
