@@ -18,8 +18,9 @@ console.log("Роли:", Object.keys(menuConfig).join(", "));
 
 // Экран входа
 T("экран входа видим", !d.getElementById("loginScreen").classList.contains("hidden"));
-T("4 кнопки ролей", d.querySelectorAll("[data-role]").length >= 4,
-  "найдено " + d.querySelectorAll("[data-role]").length);
+T("одна форма входа", !!d.getElementById("loginForm"));
+T("4 демо-аккаунта", d.querySelectorAll("[data-demo-login]").length === 4,
+  "найдено " + d.querySelectorAll("[data-demo-login]").length);
 
 const roles = Object.keys(menuConfig);
 const langs = ["ru", "uz", "en"];

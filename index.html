@@ -240,84 +240,45 @@
       margin-bottom: 36px;
     }
 
-    /* Сетка карточек ролей: mobile-first */
-    .roles-grid {
-      display: grid;
-      grid-template-columns: 1fr;              /* мобильный: 1 колонка */
-      gap: 18px;
-    }
-    /* Планшет: 2 колонки */
-    @media (min-width: 768px) {
-      .roles-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    /* Десктоп: 4 колонки */
-    @media (min-width: 1024px) {
-      .roles-grid { grid-template-columns: repeat(4, 1fr); }
-    }
-
-    /* Карточка роли (glassmorphism) */
-    .role-card {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      padding: 32px 18px;
+    /* Единая форма входа (одна для всех ролей) */
+    .login-card {
+      width: min(460px, 100%);
+      margin: 0 auto;
+      padding: 30px 26px;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
       box-shadow: var(--card-shadow);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      cursor: pointer;
-      font-family: inherit;
-      color: var(--text);
-      overflow: hidden;
-      transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.3s ease, border-color 0.3s ease;
     }
-    /* Цветная полоска сверху карточки */
-    .role-card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 4px;
-      background: var(--role);
-      opacity: 0.75;
-      transition: opacity 0.25s ease;
-    }
-    .role-card:hover {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 16px 40px var(--role-soft);
-      border-color: var(--role);
-    }
-    .role-card:hover::before { opacity: 1; }
-    .role-card:active { transform: translateY(-2px) scale(0.99); }
-
-    /* Круглая иконка роли */
-    .role-icon {
-      width: 68px;
-      height: 68px;
+    .login-form { display: flex; flex-direction: column; gap: 14px; }
+    .login-form .field { margin: 0; }
+    .login-form .field-input { width: 100%; box-sizing: border-box; }
+    .login-submit { width: 100%; justify-content: center; }
+    .login-error { margin: 0; text-align: center; font-size: 0.82rem; color: #ef4444; }
+    .demo-accounts {
+      margin: 18px auto 0;
       display: flex;
-      align-items: center;
+      flex-wrap: wrap;
       justify-content: center;
-      border-radius: 50%;
-      background: var(--role-solid, var(--role));
-      color: #ffffff;
-      font-size: 1.7rem;
-      box-shadow: 0 6px 18px var(--role-soft);
-      transition: transform 0.25s ease;
-    }
-    .role-card:hover .role-icon { transform: scale(1.08); }
-
-    .role-name {
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
-    .role-hint {
-      font-size: 0.8rem;
+      gap: 8px;
+      max-width: 520px;
+      font-size: 0.75rem;
       color: var(--text-muted);
-      font-weight: 500;
     }
+    .demo-account {
+      padding: 5px 10px;
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text-muted);
+      font: inherit;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .demo-account:hover { color: var(--accent); border-color: var(--accent); }
+    @media (max-width: 480px) { .login-card { padding: 22px 16px; } }
 
     /* Индивидуальные цвета ролей */
     .role-admin    { --role: #8b5cf6; --role-soft: rgba(139, 92, 246, 0.35); --role-solid: #8b5cf6; }
@@ -4635,40 +4596,35 @@
   <main>
 
     <!-- ============================================================
-         ЭКРАН ВХОДА: выбор роли
+         ЭКРАН ВХОДА: единая форма (роль определяется логином)
          ============================================================ -->
     <section id="loginScreen">
-      <h1 class="login-title anim" data-i18n="welcome">Добро пожаловать</h1>
-      <p class="login-subtitle anim" data-i18n="chooseRole">Выберите роль</p>
+      <div class="login-card anim">
+        <h1 class="login-title" data-i18n="welcome">Добро пожаловать</h1>
+        <p class="login-subtitle" data-i18n="loginSubtitle">Войдите в систему — роль определится автоматически</p>
 
-      <div class="roles-grid">
-        <!-- Администратор -->
-        <button class="role-card role-admin anim" data-role="admin">
-          <span class="role-icon"><i class="fas fa-user-shield"></i></span>
-          <span class="role-name" data-i18n="role_admin">Администратор</span>
-          <span class="role-hint" data-i18n="roleHint">Нажмите, чтобы войти</span>
-        </button>
+        <form id="loginForm" class="login-form" novalidate>
+          <label class="field">
+            <span class="field-label" data-i18n="loginUsername">Логин</span>
+            <input id="loginUsername" type="text" class="field-input" autocomplete="username"
+                   data-i18n-placeholder="loginUsername" placeholder="">
+          </label>
+          <label class="field">
+            <span class="field-label" data-i18n="loginPassword">Пароль</span>
+            <input id="loginPassword" type="password" class="field-input" autocomplete="current-password"
+                   data-i18n-placeholder="loginPassword" placeholder="">
+          </label>
+          <p id="loginError" class="login-error hidden" role="alert" aria-live="polite" data-i18n="loginError">Неверный логин или пароль</p>
+          <button type="submit" class="btn-primary login-submit" data-i18n="signIn">Войти</button>
+        </form>
 
-        <!-- Менеджер -->
-        <button class="role-card role-manager anim" data-role="manager">
-          <span class="role-icon"><i class="fas fa-user-tie"></i></span>
-          <span class="role-name" data-i18n="role_manager">Менеджер</span>
-          <span class="role-hint" data-i18n="roleHint">Нажмите, чтобы войти</span>
-        </button>
-
-        <!-- Преподаватель -->
-        <button class="role-card role-teacher anim" data-role="teacher">
-          <span class="role-icon"><i class="fas fa-chalkboard-user"></i></span>
-          <span class="role-name" data-i18n="role_teacher">Преподаватель</span>
-          <span class="role-hint" data-i18n="roleHint">Нажмите, чтобы войти</span>
-        </button>
-
-        <!-- Студент -->
-        <button class="role-card role-student anim" data-role="student">
-          <span class="role-icon"><i class="fas fa-user-graduate"></i></span>
-          <span class="role-name" data-i18n="role_student">Студент</span>
-          <span class="role-hint" data-i18n="roleHint">Нажмите, чтобы войти</span>
-        </button>
+        <div class="demo-accounts">
+          <span data-i18n="demoAccounts">Демо-доступ:</span>
+          <button type="button" class="demo-account" data-demo-login="student">student</button>
+          <button type="button" class="demo-account" data-demo-login="teacher">teacher</button>
+          <button type="button" class="demo-account" data-demo-login="manager">manager</button>
+          <button type="button" class="demo-account" data-demo-login="admin">admin</button>
+        </div>
       </div>
     </section>
 
@@ -4869,8 +4825,12 @@
     const translations = {
       ru: {
         welcome:        "Добро пожаловать",
-        chooseRole:     "Выберите роль",
-        roleHint:       "Нажмите, чтобы войти",
+        loginSubtitle:  "Войдите в систему — роль определится автоматически",
+        loginUsername:  "Логин",
+        loginPassword:  "Пароль",
+        signIn:         "Войти",
+        loginError:     "Неверный логин или пароль",
+        demoAccounts:   "Демо-доступ:",
         role_admin:     "Администратор",
         role_manager:   "Менеджер",
         role_teacher:   "Преподаватель",
@@ -5426,8 +5386,12 @@
       },
       uz: {
         welcome:        "Xush kelibsiz",
-        chooseRole:     "Rolni tanlang",
-        roleHint:       "Kirish uchun bosing",
+        loginSubtitle:  "Tizimga kiring — rol avtomatik aniqlanadi",
+        loginUsername:  "Login",
+        loginPassword:  "Parol",
+        signIn:         "Kirish",
+        loginError:     "Login yoki parol noto'g'ri",
+        demoAccounts:   "Demo-kirish:",
         role_admin:     "Administrator",
         role_manager:   "Menejer",
         role_teacher:   "O'qituvchi",
@@ -5980,8 +5944,12 @@
       },
       en: {
         welcome:        "Welcome",
-        chooseRole:     "Choose your role",
-        roleHint:       "Click to sign in",
+        loginSubtitle:  "Sign in — your role is detected automatically",
+        loginUsername:  "Login",
+        loginPassword:  "Password",
+        signIn:         "Sign in",
+        loginError:     "Invalid login or password",
+        demoAccounts:   "Demo access:",
         role_admin:     "Administrator",
         role_manager:   "Manager",
         role_teacher:   "Teacher",
@@ -7629,6 +7597,32 @@
     /* ============================================================
        5. РОУТЕР ПАНЕЛИ: выбор роли, sidebar, навигация, выход
        ============================================================ */
+    // Единый вход: роль определяется по логину, отдельного выбора роли нет.
+    const LOGIN_ALIASES = {
+      student: 'student', 'студент': 'student', talaba: 'student',
+      teacher: 'teacher', 'преподаватель': 'teacher', "o'qituvchi": 'teacher',
+      manager: 'manager', 'менеджер': 'manager', menejer: 'manager',
+      admin: 'admin', 'администратор': 'admin', administrator: 'admin'
+    };
+
+    function handleLogin() {
+      const userEl = document.getElementById('loginUsername');
+      const passEl = document.getElementById('loginPassword');
+      const errorEl = document.getElementById('loginError');
+      const user = (userEl ? userEl.value : '').trim().toLowerCase();
+      const pass = passEl ? passEl.value : '';
+      const role = LOGIN_ALIASES[user];
+      const ok = !!role && (pass === role || pass === 'demo');
+
+      if (!ok) {
+        if (errorEl) errorEl.classList.remove('hidden');
+        if (passEl) passEl.focus();
+        return;
+      }
+      if (errorEl) errorEl.classList.add('hidden');
+      selectRole(role);
+    }
+
     function selectRole(role) {
       if (!VALID_ROLES.includes(role)) {
         console.error("Неизвестная роль:", role);
@@ -7784,6 +7778,13 @@
       document.getElementById('panelScreen').classList.add('hidden');
       document.getElementById('loginScreen').classList.remove('hidden');
       document.body.classList.remove('in-panel');          // возвращаем глобальную шапку
+      const userEl = document.getElementById('loginUsername');
+      if (userEl) userEl.value = '';
+      const passEl = document.getElementById('loginPassword');
+      if (passEl) passEl.value = '';
+      const errorEl = document.getElementById('loginError');
+      if (errorEl) errorEl.classList.add('hidden');
+      if (userEl) userEl.focus();
 
       dbg("Выход из панели. Текущая роль сброшена.");
     }
@@ -16151,9 +16152,26 @@
         btn.addEventListener('click', () => changeLanguage(btn.dataset.lang));
       });
 
-      // 3) Карточки ролей на экране входа
-      document.querySelectorAll('.role-card').forEach(card => {
-        card.addEventListener('click', () => selectRole(card.dataset.role));
+      // 3) Единая форма входа + демо-аккаунты
+      const loginForm = document.getElementById('loginForm');
+      if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          handleLogin();
+        });
+      }
+      document.querySelectorAll('[data-demo-login]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const user = btn.dataset.demoLogin;
+          const userEl = document.getElementById('loginUsername');
+          const passEl = document.getElementById('loginPassword');
+          const errorEl = document.getElementById('loginError');
+          if (userEl) userEl.value = user;
+          if (passEl) passEl.value = user;
+          if (errorEl) errorEl.classList.add('hidden');
+          const submit = loginForm && loginForm.querySelector('button[type="submit"]');
+          if (submit) submit.focus();
+        });
       });
 
       // 4) Кнопка «Выйти» в sidebar
