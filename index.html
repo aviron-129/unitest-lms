@@ -2463,6 +2463,16 @@
     [data-theme="dark"] .admin-role-teacher { background: rgba(16, 185, 129, 0.22); color: #6ee7b7; }
     [data-theme="dark"] .admin-role-manager { background: rgba(59, 130, 246, 0.24); color: #93c5fd; }
     [data-theme="dark"] .admin-role-admin   { background: rgba(139, 92, 246, 0.24); color: #c4b5fd; }
+    .admin-actions { display: flex; align-items: center; justify-content: flex-end; gap: 6px; flex-wrap: wrap; }
+    .admin-mini-btn { padding: 6px 10px; font-size: 0.75rem; white-space: nowrap; }
+    .icon-delete {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 8px;
+      border: 1px solid var(--card-border); background: transparent;
+      color: var(--text-muted); cursor: pointer; transition: all 0.2s ease;
+    }
+    .icon-delete:hover { color: #ef4444; border-color: #ef4444; background: rgba(239, 68, 68, 0.08); }
+    .admin-direction-card .admin-actions { justify-content: flex-start; margin-top: 12px; }
 
     /* Статус «Активен» */
     .admin-user-status {
@@ -5115,6 +5125,7 @@
         // Пункты меню
         dashboard:      "Дашборд",
         faculties:      "Факультеты",
+        directions:     "Направления",
         courses:        "Курсы",
         groups:         "Группы",
         users:          "Пользователи",
@@ -5528,6 +5539,19 @@
         adminErrManager:        "Выберите менеджера или освободите должность",
         adminManagerActions:    "Действия",
         adminManagerModalTitle: "Назначить менеджера на «{0}»",
+        // Направления
+        adminDirectionsSubtitle: "Направления, группы и менеджеры",
+        adminAddDirection:       "Добавить направление",
+        adminEditDirection:      "Редактировать направление",
+        adminDirectionName:      "Название направления",
+        adminDirectionNamePh:    "Например, Медицина",
+        adminErrDirectionName:   "Введите название направления",
+        adminErrDirectionDuplicate: "Такое направление уже есть",
+        adminErrDirectionBusy:   "Нельзя удалить: на направлении есть группы или менеджер",
+        adminDeleteDirectionConfirm: "Удалить направление «{0}»?",
+        adminLogDirectionAdded:  "Создано направление: {0}",
+        adminLogDirectionUpdated:"Изменено направление: {0}",
+        adminLogDirectionDeleted:"Удалено направление: {0}",
         // Панель администратора: глобальные отчёты (Промт №28)
         adminReportsSubtitle:       "Сводные отчёты по вузу: группы, студенты и успеваемость",
         adminReportsAllCourses:     "Все курсы",
@@ -5584,6 +5608,13 @@
         adminLogManagerAdded:   "Добавлен новый менеджер: {0}",
         adminLogGroupCreated:   "Создана группа {0}",
         adminLogGroupUpdated:   "Обновлена группа {0}",
+        adminLogGroupDeleted:   "Удалена группа: {0}",
+        adminLogUserDeleted:    "Удалён пользователь: {0}",
+        adminLogManagerDeleted: "Удалён менеджер: {0}",
+        adminDeleteUserConfirm: "Удалить пользователя «{0}»? Это действие нельзя отменить.",
+        adminDeleteManagerConfirm: "Удалить менеджера «{0}»?",
+        adminDeleteGroupConfirm: "Удалить группу «{0}»?",
+        adminDeleteGroupStudentsConfirm: "В группе {1} студентов. Удалить группу? Студенты останутся без группы.",
         adminLogResultAdded:    "Результат теста по предмету {0}: оценка {1}",
         adminLogManagerAssigned:"Менеджер {0} назначен на направление «{1}»",
         adminLogManagerFreed:   "Освобождена должность менеджера направления «{0}»",
@@ -5681,6 +5712,7 @@
         overflowWarning: "DIQQAT: gorizontal skroll aniqlandi! Sahifa kengligi:",
         dashboard:      "Boshqaruv paneli",
         faculties:      "Fakultetlar",
+        directions:     "Yo'nalishlar",
         courses:        "Kurslar",
         groups:         "Guruhlar",
         users:          "Foydalanuvchilar",
@@ -6092,6 +6124,19 @@
         adminErrManager:        "Menejerni tanlang yoki lavozimni bo'shating",
         adminManagerActions:    "Amallar",
         adminManagerModalTitle: "«{0}» yo'nalishiga menejer tayinlash",
+        // Yo'nalishlar
+        adminDirectionsSubtitle: "Yo'nalishlar, guruhlar va menejerlar",
+        adminAddDirection:       "Yo'nalish qo'shish",
+        adminEditDirection:      "Yo'nalishni tahrirlash",
+        adminDirectionName:      "Yo'nalish nomi",
+        adminDirectionNamePh:    "Masalan, Tibbiyot",
+        adminErrDirectionName:   "Yo'nalish nomini kiriting",
+        adminErrDirectionDuplicate: "Bunday yo'nalish allaqachon mavjud",
+        adminErrDirectionBusy:   "O'chirib bo'lmaydi: yo'nalishda guruhlar yoki menejer bor",
+        adminDeleteDirectionConfirm: "«{0}» yo'nalishini o'chirish?",
+        adminLogDirectionAdded:  "Yo'nalish yaratildi: {0}",
+        adminLogDirectionUpdated:"Yo'nalish o'zgartirildi: {0}",
+        adminLogDirectionDeleted:"Yo'nalish o'chirildi: {0}",
         // Панель администратора: глобальные отчёты (Промт №28)
         adminReportsSubtitle:       "Universitet bo'yicha jamlanma hisobotlar: guruhlar, talabalar va o'zlashtirish",
         adminReportsAllCourses:     "Barcha kurslar",
@@ -6148,6 +6193,13 @@
         adminLogManagerAdded:   "Yangi menejer qo'shildi: {0}",
         adminLogGroupCreated:   "Guruh yaratildi: {0}",
         adminLogGroupUpdated:   "Guruh yangilandi: {0}",
+        adminLogGroupDeleted:   "Guruh o'chirildi: {0}",
+        adminLogUserDeleted:    "Foydalanuvchi o'chirildi: {0}",
+        adminLogManagerDeleted: "Menejer o'chirildi: {0}",
+        adminDeleteUserConfirm: "«{0}» foydalanuvchisini o'chirish? Bu amalni bekor qilib bo'lmaydi.",
+        adminDeleteManagerConfirm: "«{0}» menejerini o'chirish?",
+        adminDeleteGroupConfirm: "«{0}» guruhini o'chirish?",
+        adminDeleteGroupStudentsConfirm: "Guruhda {1} talaba bor. Guruhni o'chirish? Talabalar guruhsiz qoladi.",
         adminLogResultAdded:    "{0} fanidan test natijasi: baho {1}",
         adminLogManagerAssigned:"{0} menejer «{1}» yo'nalishiga tayinlandi",
         adminLogManagerFreed:   "«{0}» yo'nalishi menejer lavozimi bo'shatildi",
@@ -6245,6 +6297,7 @@
         overflowWarning: "WARNING: horizontal scroll detected! Page width:",
         dashboard:      "Dashboard",
         faculties:      "Faculties",
+        directions:     "Directions",
         courses:        "Courses",
         groups:         "Groups",
         users:          "Users",
@@ -6657,6 +6710,19 @@
         adminErrManager:        "Select a manager or vacate the position",
         adminManagerActions:    "Actions",
         adminManagerModalTitle: "Assign a manager to “{0}”",
+        // Directions
+        adminDirectionsSubtitle: "Directions, groups and managers",
+        adminAddDirection:       "Add direction",
+        adminEditDirection:      "Edit direction",
+        adminDirectionName:      "Direction name",
+        adminDirectionNamePh:    "For example, Medicine",
+        adminErrDirectionName:   "Enter the direction name",
+        adminErrDirectionDuplicate: "This direction already exists",
+        adminErrDirectionBusy:   "Cannot delete: the direction has groups or a manager",
+        adminDeleteDirectionConfirm: "Delete direction “{0}”?",
+        adminLogDirectionAdded:  "Direction created: {0}",
+        adminLogDirectionUpdated:"Direction updated: {0}",
+        adminLogDirectionDeleted:"Direction deleted: {0}",
         // Панель администратора: глобальные отчёты (Промт №28)
         adminReportsSubtitle:       "University-wide summary reports: groups, students and performance",
         adminReportsAllCourses:     "All courses",
@@ -6713,6 +6779,13 @@
         adminLogManagerAdded:   "New manager added: {0}",
         adminLogGroupCreated:   "Group created: {0}",
         adminLogGroupUpdated:   "Group updated: {0}",
+        adminLogGroupDeleted:   "Group deleted: {0}",
+        adminLogUserDeleted:    "User deleted: {0}",
+        adminLogManagerDeleted: "Manager deleted: {0}",
+        adminDeleteUserConfirm: "Delete user “{0}”? This cannot be undone.",
+        adminDeleteManagerConfirm: "Delete manager “{0}”?",
+        adminDeleteGroupConfirm: "Delete group “{0}”?",
+        adminDeleteGroupStudentsConfirm: "The group has {1} students. Delete the group? Students will be left without a group.",
         adminLogResultAdded:    "Test result in {0}: grade {1}",
         adminLogManagerAssigned:"Manager {0} assigned to the direction “{1}”",
         adminLogManagerFreed:   "Manager position freed for the direction “{0}”",
@@ -6848,6 +6921,7 @@
       admin: [
         { id: "dashboard", icon: "fa-gauge-high",       label: "dashboard" },
         { id: "faculties", icon: "fa-building-columns", label: "faculties" },
+        { id: "directions", icon: "fa-compass-drafting", label: "directions" },
         { id: "courses",   icon: "fa-book",             label: "courses" },
         { id: "groups",    icon: "fa-people-group",     label: "groups" },
         { id: "users",     icon: "fa-users",            label: "users" },
@@ -6978,6 +7052,7 @@
     const ADMIN_TEACHERS_KEY = "unitestteachers";
     // Ключ менеджеров (Промт №27): назначение на направления.
     const MANAGERS_KEY = "unitest_managers";
+    const DIRECTIONS_KEY = "unitest_directions";
     // Ключи админки (Промт №29): системные настройки и журнал действий.
     const SETTINGS_KEY = "unitest_settings";
     const AUDIT_KEY = "unitest_audit";
@@ -7130,6 +7205,10 @@
               created = true;
             }
           });
+          if (localStorage.getItem(DIRECTIONS_KEY) == null) {
+            localStorage.setItem(DIRECTIONS_KEY, JSON.stringify(BASE_DIRECTIONS));
+            created = true;
+          }
           dbg("Чистый режим: только администратор, данные пустые.");
           return created;
         }
@@ -7141,6 +7220,7 @@
         seed[ADMIN_TEACHERS_KEY] = mockAllTeachers;
         seed[GROUPS_KEY] = mockTeacherGroups;
         seed[MANAGERS_KEY] = mockAllManagers;
+        seed[DIRECTIONS_KEY] = BASE_DIRECTIONS;
         Object.keys(seed).forEach(key => localStorage.setItem(key, JSON.stringify(seed[key])));
         dbg("Демо-база создана при первом запуске:", Object.keys(seed).join(", "));
         return true;
@@ -7318,6 +7398,39 @@
         dbg("Менеджеры восстановлены из localStorage:", mockAllManagers.length);
       } catch (e) {
         console.error("Не удалось восстановить менеджеров:", e);
+      }
+    }
+
+    // Направления: база + пользовательские. Пустой массив — валидное состояние.
+    function loadDirectionsFromStorage() {
+      const saved = safeParse(DIRECTIONS_KEY, null);
+      if (!Array.isArray(saved)) return;
+      try {
+        const loaded = [];
+        saved.forEach((d, index) => {
+          if (!d || typeof d !== 'object' || !String(d.id || '').trim()) return;
+          loaded.push({
+            id: String(d.id).trim(),
+            name: String(d.name || '').trim()
+          });
+        });
+        mockDirections.length = 0;
+        loaded.forEach(d => mockDirections.push(d));
+        dbg("Направления восстановлены из localStorage:", mockDirections.length);
+      } catch (e) {
+        console.error("Не удалось восстановить направления:", e);
+      }
+    }
+
+    function saveDirectionsToStorage() {
+      const dict = translations[currentLang];
+      try {
+        localStorage.setItem(DIRECTIONS_KEY, JSON.stringify(mockDirections));
+        return true;
+      } catch (e) {
+        console.error("Не удалось сохранить направления в localStorage:", e);
+        alert(dict.storageFull);
+        return false;
       }
     }
 
@@ -8310,6 +8423,11 @@
       }
       if (currentRole === 'admin' && currentSection === 'faculties') {
         box.innerHTML = renderAdminFaculties();
+        return;
+      }
+      if (currentRole === 'admin' && currentSection === 'directions') {
+        box.innerHTML = renderAdminDirections();
+        bindAdminDirections();
         return;
       }
       if (currentRole === 'admin' && currentSection === 'courses') {
@@ -9773,6 +9891,8 @@
     // Порядок направлений в админке. Незнакомые направления из localStorage
     // добавляются в конец, чтобы созданные данные не терялись.
     const ADMIN_DIRECTION_KEYS = ['programming', 'design', 'economics'];
+    const BASE_DIRECTIONS = ADMIN_DIRECTION_KEYS.map(id => ({ id, name: '' }));
+    let mockDirections = BASE_DIRECTIONS.map(d => ({ ...d }));
 
     /* ============================================================
        ПАНЕЛЬ АДМИНИСТРАТОРА: ДАШБОРД ВУЗА (Промт №23)
@@ -9913,6 +10033,8 @@
     // Название направления по ключу (programming → dirProgramming)
     function adminDirectionLabel(direction) {
       const dict = translations[currentLang];
+      const custom = mockDirections.find(d => d && d.id === direction);
+      if (custom && custom.name) return custom.name;
       return dict["dir" + capitalize(direction)] || direction;
     }
 
@@ -10109,7 +10231,19 @@
             </span>
           </td>
           <td>${escapeHtml(adminUserExtraLabel(user))}</td>
-          <td><span class="admin-user-status"><i class="fas fa-circle"></i>${escapeHtml(translations[currentLang].statusActive)}</span></td>
+          <td>
+            <div class="admin-actions">
+              <span class="admin-user-status"><i class="fas fa-circle"></i>${escapeHtml(translations[currentLang].statusActive)}</span>
+              ${user.role === 'admin' ? '' : `
+                <button type="button" class="icon-delete"
+                        data-admin-delete-user="${escapeHtml(String(user.id))}"
+                        data-delete-user-name="${escapeHtml(user.name)}"
+                        data-delete-user-role="${escapeHtml(user.role)}"
+                        title="${escapeHtml(dict.btnDelete)}" aria-label="${escapeHtml(dict.btnDelete)}">
+                  <i class="fas fa-trash"></i>
+                </button>`}
+            </div>
+          </td>
         </tr>`;
     }
 
@@ -10133,6 +10267,14 @@
           <div class="results-card-row"><i class="fas fa-circle-info"></i>${escapeHtml(adminUserExtraLabel(user))}</div>
           <div class="results-card-bottom">
             <span class="admin-user-status"><i class="fas fa-circle"></i>${escapeHtml(dict.statusActive)}</span>
+            ${user.role === 'admin' ? '' : `
+              <button type="button" class="icon-delete"
+                      data-admin-delete-user="${escapeHtml(String(user.id))}"
+                      data-delete-user-name="${escapeHtml(user.name)}"
+                      data-delete-user-role="${escapeHtml(user.role)}"
+                      title="${escapeHtml(dict.btnDelete)}" aria-label="${escapeHtml(dict.btnDelete)}">
+                <i class="fas fa-trash"></i>
+              </button>`}
           </div>
         </article>`;
     }
@@ -10262,7 +10404,7 @@
         <option value="${escapeHtml(group.name)}">${escapeHtml(group.name)}</option>`).join('');
       const courseOptions = [1, 2, 3, 4, 5].map(course => `
         <option value="${course}">${course}</option>`).join('');
-      const directionOptions = ADMIN_DIRECTION_KEYS.map(direction => `
+      const directionOptions = adminDirectionKeys().map(direction => `
         <option value="${escapeHtml(direction)}">${escapeHtml(adminDirectionLabel(direction))}</option>`).join('');
 
       const overlay = document.createElement('div');
@@ -10467,6 +10609,61 @@
       }
     }
 
+    // Полное удаление пользователя (с подтверждением).
+    function deleteAdminUser(userId, role, name) {
+      if (!requireRole('admin', 'deleteAdminUser')) return;
+      if (role === 'admin') return;
+      const dict = translations[currentLang];
+      if (!confirm(dict.adminDeleteUserConfirm.replace('{0}', name))) return;
+
+      if (role === 'student') {
+        const idx = mockAllStudents.findIndex(s => s && String(s.id) === String(userId));
+        if (idx < 0) return;
+        mockAllStudents.splice(idx, 1);
+        saveAdminUsersToStorage();
+
+        // Удаляем связанные результаты, апелляции и сообщения этого студента.
+        try {
+          const results = getResults().filter(r => r && r.studentName !== name);
+          localStorage.setItem(RESULTS_KEY, JSON.stringify(results));
+          const appeals = getAppeals().filter(a => a && a.studentName !== name);
+          saveAppealsToStorage(appeals);
+          mockMessages = mockMessages.filter(m => m && m.senderName !== name);
+          saveMessages();
+        } catch (e) {
+          console.warn("Не удалось удалить связанные данные студента:", e && e.message);
+        }
+      } else if (role === 'teacher') {
+        const idx = mockAllTeachers.findIndex(t => t && String(t.id) === String(userId));
+        if (idx < 0) return;
+        mockAllTeachers.splice(idx, 1);
+        mockTeacherGroups.forEach(g => {
+          if (g && String(g.teacherId) === String(userId)) g.teacherId = null;
+        });
+        saveAdminUsersToStorage();
+        saveGroupsToStorage();
+        try {
+          const announcements = getAnnouncements().filter(a => a && a.author !== name);
+          saveAnnouncements(announcements);
+        } catch (e) {
+          console.warn("Не удалось удалить объявления преподавателя:", e && e.message);
+        }
+      } else if (role === 'manager') {
+        const idx = mockAllManagers.findIndex(m => m && String(m.id) === String(userId));
+        if (idx < 0) return;
+        mockAllManagers.splice(idx, 1);
+        saveManagersToStorage();
+      } else {
+        return;
+      }
+
+      addSystemLog(mockAdmin.name, 'adminLogUserDeleted', [name]);
+      allUsers = getAdminAllUsers();
+      if (currentRole === 'admin' && (currentSection === 'users' || currentSection === 'managers')) {
+        navigate(currentSection, false);
+      }
+    }
+
     // Обработчики: поиск, фильтр по роли, «Добавить пользователя» и клик по строке.
     function bindAdminUsers() {
       const dict = translations[currentLang];
@@ -10483,6 +10680,17 @@
         if (addBtn) {
           e.preventDefault();
           openAdminUserModal();
+          return;
+        }
+        const delBtn = e.target.closest('[data-admin-delete-user]');
+        if (delBtn) {
+          e.preventDefault();
+          e.stopPropagation();
+          deleteAdminUser(
+            delBtn.dataset.adminDeleteUser,
+            delBtn.dataset.deleteUserRole,
+            delBtn.dataset.deleteUserName
+          );
           return;
         }
         const row = e.target.closest('[data-admin-user]');
@@ -10512,10 +10720,19 @@
             ? `<span class="admin-manager-name"><i class="fas fa-user-tie"></i>${escapeHtml(manager.name)}</span>`
             : `<span class="admin-manager-empty">${escapeHtml(dict.adminManagerNotAssigned)}</span>`}</td>
           <td>
-            <button type="button" class="btn-ghost admin-manager-assign"
-                    data-admin-manager-assign="${escapeHtml(direction)}">
-              <i class="fas fa-user-pen"></i> ${escapeHtml(dict.adminManagerAssign)}
-            </button>
+            <div class="admin-actions">
+              <button type="button" class="btn-ghost admin-manager-assign"
+                      data-admin-manager-assign="${escapeHtml(direction)}">
+                <i class="fas fa-user-pen"></i> ${escapeHtml(dict.adminManagerAssign)}
+              </button>
+              ${manager ? `
+                <button type="button" class="icon-delete"
+                        data-admin-delete-manager="${escapeHtml(String(manager.id))}"
+                        data-manager-name="${escapeHtml(manager.name)}"
+                        title="${escapeHtml(dict.btnDelete)}" aria-label="${escapeHtml(dict.btnDelete)}">
+                  <i class="fas fa-trash"></i>
+                </button>` : ''}
+            </div>
           </td>
         </tr>`;
     }
@@ -10538,10 +10755,19 @@
               ? `<span class="admin-manager-name">${escapeHtml(manager.name)}</span>`
               : `<span class="admin-manager-empty">${escapeHtml(dict.adminManagerNotAssigned)}</span>`}
           </div>
-          <button type="button" class="btn-ghost admin-manager-assign"
-                  data-admin-manager-assign="${escapeHtml(direction)}">
-            <i class="fas fa-user-pen"></i> ${escapeHtml(dict.adminManagerAssign)}
-          </button>
+          <div class="admin-actions">
+            <button type="button" class="btn-ghost admin-manager-assign"
+                    data-admin-manager-assign="${escapeHtml(direction)}">
+              <i class="fas fa-user-pen"></i> ${escapeHtml(dict.adminManagerAssign)}
+            </button>
+            ${manager ? `
+              <button type="button" class="icon-delete"
+                      data-admin-delete-manager="${escapeHtml(String(manager.id))}"
+                      data-manager-name="${escapeHtml(manager.name)}"
+                      title="${escapeHtml(dict.btnDelete)}" aria-label="${escapeHtml(dict.btnDelete)}">
+                <i class="fas fa-trash"></i>
+              </button>` : ''}
+          </div>
         </article>`;
     }
 
@@ -10556,8 +10782,8 @@
       };
 
       groups.forEach(g => addDirection(g && g.direction));
-      // Если групп ещё нет — показываем базовые направления справочника.
-      if (!groups.length) ADMIN_DIRECTION_KEYS.forEach(addDirection);
+      // Если групп ещё нет — показываем справочник направлений.
+      if (!groups.length) adminDirectionKeys().forEach(addDirection);
       // Направление только что добавленного менеджера тоже должно быть в таблице.
       (Array.isArray(mockAllManagers) ? mockAllManagers : []).forEach(m => addDirection(m && m.direction));
       dbg("Направления для управления:", uniqueDirections);
@@ -10726,7 +10952,21 @@
       }
     }
 
-    // Обработчики раздела «Менеджеры»: кнопки «Назначить / Изменить».
+    function deleteAdminManager(managerId, name) {
+      if (!requireRole('admin', 'deleteAdminManager')) return;
+      const dict = translations[currentLang];
+      if (!confirm(dict.adminDeleteManagerConfirm.replace('{0}', name))) return;
+      const idx = mockAllManagers.findIndex(m => m && String(m.id) === String(managerId));
+      if (idx < 0) return;
+      mockAllManagers.splice(idx, 1);
+      saveManagersToStorage();
+      addSystemLog(mockAdmin.name, 'adminLogManagerDeleted', [name]);
+      if (currentRole === 'admin' && (currentSection === 'managers' || currentSection === 'users')) {
+        navigate(currentSection, false);
+      }
+    }
+
+    // Обработчики раздела «Менеджеры»: добавить, назначить/изменить, удалить.
     function bindAdminManagers() {
       const box = document.getElementById('sectionContent');
       if (!box) return;
@@ -10735,6 +10975,12 @@
         if (addBtn) {
           e.preventDefault();
           openAdminUserModal('manager');
+          return;
+        }
+        const delBtn = e.target.closest('[data-admin-delete-manager]');
+        if (delBtn) {
+          e.preventDefault();
+          deleteAdminManager(delBtn.dataset.adminDeleteManager, delBtn.dataset.managerName);
           return;
         }
         const btn = e.target.closest('[data-admin-manager-assign]');
@@ -11675,9 +11921,12 @@
 
     // Список направлений: сначала базовые ключи, затем любые из localStorage.
     function adminDirectionKeys() {
-      const keys = ADMIN_DIRECTION_KEYS.slice();
+      const keys = mockDirections.map(d => d.id);
       mockTeacherGroups.forEach(g => {
         if (g && g.direction && !keys.includes(g.direction)) keys.push(g.direction);
+      });
+      mockAllManagers.forEach(m => {
+        if (m && m.direction && !keys.includes(m.direction)) keys.push(m.direction);
       });
       return keys;
     }
@@ -11712,10 +11961,18 @@
           <div class="admin-group-students">
             <i class="fas fa-user-group"></i>${count} ${escapeHtml(studentsWord(count))}
           </div>
-          <button type="button" class="btn-ghost admin-group-edit"
-                  data-admin-edit-group="${escapeHtml(String(group.id))}">
-            <i class="fas fa-pen"></i> ${escapeHtml(dict.adminEditGroup)}
-          </button>
+          <div class="admin-actions">
+            <button type="button" class="btn-ghost admin-group-edit admin-mini-btn"
+                    data-admin-edit-group="${escapeHtml(String(group.id))}">
+              <i class="fas fa-pen"></i> ${escapeHtml(dict.adminEditGroup)}
+            </button>
+            <button type="button" class="icon-delete"
+                    data-admin-delete-group="${escapeHtml(String(group.id))}"
+                    data-group-name="${escapeHtml(group.name)}"
+                    title="${escapeHtml(dict.btnDelete)}" aria-label="${escapeHtml(dict.btnDelete)}">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
         </article>`;
     }
 
@@ -11773,7 +12030,9 @@
       }
 
       const cards = mockFaculties.map(faculty => {
-        const rows = faculty.directions.map(direction => {
+        const rows = faculty.directions
+          .filter(direction => adminDirectionKeys().includes(direction))
+          .map(direction => {
           const list = groups.filter(g => g && g.direction === direction);
           return `
             <li class="admin-ref-item">
@@ -11801,6 +12060,230 @@
       return `
         <p class="admin-ref-subtitle">${escapeHtml(dict.adminFacultiesSubtitle)}</p>
         <div class="admin-ref-grid">${cards}</div>`;
+    }
+
+    /* ============================================================
+       НАПРАВЛЕНИЯ: добавление, редактирование, удаление
+       ============================================================ */
+    let adminDirectionEditingId = null;
+
+    function adminDirectionStats(direction) {
+      const groups = mockTeacherGroups.filter(g => g && g.direction === direction);
+      const groupNames = groups.map(g => g.name);
+      return {
+        groups: groups.length,
+        managers: mockAllManagers.filter(m => m && m.direction === direction).length,
+        students: mockAllStudents.filter(s => s && groupNames.includes(s.group)).length
+      };
+    }
+
+    function renderAdminDirections() {
+      const dict = translations[currentLang];
+      const rows = mockDirections.map(direction => {
+        const stats = adminDirectionStats(direction.id);
+        return `
+          <tr data-admin-direction-row="${escapeHtml(direction.id)}">
+            <td>
+              <span class="admin-direction-name">
+                <i class="fas fa-compass-drafting"></i>${escapeHtml(adminDirectionLabel(direction.id))}
+              </span>
+            </td>
+            <td>${stats.groups}</td>
+            <td>${stats.managers}</td>
+            <td>${stats.students}</td>
+            <td>
+              <div class="admin-actions">
+                <button type="button" class="btn-ghost admin-mini-btn" data-admin-edit-direction="${escapeHtml(direction.id)}">
+                  <i class="fas fa-pen"></i> ${escapeHtml(dict.edit)}
+                </button>
+                <button type="button" class="icon-delete" data-admin-delete-direction="${escapeHtml(direction.id)}"
+                        title="${escapeHtml(dict.btnDelete)}" aria-label="${escapeHtml(dict.btnDelete)}">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>`;
+      }).join('');
+
+      const cards = mockDirections.map(direction => {
+        const stats = adminDirectionStats(direction.id);
+        return `
+          <article class="results-card admin-direction-card" data-admin-direction-id="${escapeHtml(direction.id)}">
+            <div class="results-card-top">
+              <span class="results-card-name">${escapeHtml(adminDirectionLabel(direction.id))}</span>
+            </div>
+            <div class="results-card-row"><i class="fas fa-people-group"></i> ${escapeHtml(dict.groups)}: ${stats.groups}</div>
+            <div class="results-card-row"><i class="fas fa-user-tie"></i> ${escapeHtml(dict.managers)}: ${stats.managers}</div>
+            <div class="results-card-row"><i class="fas fa-user-graduate"></i> ${escapeHtml(dict.students)}: ${stats.students}</div>
+            <div class="admin-actions">
+              <button type="button" class="btn-ghost admin-mini-btn" data-admin-edit-direction="${escapeHtml(direction.id)}">
+                <i class="fas fa-pen"></i> ${escapeHtml(dict.edit)}
+              </button>
+              <button type="button" class="icon-delete" data-admin-delete-direction="${escapeHtml(direction.id)}"
+                      title="${escapeHtml(dict.btnDelete)}" aria-label="${escapeHtml(dict.btnDelete)}">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </article>`;
+      }).join('');
+
+      const content = mockDirections.length
+        ? `<div class="results-table-wrap table-responsive">
+             <table class="results-table admin-managers-table">
+               <thead><tr>
+                 <th>${escapeHtml(dict.adminGroupDirection)}</th>
+                 <th>${escapeHtml(dict.groups)}</th>
+                 <th>${escapeHtml(dict.managers)}</th>
+                 <th>${escapeHtml(dict.students)}</th>
+                 <th>${escapeHtml(dict.adminManagerActions)}</th>
+               </tr></thead>
+               <tbody>${rows}</tbody>
+             </table>
+           </div>
+           <div class="results-cards">${cards}</div>`
+        : renderEmptyState('fa-compass-drafting', dict.adminNoDirections, dict.emptyGroupsDesc);
+
+      return `
+        <p class="admin-ref-subtitle">${escapeHtml(dict.adminDirectionsSubtitle)}</p>
+        <div class="manager-toolbar">
+          <button type="button" class="btn-primary" data-admin-action="add-direction">
+            <i class="fas fa-plus"></i> ${escapeHtml(dict.adminAddDirection)}
+          </button>
+        </div>
+        ${content}`;
+    }
+
+    function closeAdminDirectionModal() {
+      const overlay = document.getElementById('adminDirectionOverlay');
+      if (overlay) overlay.remove();
+      adminDirectionEditingId = null;
+      document.removeEventListener('keydown', adminDirectionModalKeydown);
+    }
+
+    function adminDirectionModalKeydown(e) {
+      if (e.key === 'Escape') closeAdminDirectionModal();
+    }
+
+    function openAdminDirectionModal(directionId) {
+      const dict = translations[currentLang];
+      const direction = directionId == null
+        ? null
+        : mockDirections.find(d => d && d.id === directionId) || null;
+      adminDirectionEditingId = direction ? direction.id : null;
+
+      const old = document.getElementById('adminDirectionOverlay');
+      if (old) old.remove();
+      document.removeEventListener('keydown', adminDirectionModalKeydown);
+
+      const overlay = document.createElement('div');
+      overlay.className = 'admin-modal-overlay';
+      overlay.id = 'adminDirectionOverlay';
+      overlay.innerHTML = `
+        <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="adminDirectionModalTitle">
+          <div class="admin-modal-head">
+            <h3 class="admin-modal-title" id="adminDirectionModalTitle">
+              ${escapeHtml(direction ? dict.adminEditDirection : dict.adminAddDirection)}
+            </h3>
+            <button type="button" class="admin-modal-close" id="adminDirectionClose"
+                    aria-label="${escapeHtml(dict.close)}" title="${escapeHtml(dict.close)}">✕</button>
+          </div>
+          <form class="admin-modal-form" id="adminDirectionForm" novalidate>
+            <label class="field">
+              <span class="field-label">${escapeHtml(dict.adminDirectionName)} <span class="req">*</span></span>
+              <input type="text" class="field-input" id="adminDirectionName" maxlength="60"
+                     placeholder="${escapeHtml(dict.adminDirectionNamePh)}" autocomplete="off">
+            </label>
+            <div class="form-actions">
+              <button type="button" class="btn-ghost" id="adminDirectionCancel">${escapeHtml(dict.cancel)}</button>
+              <button type="submit" class="btn-primary" id="adminDirectionSave">
+                <i class="fas fa-floppy-disk"></i> ${escapeHtml(dict.adminSave)}
+              </button>
+            </div>
+          </form>
+        </div>`;
+      document.body.appendChild(overlay);
+
+      const nameInput = document.getElementById('adminDirectionName');
+      if (nameInput && direction) nameInput.value = adminDirectionLabel(direction.id);
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay ||
+            (e.target.closest && (e.target.closest('#adminDirectionClose') || e.target.closest('#adminDirectionCancel')))) {
+          closeAdminDirectionModal();
+        }
+      });
+      document.getElementById('adminDirectionForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        saveAdminDirection();
+      });
+      document.addEventListener('keydown', adminDirectionModalKeydown);
+      if (nameInput) nameInput.focus();
+    }
+
+    function saveAdminDirection() {
+      if (!requireRole('admin', 'saveAdminDirection')) return;
+      const dict = translations[currentLang];
+      const nameInput = document.getElementById('adminDirectionName');
+      if (!nameInput) return;
+      const name = (nameInput.value || '').trim();
+      if (!name) { alert(dict.adminErrDirectionName); nameInput.focus(); return; }
+
+      const duplicate = mockDirections.some(d =>
+        d && String(d.id) !== String(adminDirectionEditingId) &&
+        adminDirectionLabel(d.id).toLowerCase() === name.toLowerCase()
+      );
+      if (duplicate) { alert(dict.adminErrDirectionDuplicate); nameInput.focus(); return; }
+
+      if (adminDirectionEditingId != null) {
+        const direction = mockDirections.find(d => String(d.id) === String(adminDirectionEditingId));
+        if (direction) {
+          direction.name = name;
+          addSystemLog(mockAdmin.name, 'adminLogDirectionUpdated', [name]);
+        }
+      } else {
+        const direction = { id: 'dir_' + Date.now(), name };
+        mockDirections.push(direction);
+        addSystemLog(mockAdmin.name, 'adminLogDirectionAdded', [name]);
+      }
+
+      saveDirectionsToStorage();
+      closeAdminDirectionModal();
+      if (currentRole === 'admin' && currentSection === 'directions') {
+        navigate('directions', false);
+      }
+    }
+
+    function deleteAdminDirection(directionId) {
+      if (!requireRole('admin', 'deleteAdminDirection')) return;
+      const dict = translations[currentLang];
+      const direction = mockDirections.find(d => String(d.id) === String(directionId));
+      if (!direction) return;
+      const label = adminDirectionLabel(direction.id);
+      const stats = adminDirectionStats(direction.id);
+      if (stats.groups || stats.managers) {
+        alert(dict.adminErrDirectionBusy);
+        return;
+      }
+      if (!confirm(dict.adminDeleteDirectionConfirm.replace('{0}', label))) return;
+      const index = mockDirections.findIndex(d => String(d.id) === String(directionId));
+      if (index < 0) return;
+      mockDirections.splice(index, 1);
+      saveDirectionsToStorage();
+      addSystemLog(mockAdmin.name, 'adminLogDirectionDeleted', [label]);
+      navigate('directions', false);
+    }
+
+    function bindAdminDirections() {
+      const box = document.getElementById('sectionContent');
+      if (!box) return;
+      box.onclick = (e) => {
+        const addBtn = e.target.closest('[data-admin-action="add-direction"]');
+        if (addBtn) { e.preventDefault(); openAdminDirectionModal(null); return; }
+        const editBtn = e.target.closest('[data-admin-edit-direction]');
+        if (editBtn) { e.preventDefault(); openAdminDirectionModal(editBtn.dataset.adminEditDirection); return; }
+        const delBtn = e.target.closest('[data-admin-delete-direction]');
+        if (delBtn) { e.preventDefault(); deleteAdminDirection(delBtn.dataset.adminDeleteDirection); return; }
+      };
     }
 
     // Минимальный справочник курсов: 1–5, число групп и студентов на курсе.
@@ -12009,7 +12492,33 @@
       }
     }
 
-    // Обработчики раздела «Группы»: создание и редактирование (делегирование).
+    function deleteAdminGroup(groupId, name) {
+      if (!requireRole('admin', 'deleteAdminGroup')) return;
+      const dict = translations[currentLang];
+      const group = mockTeacherGroups.find(g => g && String(g.id) === String(groupId));
+      if (!group) return;
+      const count = adminGroupStudentCount(group);
+      if (!confirm(dict.adminDeleteGroupConfirm.replace('{0}', name))) return;
+      if (count > 0 &&
+          !confirm(dict.adminDeleteGroupStudentsConfirm.replace('{0}', name).replace('{1}', String(count)))) {
+        return;
+      }
+
+      if (count > 0) {
+        mockAllStudents.forEach(s => {
+          if (s && s.group === group.name) s.group = '';
+        });
+        saveAdminUsersToStorage();
+      }
+      const idx = mockTeacherGroups.findIndex(g => g && String(g.id) === String(groupId));
+      if (idx < 0) return;
+      mockTeacherGroups.splice(idx, 1);
+      saveGroupsToStorage();
+      addSystemLog(mockAdmin.name, 'adminLogGroupDeleted', [name]);
+      navigate('groups', false);
+    }
+
+    // Обработчики раздела «Группы»: создание, редактирование, удаление.
     function bindAdminGroups() {
       const box = document.getElementById('sectionContent');
       if (!box) return;
@@ -12019,6 +12528,12 @@
         if (target.closest('[data-admin-action="create-group"]')) {
           e.preventDefault();
           openAdminGroupModal(null);
+          return;
+        }
+        const delBtn = target.closest('[data-admin-delete-group]');
+        if (delBtn) {
+          e.preventDefault();
+          deleteAdminGroup(delBtn.dataset.adminDeleteGroup, delBtn.dataset.groupName);
           return;
         }
         const editBtn = target.closest('[data-admin-edit-group]');
@@ -16581,6 +17096,8 @@
 
       // Восстанавливаем сохранённые тесты (созданные преподавателями, Промт №14)
       loadTestsFromStorage();
+      // Восстанавливаем направления из unitest_directions
+      loadDirectionsFromStorage();
       // Восстанавливаем группы из unitest_groups (созданные админом, Промт №25)
       loadGroupsFromStorage();
       // Восстанавливаем пользователей из uniteststudents / unitestteachers (Промт №26)

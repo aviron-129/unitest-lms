@@ -67,6 +67,10 @@ T("курсы пустые", txt(d.getElementById("sectionContent")).includes("�
 w.navigate("faculties");
 T("факультеты пустые", txt(d.getElementById("sectionContent")).includes("Факультеты пока не добавлены"));
 
+w.navigate("directions");
+T("3 базовых направления", w.eval("mockDirections.length") === 3, w.eval("mockDirections.length"));
+T("есть кнопка добавления направления", !!d.querySelector('[data-admin-action="add-direction"]'));
+
 T("console.error пуст", app.errors.length === 0, JSON.stringify(app.errors));
 
 console.log(`\n=== TEST46: пройдено ${pass}, провалено ${fail} ===`);
