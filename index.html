@@ -7060,7 +7060,7 @@
     function prepareCleanMode() {
       if (DEMO_MODE) return;
       // Флаги старых демо-тестов на устройстве больше не нужны.
-      ['unitest_formula_demo_v2', 'unitest_diagram_demo_v1', 'unitest_appeal_demo_v1']
+      ['unitest_formula_demo_v2', 'unitest_diagram_demo_v1', 'unitest_appeal_demo_v1', 'unitestactivetest']
         .forEach(key => { try { localStorage.removeItem(key); } catch (e) {} });
       const flag = CLEAN_STATE_KEY;
       if (!storageGet(flag)) {
@@ -7072,7 +7072,6 @@
             'unitest_lang',
             'unitest_theme',
             'unitestreadnotifications',
-            'unitestactivetest',
             flag
           ]);
           try {
