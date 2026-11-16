@@ -5064,7 +5064,12 @@
       try {
         const q = new URLSearchParams(location.search);
         if (q.has('clean')) return false;
-        if (q.has('demo')) return true;
+        if (q.has('demo')) {
+          // Демо-данные не должны попадать в общую БД с GitHub Pages.
+          return location.protocol === 'file:' ||
+            /jsdom/i.test(navigator.userAgent) ||
+            /(^|\.)unitest\.local$/.test(location.hostname);
+        }
         if (/jsdom/i.test(navigator.userAgent)) return true;
         return /(^|\.)unitest\.local$/.test(location.hostname);
       } catch (e) { return false; }
