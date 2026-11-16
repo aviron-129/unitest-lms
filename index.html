@@ -4825,6 +4825,9 @@
     </article>
   </div>
 
+  <!-- Supabase JS: Auth + общая БД -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- ============================================================
        SUPABASE SYNC (этап 1): общая БД вместо localStorage-only.
        Скрипт стоит ДО основного приложения, чтобы успеть загрузить
@@ -5085,6 +5088,20 @@
       } catch (e) { return false; }
     })();
     const CLEAN_STATE_KEY = 'unitest_clean_admin_only_v1';
+    const AUTH_URL = 'https://mpiyzstuyddlupchwsjz.supabase.co';
+    const AUTH_KEY = 'sb_publishable_yDAPusABXaLCUd3qY6ZzjA_MQMEghd0';
+    const AUTH_ENABLED = typeof window.supabase !== 'undefined' && !DEBUG_RUNTIME;
+    const authClient = AUTH_ENABLED
+      ? window.supabase.createClient(AUTH_URL, AUTH_KEY, {
+          auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+        })
+      : null;
+    // Отдельный клиент для создания аккаунтов: не трогает сессию админа.
+    const authSignupClient = AUTH_ENABLED
+      ? window.supabase.createClient(AUTH_URL, AUTH_KEY, {
+          auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+        })
+      : null;
     function dbg(...args) {
       if (DEBUG || DEBUG_RUNTIME) console.log(...args);
     }
@@ -5100,11 +5117,23 @@
     const translations = {
       ru: {
         welcome:        "Добро пожаловать",
-        loginSubtitle:  "Войдите в систему — роль определится автоматически",
-        loginUsername:  "Логин",
+        loginSubtitle:  "Войдите по email и паролю — роль определится автоматически",
+        loginUsername:  "Email или логин",
         loginPassword:  "Пароль",
         signIn:         "Войти",
         loginError:     "Неверный логин или пароль",
+        authEmail:      "Email (логин)",
+        authEmailPh:    "user@university.uz",
+        authPassword:   "Пароль",
+        authPasswordPh: "Минимум 6 символов",
+        authEmailInvalid: "Введите корректный email",
+        authPasswordShort: "Пароль должен быть не короче 6 символов",
+        authEmailExists: "Пользователь с таким email уже есть",
+        authCreated:    "Аккаунт создан. Пользователь должен подтвердить email.",
+        authCreateError:"Не удалось создать аккаунт: {0}",
+        authLoginError: "Неверный email или пароль",
+        authNoProfile:  "Аккаунт входа не привязан к профилю",
+        authEmailNotConfirmed: "Подтвердите email по ссылке из письма",
         role_admin:     "Администратор",
         role_manager:   "Менеджер",
         role_teacher:   "Преподаватель",
@@ -5688,11 +5717,23 @@
       },
       uz: {
         welcome:        "Xush kelibsiz",
-        loginSubtitle:  "Tizimga kiring — rol avtomatik aniqlanadi",
-        loginUsername:  "Login",
+        loginSubtitle:  "Email va parol bilan kiring — rol avtomatik aniqlanadi",
+        loginUsername:  "Email yoki login",
         loginPassword:  "Parol",
         signIn:         "Kirish",
         loginError:     "Login yoki parol noto'g'ri",
+        authEmail:      "Email (login)",
+        authEmailPh:    "user@university.uz",
+        authPassword:   "Parol",
+        authPasswordPh: "Kamida 6 ta belgi",
+        authEmailInvalid: "To'g'ri email kiriting",
+        authPasswordShort: "Parol kamida 6 ta belgidan iborat bo'lishi kerak",
+        authEmailExists: "Bu email bilan foydalanuvchi allaqachon mavjud",
+        authCreated:    "Akkaunt yaratildi. Foydalanuvchi emailni tasdiqlashi kerak.",
+        authCreateError:"Akkaunt yaratib bo'lmadi: {0}",
+        authLoginError: "Email yoki parol noto'g'ri",
+        authNoProfile:  "Kirish akkaunti profilga bog'lanmagan",
+        authEmailNotConfirmed: "Emailingizga yuborilgan havola orqali tasdiqlang",
         role_admin:     "Administrator",
         role_manager:   "Menejer",
         role_teacher:   "O'qituvchi",
@@ -6273,11 +6314,23 @@
       },
       en: {
         welcome:        "Welcome",
-        loginSubtitle:  "Sign in — your role is detected automatically",
-        loginUsername:  "Login",
+        loginSubtitle:  "Sign in with email and password — your role is detected automatically",
+        loginUsername:  "Email or login",
         loginPassword:  "Password",
         signIn:         "Sign in",
         loginError:     "Invalid login or password",
+        authEmail:      "Email (login)",
+        authEmailPh:    "user@university.uz",
+        authPassword:   "Password",
+        authPasswordPh: "At least 6 characters",
+        authEmailInvalid: "Enter a valid email",
+        authPasswordShort: "Password must be at least 6 characters",
+        authEmailExists: "A user with this email already exists",
+        authCreated:    "Account created. The user must confirm their email.",
+        authCreateError:"Could not create account: {0}",
+        authLoginError: "Invalid email or password",
+        authNoProfile:  "This login account is not linked to a profile",
+        authEmailNotConfirmed: "Confirm your email using the link in the message",
         role_admin:     "Administrator",
         role_manager:   "Manager",
         role_teacher:   "Teacher",
@@ -6885,6 +6938,7 @@
     }
 
     let currentRole = null;                                   // выбранная роль
+    let currentUser = null;                                   // профиль вошедшего пользователя
     let currentSection = null;                                // текущий раздел панели
     let currentLang = readStoredLang() || 'ru';
     let currentTheme = readStoredTheme() === 'dark' ? 'dark' : 'light';
@@ -7053,6 +7107,7 @@
     // Ключ менеджеров (Промт №27): назначение на направления.
     const MANAGERS_KEY = "unitest_managers";
     const DIRECTIONS_KEY = "unitest_directions";
+    const ACCOUNTS_KEY = "unitest_accounts";
     // Ключи админки (Промт №29): системные настройки и журнал действий.
     const SETTINGS_KEY = "unitest_settings";
     const AUDIT_KEY = "unitest_audit";
@@ -7196,7 +7251,8 @@
           const emptyKeys = [
             ALL_TESTS_KEY, ADMIN_STUDENTS_KEY, ADMIN_TEACHERS_KEY,
             GROUPS_KEY, MANAGERS_KEY, RESULTS_KEY, APPEALS_KEY,
-            MESSAGES_KEY, AUDIT_KEY, ANNOUNCEMENTS_KEY, DYNAMIC_NOTIF_KEY
+            MESSAGES_KEY, AUDIT_KEY, ANNOUNCEMENTS_KEY, DYNAMIC_NOTIF_KEY,
+            ACCOUNTS_KEY
           ];
           let created = false;
           emptyKeys.forEach(key => {
@@ -7398,6 +7454,67 @@
         dbg("Менеджеры восстановлены из localStorage:", mockAllManagers.length);
       } catch (e) {
         console.error("Не удалось восстановить менеджеров:", e);
+      }
+    }
+
+    // Аккаунты для входа: email + роль + привязка к группе/направлению.
+    let userAccounts = [];
+
+    function loadAccountsFromStorage() {
+      const saved = safeParse(ACCOUNTS_KEY, null);
+      if (!Array.isArray(saved)) return;
+      userAccounts = saved.filter(a => a && typeof a === 'object' && a.email);
+    }
+
+    function saveAccountsToStorage() {
+      try {
+        localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(userAccounts));
+        return true;
+      } catch (e) {
+        console.error("Не удалось сохранить аккаунты:", e);
+        return false;
+      }
+    }
+
+    function findAccountByEmail(email) {
+      const needle = String(email || '').trim().toLowerCase();
+      return userAccounts.find(a => String(a.email || '').trim().toLowerCase() === needle) || null;
+    }
+
+    function ensureAdminAccount() {
+      if (userAccounts.some(a => a && a.role === 'admin')) return;
+      userAccounts.push({
+        id: 'a1',
+        email: 'admin@unitest.uz',
+        role: 'admin',
+        name: mockAdmin.name
+      });
+      saveAccountsToStorage();
+    }
+
+    // Создаёт auth-пользователя в Supabase. Сессия админа не затрагивается:
+    // используется отдельный клиент без persistSession.
+    async function createSupabaseUser(email, password) {
+      if (!AUTH_ENABLED || !authSignupClient) return false;
+      const dict = translations[currentLang];
+      try {
+        const canRedirect = /^https?:$/.test(location.protocol);
+        const { error } = await authSignupClient.auth.signUp({
+          email,
+          password,
+          options: canRedirect
+            ? { emailRedirectTo: location.origin + location.pathname }
+            : undefined
+        });
+        if (error) {
+          alert(dict.authCreateError.replace('{0}', error.message));
+          return false;
+        }
+        alert(dict.authCreated);
+        return true;
+      } catch (e) {
+        alert(dict.authCreateError.replace('{0}', e.message || 'network'));
+        return false;
       }
     }
 
@@ -8085,6 +8202,13 @@
       const errorEl = document.getElementById('loginError');
       const user = (userEl ? userEl.value : '').trim().toLowerCase();
       const pass = passEl ? passEl.value : '';
+
+      // Email-вход через Supabase Auth (новые аккаунты).
+      if (AUTH_ENABLED && user.includes('@')) {
+        void handleSupabaseLogin(user, pass);
+        return;
+      }
+
       const role = LOGIN_ALIASES[user];
       const allowed = DEMO_MODE || role === 'admin';
       const ok = !!role && allowed && (pass === role || pass === 'demo');
@@ -8095,7 +8219,86 @@
         return;
       }
       if (errorEl) errorEl.classList.add('hidden');
+      if (role === 'admin') {
+        currentUser = findAccountByEmail('admin@unitest.uz') || {
+          id: 'a1', email: 'admin@unitest.uz', role: 'admin', name: mockAdmin.name
+        };
+      }
       selectRole(role);
+    }
+
+    function applyAuthProfile(profile) {
+      if (!profile) return;
+      currentUser = profile;
+      const role = profile.role;
+      if (!VALID_ROLES.includes(role)) return;
+
+      if (role === 'student') {
+        const parts = String(profile.name || '').trim().split(/\s+/);
+        mockStudent.firstName = parts[0] || profile.name || '';
+        mockStudent.lastName = parts.slice(1).join(' ') || '';
+        mockStudent.middleName = '';
+        mockStudent.group = profile.group || mockStudent.group;
+        mockStudent.course = profile.course || mockStudent.course;
+        mockStudent.direction = profile.direction || mockStudent.direction;
+        mockStudent.form = profile.form || mockStudent.form;
+        mockStudent.category = profile.category || mockStudent.category;
+      } else if (role === 'teacher') {
+        mockTeacher.name = profile.name || mockTeacher.name;
+        mockTeacher.subject = profile.subject || mockTeacher.subject;
+        if (profile.id) mockTeacher.id = profile.id;
+      } else if (role === 'manager') {
+        mockManager.name = profile.name || mockManager.name;
+        mockManager.direction = profile.direction || mockManager.direction;
+        if (profile.id) mockManager.id = profile.id;
+      }
+
+      const user = MOCK_USERS[role];
+      if (user) {
+        user.name = profile.name || user.name;
+        const parts = String(user.name || '').trim().split(/\s+/);
+        user.initials = ((parts[0] || '')[0] || '') + ((parts[1] || '')[0] || '');
+      }
+    }
+
+    async function handleSupabaseLogin(email, password) {
+      const dict = translations[currentLang];
+      const errorEl = document.getElementById('loginError');
+      const passEl = document.getElementById('loginPassword');
+      if (!authClient) {
+        if (errorEl) errorEl.classList.remove('hidden');
+        return;
+      }
+      try {
+        const { error } = await authClient.auth.signInWithPassword({ email, password });
+        if (error) {
+          if (errorEl) {
+            errorEl.textContent = /confirm/i.test(error.message || '')
+              ? dict.authEmailNotConfirmed
+              : dict.authLoginError;
+            errorEl.classList.remove('hidden');
+          }
+          if (passEl) passEl.focus();
+          return;
+        }
+        const profile = findAccountByEmail(email);
+        if (!profile) {
+          await authClient.auth.signOut();
+          if (errorEl) {
+            errorEl.textContent = dict.authNoProfile;
+            errorEl.classList.remove('hidden');
+          }
+          return;
+        }
+        if (errorEl) errorEl.classList.add('hidden');
+        applyAuthProfile(profile);
+        selectRole(profile.role);
+      } catch (e) {
+        if (errorEl) {
+          errorEl.textContent = dict.authLoginError;
+          errorEl.classList.remove('hidden');
+        }
+      }
     }
 
     function selectRole(role) {
@@ -8103,7 +8306,8 @@
         console.error("Неизвестная роль:", role);
         return;
       }
-      if (!DEMO_MODE && role !== 'admin') {
+      const authenticatedRole = currentUser && currentUser.role === role;
+      if (!DEMO_MODE && role !== 'admin' && !authenticatedRole) {
         console.warn("В чистом режиме доступен только администратор.");
         return;
       }
@@ -8234,6 +8438,8 @@
 
     function logout() {
       currentRole = null;
+      currentUser = null;
+      if (AUTH_ENABLED && authClient) void authClient.auth.signOut();
       currentSection = null;
       currentChatGroup = null;                             // сбрасываем состояние чата (Промт №35)
       chatPanelOpen = false;
@@ -8262,7 +8468,10 @@
       const passEl = document.getElementById('loginPassword');
       if (passEl) passEl.value = '';
       const errorEl = document.getElementById('loginError');
-      if (errorEl) errorEl.classList.add('hidden');
+      if (errorEl) {
+        errorEl.textContent = translations[currentLang].loginError;
+        errorEl.classList.add('hidden');
+      }
       if (userEl) userEl.focus();
 
       dbg("Выход из панели. Текущая роль сброшена.");
@@ -10433,6 +10642,18 @@
                        placeholder="${escapeHtml(dict.adminUserNamePh)}" autocomplete="off">
               </label>
 
+              ${AUTH_ENABLED ? `
+              <label class="field">
+                <span class="field-label">${escapeHtml(dict.authEmail)} <span class="req">*</span></span>
+                <input type="email" class="field-input" id="adminNewUserEmail" maxlength="120"
+                       placeholder="${escapeHtml(dict.authEmailPh)}" autocomplete="off">
+              </label>
+              <label class="field">
+                <span class="field-label">${escapeHtml(dict.authPassword)} <span class="req">*</span></span>
+                <input type="text" class="field-input" id="adminNewUserPassword" maxlength="80"
+                       placeholder="${escapeHtml(dict.authPasswordPh)}" autocomplete="new-password">
+              </label>` : ''}
+
               <div class="admin-role-fields field-full" id="adminStudentFields">
                 <div class="form-grid">
                   <label class="field">
@@ -10541,6 +10762,8 @@
       const categorySelect = document.getElementById('adminNewUserCategory');
       const subjectInput = document.getElementById('adminNewUserSubject');
       const managerDirectionSelect = document.getElementById('adminNewManagerDirection');
+      const emailInput = document.getElementById('adminNewUserEmail');
+      const passwordInput = document.getElementById('adminNewUserPassword');
       if (!roleSelect || !nameInput) return;
 
       const requestedRole = roleSelect.value;
@@ -10549,6 +10772,28 @@
         : 'student';
       const name = (nameInput.value || '').trim();
       if (!name) { alert(dict.adminErrUserName); nameInput.focus(); return; }
+
+      let email = '';
+      let password = '';
+      if (AUTH_ENABLED) {
+        email = (emailInput ? emailInput.value : '').trim().toLowerCase();
+        password = passwordInput ? passwordInput.value : '';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          alert(dict.authEmailInvalid);
+          if (emailInput) emailInput.focus();
+          return;
+        }
+        if (password.length < 6) {
+          alert(dict.authPasswordShort);
+          if (passwordInput) passwordInput.focus();
+          return;
+        }
+        if (findAccountByEmail(email)) {
+          alert(dict.authEmailExists);
+          if (emailInput) emailInput.focus();
+          return;
+        }
+      }
 
       let newUser = null;
       if (role === 'manager') {
@@ -10563,7 +10808,7 @@
           if (managerDirectionSelect) managerDirectionSelect.focus();
           return;
         }
-        newUser = { id: 'm_' + Date.now(), name, direction };
+        newUser = { id: 'm_' + Date.now(), name, direction, email };
         mockAllManagers.push(newUser);
         saveManagersToStorage();
         dbg("Менеджер создан:", newUser);
@@ -10584,7 +10829,8 @@
           group,
           course,
           form: formSelect && formSelect.value === 'part' ? 'part' : 'full',
-          category: categorySelect && categorySelect.value === 'regular' ? 'regular' : 'archer'
+          category: categorySelect && categorySelect.value === 'regular' ? 'regular' : 'archer',
+          email
         };
         mockAllStudents.push(newUser);
         saveAdminUsersToStorage();
@@ -10594,12 +10840,29 @@
       } else {
         const subject = subjectInput ? (subjectInput.value || '').trim() : '';
         if (!subject) { alert(dict.adminErrUserSubject); if (subjectInput) subjectInput.focus(); return; }
-        newUser = { id: 't_' + Date.now(), name, subject };
+        newUser = { id: 't_' + Date.now(), name, subject, email };
         mockAllTeachers.push(newUser);
         saveAdminUsersToStorage();                     // uniteststudents + unitestteachers
         dbg("Пользователь создан:", newUser);
         addSystemLog(mockAdmin.name, 'adminLogUserAdded', [newUser.name]);
         dbg("Всего преподавателей теперь:", mockAllTeachers.length);
+      }
+
+      if (AUTH_ENABLED) {
+        userAccounts.push({
+          id: newUser.id,
+          email,
+          role,
+          name,
+          group: newUser.group || '',
+          course: newUser.course || null,
+          form: newUser.form || '',
+          category: newUser.category || '',
+          subject: newUser.subject || '',
+          direction: newUser.direction || ''
+        });
+        saveAccountsToStorage();
+        void createSupabaseUser(email, password);
       }
 
       closeAdminUserModal();
@@ -10657,6 +10920,8 @@
         return;
       }
 
+      userAccounts = userAccounts.filter(a => !a || String(a.id) !== String(userId));
+      saveAccountsToStorage();
       addSystemLog(mockAdmin.name, 'adminLogUserDeleted', [name]);
       allUsers = getAdminAllUsers();
       if (currentRole === 'admin' && (currentSection === 'users' || currentSection === 'managers')) {
@@ -10960,6 +11225,8 @@
       if (idx < 0) return;
       mockAllManagers.splice(idx, 1);
       saveManagersToStorage();
+      userAccounts = userAccounts.filter(a => !a || String(a.id) !== String(managerId));
+      saveAccountsToStorage();
       addSystemLog(mockAdmin.name, 'adminLogManagerDeleted', [name]);
       if (currentRole === 'admin' && (currentSection === 'managers' || currentSection === 'users')) {
         navigate(currentSection, false);
@@ -17096,7 +17363,9 @@
 
       // Восстанавливаем сохранённые тесты (созданные преподавателями, Промт №14)
       loadTestsFromStorage();
-      // Восстанавливаем направления из unitest_directions
+      // Восстанавливаем аккаунты и направления
+      loadAccountsFromStorage();
+      ensureAdminAccount();
       loadDirectionsFromStorage();
       // Восстанавливаем группы из unitest_groups (созданные админом, Промт №25)
       loadGroupsFromStorage();
