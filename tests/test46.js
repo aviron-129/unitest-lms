@@ -23,6 +23,7 @@ T("сообщения пустые", w.eval("mockMessages.length") === 0);
 T("результаты пустые", w.eval("getResults().length") === 0);
 T("объявления пустые", w.eval("getAnnouncements().length") === 0);
 T("уведомления пустые", w.eval("getRoleNotifications('admin').length") === 0);
+T("динамические уведомления пустые", w.eval("getDynamicNotifications().length") === 0);
 
 console.log("\n[2] Вход только администратора");
 T("на экране один демо-логин", d.querySelectorAll("[data-demo-login]").length === 1,

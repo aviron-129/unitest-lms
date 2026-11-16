@@ -7059,6 +7059,9 @@
     // есть данные администратора — не трогаем их.
     function prepareCleanMode() {
       if (DEMO_MODE) return;
+      // Флаги старых демо-тестов на устройстве больше не нужны.
+      ['unitest_formula_demo_v2', 'unitest_diagram_demo_v1', 'unitest_appeal_demo_v1']
+        .forEach(key => { try { localStorage.removeItem(key); } catch (e) {} });
       const flag = CLEAN_STATE_KEY;
       if (!storageGet(flag)) {
         const remote = window.__unitestRemote || {};
@@ -7096,7 +7099,7 @@
           const emptyKeys = [
             ALL_TESTS_KEY, ADMIN_STUDENTS_KEY, ADMIN_TEACHERS_KEY,
             GROUPS_KEY, MANAGERS_KEY, RESULTS_KEY, APPEALS_KEY,
-            MESSAGES_KEY, AUDIT_KEY, ANNOUNCEMENTS_KEY
+            MESSAGES_KEY, AUDIT_KEY, ANNOUNCEMENTS_KEY, DYNAMIC_NOTIF_KEY
           ];
           let created = false;
           emptyKeys.forEach(key => {
