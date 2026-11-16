@@ -2458,9 +2458,11 @@
     .admin-role-student { background: rgba(245, 158, 11, 0.16); color: #b45309; }
     .admin-role-teacher { background: rgba(16, 185, 129, 0.16); color: #047857; }
     .admin-role-manager { background: rgba(59, 130, 246, 0.16); color: #1d4ed8; }
+    .admin-role-admin   { background: rgba(139, 92, 246, 0.16); color: #6d28d9; }
     [data-theme="dark"] .admin-role-student { background: rgba(245, 158, 11, 0.22); color: #fbbf24; }
     [data-theme="dark"] .admin-role-teacher { background: rgba(16, 185, 129, 0.22); color: #6ee7b7; }
     [data-theme="dark"] .admin-role-manager { background: rgba(59, 130, 246, 0.24); color: #93c5fd; }
+    [data-theme="dark"] .admin-role-admin   { background: rgba(139, 92, 246, 0.24); color: #c4b5fd; }
 
     /* Статус «Активен» */
     .admin-user-status {
@@ -4830,7 +4832,8 @@
         'unitest_lang',
         'unitest_theme',
         'unitestreadnotifications',
-        'unitestactivetest'
+        'unitestactivetest',
+        'unitest_clean_admin_only_v1'
       ]);
 
       const isJsdom = /jsdom/i.test(navigator.userAgent) || location.hostname === 'unitest.local';
@@ -5054,6 +5057,19 @@
       try { return /(^|\.)unitest\.local$/.test(location.hostname); }
       catch (e) { return false; }
     })();
+    /* Чистый режим: в интернете и в file:// остаётся только администратор.
+       Демо-данные включаются только в jsdom-тестах (unitest.local) или
+       явно через ?demo=1. */
+    const DEMO_MODE = (() => {
+      try {
+        const q = new URLSearchParams(location.search);
+        if (q.has('clean')) return false;
+        if (q.has('demo')) return true;
+        if (/jsdom/i.test(navigator.userAgent)) return true;
+        return /(^|\.)unitest\.local$/.test(location.hostname);
+      } catch (e) { return false; }
+    })();
+    const CLEAN_STATE_KEY = 'unitest_clean_admin_only_v1';
     function dbg(...args) {
       if (DEBUG || DEBUG_RUNTIME) console.log(...args);
     }
@@ -5542,6 +5558,7 @@
         facultyIt:             "Факультет информационных технологий",
         facultyEconomics:      "Экономический факультет",
         adminNoCourses:        "Курсы пока не заданы",
+        adminNoFaculties:      "Факультеты пока не добавлены",
         // Панель администратора: настройки и журнал действий (Промт №29)
         adminLogTitle:          "Журнал действий",
         adminLogSubtitle:       "Последние изменения в системе",
@@ -6099,6 +6116,7 @@
         facultyIt:             "Axborot texnologiyalari fakulteti",
         facultyEconomics:      "Iqtisodiyot fakulteti",
         adminNoCourses:        "Hozircha kurslar yo'q",
+        adminNoFaculties:      "Fakultetlar hali qo'shilmagan",
         // Панель администратора: настройки и журнал действий (Промт №29)
         adminLogTitle:          "Harakatlar jurnali",
         adminLogSubtitle:       "Tizimdagi so'nggi o'zgarishlar",
@@ -6657,6 +6675,7 @@
         facultyIt:             "Faculty of Information Technology",
         facultyEconomics:      "Faculty of Economics",
         adminNoCourses:        "No courses configured yet",
+        adminNoFaculties:      "No faculties yet",
         // Панель администратора: настройки и журнал действий (Промт №29)
         adminLogTitle:          "Action log",
         adminLogSubtitle:       "Recent changes in the system",
@@ -7003,6 +7022,7 @@
 
     // Первичное заполнение результатов (демо): 2 теста уже пройдены
     function ensureMockResults() {
+      if (!DEMO_MODE) return;
       try {
         if (!localStorage.getItem(RESULTS_KEY)) {
           localStorage.setItem(RESULTS_KEY, JSON.stringify([
@@ -7016,12 +7036,79 @@
       }
     }
 
-    // Промт №40: первичное наполнение localStorage демо-данными.
-    // Если хранилище абсолютно пустое (первый запуск), записываем базовые
-    // тесты, пользователей, группы и менеджеров, чтобы приложение не выглядело
-    // «мёртвым». Повторно данные не перезаписываются.
+    // Чистый режим: убираем демо-массивы из памяти. Данные администратора
+    // (созданные после чистки) лежат в localStorage и загрузятся ниже.
+    function clearDemoData() {
+      try {
+        mockTests.length = 0;
+        mockAllStudents.length = 0;
+        mockAllTeachers.length = 0;
+        mockAllManagers.length = 0;
+        mockTeacherGroups.length = 0;
+        mockMessages.length = 0;
+        mockAdminEvents.length = 0;
+        mockHistoricalResults.length = 0;
+        mockFaculties.length = 0;
+        if (Array.isArray(mockSystemLogs)) mockSystemLogs.length = 0;
+      } catch (e) {
+        console.warn("Не удалось очистить демо-данные:", e && e.message);
+      }
+    }
+
+    // Один раз на устройстве чистим старые демо-ключи. Если в Supabase уже
+    // есть данные администратора — не трогаем их.
+    function prepareCleanMode() {
+      if (DEMO_MODE) return;
+      const flag = CLEAN_STATE_KEY;
+      if (!storageGet(flag)) {
+        const remote = window.__unitestRemote || {};
+        const canReset = !remote.enabled ||
+          (remote.status === 'online' && Number(remote.rows || 0) === 0);
+        if (canReset) {
+          const keep = new Set([
+            'unitest_lang',
+            'unitest_theme',
+            'unitestreadnotifications',
+            'unitestactivetest',
+            flag
+          ]);
+          try {
+            Object.keys(localStorage).forEach(key => {
+              if (key.indexOf('unitest') === 0 && !keep.has(key)) {
+                localStorage.removeItem(key);
+              }
+            });
+          } catch (e) {
+            console.warn("Не удалось очистить старые данные:", e && e.message);
+          }
+        }
+        try { localStorage.setItem(flag, '1'); } catch (e) {}
+      }
+      clearDemoData();
+    }
+
+    // Промт №40: первичное наполнение localStorage.
+    // В демо-режиме — демо-база; в чистом режиме — только пустые массивы,
+    // чтобы администратор начинал с нуля.
     function initDefaultData() {
       try {
+        if (!DEMO_MODE) {
+          const emptyKeys = [
+            ALL_TESTS_KEY, ADMIN_STUDENTS_KEY, ADMIN_TEACHERS_KEY,
+            GROUPS_KEY, MANAGERS_KEY, RESULTS_KEY, APPEALS_KEY,
+            MESSAGES_KEY, AUDIT_KEY, ANNOUNCEMENTS_KEY
+          ];
+          let created = false;
+          emptyKeys.forEach(key => {
+            if (localStorage.getItem(key) == null) {
+              localStorage.setItem(key, '[]');
+              created = true;
+            }
+          });
+          dbg("Чистый режим: только администратор, данные пустые.");
+          return created;
+        }
+
         if (localStorage.length > 0) return false;
         const seed = {};
         seed[ALL_TESTS_KEY] = mockTests;
@@ -7034,7 +7121,7 @@
         return true;
       } catch (e) {
         // Запрет localStorage/переполнение не должны мешать работе приложения
-        console.warn("Не удалось создать демо-базу:", e && e.name);
+        console.warn("Не удалось создать базу:", e && e.name);
         return false;
       }
     }
@@ -7243,6 +7330,7 @@
     // Демо-данные добавляем при локальном открытии и на GitHub Pages.
     // jsdom-тесты (https://unitest.local) их не видят, счётчики не меняются.
     function isDemoSeedHost() {
+      if (!DEMO_MODE) return false;
       if (typeof location === 'undefined') return false;
       return location.protocol === 'file:' || /(^|\.)github\.io$/i.test(location.hostname);
     }
@@ -7605,10 +7693,10 @@
     // Объявления: сначала localStorage (unitest_announcements), если пусто — демо-массив
     function getAnnouncements() {
       const saved = safeParse(ANNOUNCEMENTS_KEY, null);
-      if (Array.isArray(saved) && saved.length) {
+      if (Array.isArray(saved)) {
         return saved.filter(a => a && typeof a === 'object');
       }
-      return mockAnnouncements.slice();
+      return DEMO_MODE ? mockAnnouncements.slice() : [];
     }
 
     function saveAnnouncements(list) {
@@ -7860,7 +7948,8 @@
       const user = (userEl ? userEl.value : '').trim().toLowerCase();
       const pass = passEl ? passEl.value : '';
       const role = LOGIN_ALIASES[user];
-      const ok = !!role && (pass === role || pass === 'demo');
+      const allowed = DEMO_MODE || role === 'admin';
+      const ok = !!role && allowed && (pass === role || pass === 'demo');
 
       if (!ok) {
         if (errorEl) errorEl.classList.remove('hidden');
@@ -7874,6 +7963,10 @@
     function selectRole(role) {
       if (!VALID_ROLES.includes(role)) {
         console.error("Неизвестная роль:", role);
+        return;
+      }
+      if (!DEMO_MODE && role !== 'admin') {
+        console.warn("В чистом режиме доступен только администратор.");
         return;
       }
       // Промт №42: при входе/смене роли не оставляем таймер прошлого теста.
@@ -8739,8 +8832,12 @@
     // Уведомления только текущей роли (студенческие из №9 + глобальные №30 + динамические №34)
     function getRoleNotifications(role) {
       if (!role) return [];
-      const own = mockNotifications.filter(n => (n.targetRole || "student") === role);
-      const global = mockGlobalNotifications.filter(n => n.targetRole === role);
+      const own = DEMO_MODE
+        ? mockNotifications.filter(n => (n.targetRole || "student") === role)
+        : [];
+      const global = DEMO_MODE
+        ? mockGlobalNotifications.filter(n => n.targetRole === role)
+        : [];
       const dynamic = dynamicNotifications.filter(n => n.targetRole === role);
       return own.concat(global, dynamic);
     }
@@ -8835,7 +8932,8 @@
 
     // Находит уведомление по id (id из dataset приходит строкой)
     function findNotification(id) {
-      return mockNotifications.concat(mockGlobalNotifications, dynamicNotifications)
+      const base = DEMO_MODE ? mockNotifications.concat(mockGlobalNotifications) : [];
+      return base.concat(dynamicNotifications)
         .find(n => String(n.id) === String(id)) || null;
     }
 
@@ -9738,7 +9836,9 @@
     function loadAuditLogsFromStorage() {
       const saved = safeParse(AUDIT_KEY, null);
       if (saved == null) {
-        systemLogs = mockSystemLogs.map(entry => ({ ...entry, args: (entry.args || []).slice() }));
+        systemLogs = DEMO_MODE
+          ? mockSystemLogs.map(entry => ({ ...entry, args: (entry.args || []).slice() }))
+          : [];
         return;
       }
       systemLogs = Array.isArray(saved) ? saved.filter(e => e && typeof e === 'object') : [];
@@ -9937,8 +10037,16 @@
         extra: m.direction || "",
         extraKind: 'direction'
       }));
+      // В чистом режиме в списке остаётся только администратор.
+      const admins = DEMO_MODE ? [] : [{
+        id: mockAdmin.id,
+        name: mockAdmin.name,
+        role: 'admin',
+        extra: 'superAdmin',
+        extraKind: 'adminRole'
+      }];
 
-      return [...students, ...teachers, ...managers];
+      return [...admins, ...students, ...teachers, ...managers];
     }
 
     // Подпись роли: всегда из переводов (без хардкода).
@@ -9952,6 +10060,7 @@
       const dict = translations[currentLang];
       if (user.extraKind === 'subject') return dict['subj_' + user.extra] || user.extra;
       if (user.extraKind === 'direction') return dict['dir' + capitalize(user.extra)] || user.extra;
+      if (user.extraKind === 'adminRole') return dict.adminRoleLabel || user.extra;
       return user.extra;
     }
 
@@ -9959,6 +10068,7 @@
       const dict = translations[currentLang];
       const roleIcon = user.role === 'student' ? 'fa-user-graduate'
         : user.role === 'teacher' ? 'fa-chalkboard-user'
+        : user.role === 'admin' ? 'fa-user-shield'
         : 'fa-user-tie';
       return `
         <tr data-admin-user="${escapeHtml(user.name)}" data-user-role="${escapeHtml(user.role)}">
@@ -9982,6 +10092,7 @@
       const dict = translations[currentLang];
       const roleIcon = user.role === 'student' ? 'fa-user-graduate'
         : user.role === 'teacher' ? 'fa-chalkboard-user'
+        : user.role === 'admin' ? 'fa-user-shield'
         : 'fa-user-tie';
       return `
         <article class="results-card admin-user-card" data-admin-user="${escapeHtml(user.name)}" data-user-role="${escapeHtml(user.role)}">
@@ -10019,6 +10130,7 @@
             <option value="student">${escapeHtml(dict.role_student)}</option>
             <option value="teacher">${escapeHtml(dict.role_teacher)}</option>
             <option value="manager">${escapeHtml(dict.role_manager)}</option>
+            <option value="admin">${escapeHtml(dict.role_admin)}</option>
           </select>
           <button type="button" class="btn-primary" data-admin-action="add-user">
             <i class="fas fa-plus"></i> ${escapeHtml(dict.adminAddUser)}
@@ -11574,6 +11686,12 @@
     function renderAdminFaculties() {
       const dict = translations[currentLang];
       const groups = Array.isArray(mockTeacherGroups) ? mockTeacherGroups : [];
+
+      if (!mockFaculties.length) {
+        return `
+          <p class="admin-ref-subtitle">${escapeHtml(dict.adminFacultiesSubtitle)}</p>
+          ${renderEmptyState('fa-building-columns', dict.adminNoFaculties, dict.emptyGroupsDesc)}`;
+      }
 
       const cards = mockFaculties.map(faculty => {
         const rows = faculty.directions.map(direction => {
@@ -15927,6 +16045,10 @@
     // Читает сообщения из localStorage. Если ключа ещё нет — оставляет демо-набор
     // и сохраняет его, чтобы первые сообщения не «потеряли» историю.
     function loadMessagesFromStorage(persistSeed) {
+      if (!DEMO_MODE && !storageGet(MESSAGES_KEY)) {
+        mockMessages = [];
+        return;
+      }
       const saved = safeParse(MESSAGES_KEY, null);
       if (Array.isArray(saved)) {
         mockMessages = saved
@@ -16353,8 +16475,14 @@
       }
       appInitialized = true;
 
-      // Промт №40: при первом запуске заполняем localStorage демо-данными
+      // Чистый режим: только администратор, без демо-групп/людей/тестов.
+      prepareCleanMode();
       initDefaultData();
+      if (!DEMO_MODE) {
+        document.querySelectorAll('[data-demo-login]').forEach(btn => {
+          if (btn.dataset.demoLogin !== 'admin') btn.remove();
+        });
+      }
 
       // Промт №43: клавиатурная доступность модалок (Tab/фокус)
       initModalA11y();

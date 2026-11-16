@@ -8,7 +8,7 @@
 node tests/run-all.js
 ```
 
-Сейчас: **34/34 набора** — синтаксис, функциональные тесты №13–45,
+Сейчас: **35/35 наборов** — синтаксис, функциональные тесты №13–46,
 статика/i18n и smoke по всем ролям/разделам/языкам/темам (561 проверка).
 
 ## Финальная приёмка
@@ -58,6 +58,7 @@ node tests/test42.js
 node tests/test43.js
 node tests/test44.js
 node tests/test45.js
+node tests/test46.js
 node tests/static.js
 node tests/smoke.js
 ```
