@@ -5156,6 +5156,7 @@
         formFull:       "Очное",
         formPart:       "Заочное",
         dirProgramming: "Программирование",
+        dirEconomics:   "Экономика",
         dataNotLoaded:  "Данные студента не загружены!",
         // Промт №39: пустые состояния и ошибки рендера
         emptyTestsDesc:        "Когда преподаватель назначит тест, он появится в этом списке.",
@@ -5510,6 +5511,9 @@
         adminErrUserName:      "Введите ФИО",
         adminErrUserGroup:     "Выберите группу",
         adminErrUserSubject:   "Введите предмет",
+        adminErrManagerDirection: "Выберите направление менеджера",
+        adminErrManagerBusy:   "На это направление уже назначен менеджер",
+        adminUserDirectionPh:  "Выберите направление",
         adminUserCreated:      "Пользователь создан: {0}",
         adminUserStudentsNow:  "Всего студентов теперь: {0}",
         adminUserTeachersNow:  "Всего преподавателей теперь: {0}",
@@ -5517,6 +5521,7 @@
         adminManagersSubtitle:  "Назначение менеджеров на направления",
         adminManagerCurrent:    "Текущий менеджер",
         adminManagerNotAssigned:"Не назначен",
+        adminAddManager:        "Добавить менеджера",
         adminManagerAssign:     "Назначить / Изменить",
         adminManagerFree:       "Освободить должность",
         adminManagerSelect:     "Выберите менеджера",
@@ -5576,6 +5581,7 @@
         adminLogTestMath:       "Математика. Контрольная №3",
         adminLogTestCreated:    "Создан тест «{0}»",
         adminLogUserAdded:      "Добавлен новый пользователь: {0}",
+        adminLogManagerAdded:   "Добавлен новый менеджер: {0}",
         adminLogGroupCreated:   "Создана группа {0}",
         adminLogGroupUpdated:   "Обновлена группа {0}",
         adminLogResultAdded:    "Результат теста по предмету {0}: оценка {1}",
@@ -5716,6 +5722,7 @@
         formFull:       "Kunduzgi",
         formPart:       "Sirtqi",
         dirProgramming: "Dasturlash",
+        dirEconomics:   "Iqtisodiyot",
         dataNotLoaded:  "Talaba ma'lumotlari yuklanmagan!",
         // Промт №39: пустые состояния и ошибки рендера
         emptyTestsDesc:        "O'qituvchi test tayinlaganda, u shu ro'yxatda paydo bo'ladi.",
@@ -6068,6 +6075,9 @@
         adminErrUserName:      "F.I.Sh.ni kiriting",
         adminErrUserGroup:     "Guruhni tanlang",
         adminErrUserSubject:   "Fanni kiriting",
+        adminErrManagerDirection: "Menejer yo'nalishini tanlang",
+        adminErrManagerBusy:   "Bu yo'nalishga menejer tayinlangan",
+        adminUserDirectionPh:  "Yo'nalishni tanlang",
         adminUserCreated:      "Foydalanuvchi yaratildi: {0}",
         adminUserStudentsNow:  "Jami talabalar soni: {0}",
         adminUserTeachersNow:  "Jami o'qituvchilar soni: {0}",
@@ -6075,6 +6085,7 @@
         adminManagersSubtitle:  "Yo'nalishlarga menejer tayinlash",
         adminManagerCurrent:    "Joriy menejer",
         adminManagerNotAssigned:"Tayinlanmagan",
+        adminAddManager:        "Menejer qo'shish",
         adminManagerAssign:     "Tayinlash / O'zgartirish",
         adminManagerFree:       "Lavozimni bo'shatish",
         adminManagerSelect:     "Menejerni tanlang",
@@ -6134,6 +6145,7 @@
         adminLogTestMath:       "Matematika. Nazorat ishi №3",
         adminLogTestCreated:    "Test yaratildi: «{0}»",
         adminLogUserAdded:      "Yangi foydalanuvchi qo'shildi: {0}",
+        adminLogManagerAdded:   "Yangi menejer qo'shildi: {0}",
         adminLogGroupCreated:   "Guruh yaratildi: {0}",
         adminLogGroupUpdated:   "Guruh yangilandi: {0}",
         adminLogResultAdded:    "{0} fanidan test natijasi: baho {1}",
@@ -6274,6 +6286,7 @@
         formFull:       "Full-time",
         formPart:       "Part-time",
         dirProgramming: "Programming",
+        dirEconomics:   "Economics",
         dataNotLoaded:  "Student data not loaded!",
         // Промт №39: пустые состояния и ошибки рендера
         emptyTestsDesc:        "When a teacher assigns a test, it will appear in this list.",
@@ -6627,6 +6640,9 @@
         adminErrUserName:      "Enter the full name",
         adminErrUserGroup:     "Select a group",
         adminErrUserSubject:   "Enter the subject",
+        adminErrManagerDirection: "Select a manager direction",
+        adminErrManagerBusy:   "A manager is already assigned to this direction",
+        adminUserDirectionPh:  "Select a direction",
         adminUserCreated:      "User created: {0}",
         adminUserStudentsNow:  "Total students now: {0}",
         adminUserTeachersNow:  "Total teachers now: {0}",
@@ -6634,6 +6650,7 @@
         adminManagersSubtitle:  "Assign managers to directions",
         adminManagerCurrent:    "Current manager",
         adminManagerNotAssigned:"Not assigned",
+        adminAddManager:        "Add manager",
         adminManagerAssign:     "Assign / Change",
         adminManagerFree:       "Vacate the position",
         adminManagerSelect:     "Select a manager",
@@ -6693,6 +6710,7 @@
         adminLogTestMath:       "Mathematics. Test #3",
         adminLogTestCreated:    "Test created: “{0}”",
         adminLogUserAdded:      "New user added: {0}",
+        adminLogManagerAdded:   "New manager added: {0}",
         adminLogGroupCreated:   "Group created: {0}",
         adminLogGroupUpdated:   "Group updated: {0}",
         adminLogResultAdded:    "Test result in {0}: grade {1}",
@@ -10207,16 +10225,21 @@
     function syncAdminUserFields(role) {
       const studentFields = document.getElementById('adminStudentFields');
       const teacherFields = document.getElementById('adminTeacherFields');
+      const managerFields = document.getElementById('adminManagerFields');
       const groupSelect = document.getElementById('adminNewUserGroup');
       const courseInput = document.getElementById('adminNewUserCourse');
       const formSelect = document.getElementById('adminNewUserForm');
       const categorySelect = document.getElementById('adminNewUserCategory');
       const subjectInput = document.getElementById('adminNewUserSubject');
-      if (!studentFields || !teacherFields) return;
+      const directionSelect = document.getElementById('adminNewManagerDirection');
+      if (!studentFields || !teacherFields || !managerFields) return;
 
-      const isStudent = role !== 'teacher';
+      const isStudent = role === 'student';
+      const isTeacher = role === 'teacher';
+      const isManager = role === 'manager';
       studentFields.hidden = !isStudent;
-      teacherFields.hidden = isStudent;
+      teacherFields.hidden = !isTeacher;
+      managerFields.hidden = !isManager;
 
       // При смене роли значения скрытых полей сбрасываются.
       if (groupSelect) groupSelect.value = '';
@@ -10224,10 +10247,11 @@
       if (formSelect) formSelect.value = 'full';
       if (categorySelect) categorySelect.value = 'archer';
       if (subjectInput) subjectInput.value = '';
+      if (directionSelect) directionSelect.value = '';
     }
 
     // Модальное окно «Добавить пользователя»: роль, ФИО и поля по роли.
-    function openAdminUserModal() {
+    function openAdminUserModal(presetRole) {
       const dict = translations[currentLang];
       const old = document.getElementById('adminAddUserOverlay');
       if (old) old.remove();
@@ -10238,6 +10262,8 @@
         <option value="${escapeHtml(group.name)}">${escapeHtml(group.name)}</option>`).join('');
       const courseOptions = [1, 2, 3, 4, 5].map(course => `
         <option value="${course}">${course}</option>`).join('');
+      const directionOptions = ADMIN_DIRECTION_KEYS.map(direction => `
+        <option value="${escapeHtml(direction)}">${escapeHtml(adminDirectionLabel(direction))}</option>`).join('');
 
       const overlay = document.createElement('div');
       overlay.className = 'admin-modal-overlay';
@@ -10256,6 +10282,7 @@
                 <select class="field-input" id="adminNewUserRole">
                   <option value="student">${escapeHtml(dict.role_student)}</option>
                   <option value="teacher">${escapeHtml(dict.role_teacher)}</option>
+                  <option value="manager">${escapeHtml(dict.role_manager)}</option>
                 </select>
               </label>
               <label class="field">
@@ -10301,6 +10328,16 @@
                          placeholder="${escapeHtml(dict.adminUserSubjectPh)}" autocomplete="off">
                 </label>
               </div>
+
+              <div class="admin-role-fields field-full" id="adminManagerFields" hidden>
+                <label class="field">
+                  <span class="field-label">${escapeHtml(dict.adminGroupDirection)} <span class="req">*</span></span>
+                  <select class="field-input" id="adminNewManagerDirection">
+                    <option value="">${escapeHtml(dict.adminUserDirectionPh)}</option>
+                    ${directionOptions}
+                  </select>
+                </label>
+              </div>
             </div>
             <div class="form-actions">
               <button type="button" class="btn-ghost" id="adminNewUserCancel">${escapeHtml(dict.cancel)}</button>
@@ -10315,15 +10352,20 @@
 
       const roleSelect = document.getElementById('adminNewUserRole');
       if (roleSelect) {
-        roleSelect.value = 'student';
-        syncAdminUserFields('student');
+        const initialRole = ['student', 'teacher', 'manager'].includes(presetRole)
+          ? presetRole
+          : 'student';
+        roleSelect.value = initialRole;
+        syncAdminUserFields(initialRole);
         roleSelect.addEventListener('change', () => {
           const selectedRole = roleSelect.value;
           dbg("Выбрана роль:", selectedRole);
           syncAdminUserFields(selectedRole);
           const focusEl = selectedRole === 'teacher'
             ? document.getElementById('adminNewUserSubject')
-            : document.getElementById('adminNewUserGroup');
+            : selectedRole === 'manager'
+              ? document.getElementById('adminNewManagerDirection')
+              : document.getElementById('adminNewUserGroup');
           if (focusEl) focusEl.focus();
         });
       }
@@ -10356,14 +10398,36 @@
       const formSelect = document.getElementById('adminNewUserForm');
       const categorySelect = document.getElementById('adminNewUserCategory');
       const subjectInput = document.getElementById('adminNewUserSubject');
+      const managerDirectionSelect = document.getElementById('adminNewManagerDirection');
       if (!roleSelect || !nameInput) return;
 
-      const role = roleSelect.value === 'teacher' ? 'teacher' : 'student';
+      const requestedRole = roleSelect.value;
+      const role = requestedRole === 'teacher' || requestedRole === 'manager'
+        ? requestedRole
+        : 'student';
       const name = (nameInput.value || '').trim();
       if (!name) { alert(dict.adminErrUserName); nameInput.focus(); return; }
 
       let newUser = null;
-      if (role === 'student') {
+      if (role === 'manager') {
+        const direction = managerDirectionSelect ? managerDirectionSelect.value : '';
+        if (!direction) {
+          alert(dict.adminErrManagerDirection);
+          if (managerDirectionSelect) managerDirectionSelect.focus();
+          return;
+        }
+        if (mockAllManagers.some(m => m && m.direction === direction)) {
+          alert(dict.adminErrManagerBusy);
+          if (managerDirectionSelect) managerDirectionSelect.focus();
+          return;
+        }
+        newUser = { id: 'm_' + Date.now(), name, direction };
+        mockAllManagers.push(newUser);
+        saveManagersToStorage();
+        dbg("Менеджер создан:", newUser);
+        addSystemLog(mockAdmin.name, 'adminLogManagerAdded', [newUser.name]);
+        dbg("Всего менеджеров теперь:", mockAllManagers.length);
+      } else if (role === 'student') {
         const group = groupSelect ? groupSelect.value : '';
         const course = courseInput ? Number(courseInput.value) : 0;
         if (!group) { alert(dict.adminErrUserGroup); if (groupSelect) groupSelect.focus(); return; }
@@ -10381,27 +10445,25 @@
           category: categorySelect && categorySelect.value === 'regular' ? 'regular' : 'archer'
         };
         mockAllStudents.push(newUser);
+        saveAdminUsersToStorage();
+        dbg("Пользователь создан:", newUser);
+        addSystemLog(mockAdmin.name, 'adminLogUserAdded', [newUser.name]);
+        dbg("Всего студентов теперь:", mockAllStudents.length);
       } else {
         const subject = subjectInput ? (subjectInput.value || '').trim() : '';
         if (!subject) { alert(dict.adminErrUserSubject); if (subjectInput) subjectInput.focus(); return; }
         newUser = { id: 't_' + Date.now(), name, subject };
         mockAllTeachers.push(newUser);
-      }
-
-      saveAdminUsersToStorage();                       // uniteststudents + unitestteachers
-      // Логи самопроверки — как в промте (не UI, поэтому без перевода).
-      dbg("Пользователь создан:", newUser);
-      addSystemLog(mockAdmin.name, 'adminLogUserAdded', [newUser.name]);
-      if (role === 'student') {
-        dbg("Всего студентов теперь:", mockAllStudents.length);
-      } else {
+        saveAdminUsersToStorage();                     // uniteststudents + unitestteachers
+        dbg("Пользователь создан:", newUser);
+        addSystemLog(mockAdmin.name, 'adminLogUserAdded', [newUser.name]);
         dbg("Всего преподавателей теперь:", mockAllTeachers.length);
       }
 
       closeAdminUserModal();
       allUsers = getAdminAllUsers();
-      if (currentRole === 'admin' && currentSection === 'users') {
-        navigate('users', false);                      // таблица и карточки перерисовываются
+      if (currentRole === 'admin' && (currentSection === 'users' || currentSection === 'managers')) {
+        navigate(currentSection, false);                // таблица и карточки перерисовываются
       }
     }
 
@@ -10489,20 +10551,24 @@
       const dict = translations[currentLang];
       const groups = Array.isArray(mockTeacherGroups) ? mockTeacherGroups : [];
       const uniqueDirections = [];
+      const addDirection = direction => {
+        if (direction && !uniqueDirections.includes(direction)) uniqueDirections.push(direction);
+      };
 
-      groups.forEach(g => {
-        if (g && g.direction && !uniqueDirections.includes(g.direction)) {
-          uniqueDirections.push(g.direction);
-        }
-      });
+      groups.forEach(g => addDirection(g && g.direction));
       // Если групп ещё нет — показываем базовые направления справочника.
-      if (!uniqueDirections.length) {
-        ADMIN_DIRECTION_KEYS.forEach(direction => uniqueDirections.push(direction));
-      }
+      if (!groups.length) ADMIN_DIRECTION_KEYS.forEach(addDirection);
+      // Направление только что добавленного менеджера тоже должно быть в таблице.
+      (Array.isArray(mockAllManagers) ? mockAllManagers : []).forEach(m => addDirection(m && m.direction));
       dbg("Направления для управления:", uniqueDirections);
 
       return `
         <p class="admin-ref-subtitle">${escapeHtml(dict.adminManagersSubtitle)}</p>
+        <div class="manager-toolbar">
+          <button type="button" class="btn-primary" data-admin-action="add-manager">
+            <i class="fas fa-plus"></i> ${escapeHtml(dict.adminAddManager)}
+          </button>
+        </div>
         <div class="results-table-wrap table-responsive admin-managers-table-wrap">
           <table class="results-table admin-managers-table">
             <thead>
@@ -10665,6 +10731,12 @@
       const box = document.getElementById('sectionContent');
       if (!box) return;
       box.onclick = (e) => {
+        const addBtn = e.target.closest('[data-admin-action="add-manager"]');
+        if (addBtn) {
+          e.preventDefault();
+          openAdminUserModal('manager');
+          return;
+        }
         const btn = e.target.closest('[data-admin-manager-assign]');
         if (!btn) return;
         e.preventDefault();
