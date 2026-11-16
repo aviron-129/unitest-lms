@@ -2703,6 +2703,12 @@
     .admin-ref-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
     @media (min-width: 768px)  { .admin-ref-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (min-width: 1180px) { .admin-ref-grid.admin-course-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    .faculty-direction-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .faculty-direction-option {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 10px; border: 1px solid var(--card-border);
+      border-radius: 8px; font-size: 0.82rem; cursor: pointer;
+    }
     .admin-ref-card {
       min-width: 0;
       padding: 18px;
@@ -5570,6 +5576,17 @@
         adminManagerModalTitle: "Назначить менеджера на «{0}»",
         // Направления
         adminDirectionsSubtitle: "Направления, группы и менеджеры",
+        adminAddFaculty:         "Добавить факультет",
+        adminEditFaculty:        "Редактировать факультет",
+        adminFacultyName:        "Название факультета",
+        adminFacultyNamePh:      "Например, Медицинский факультет",
+        adminFacultyDirections:  "Направления факультета",
+        adminErrFacultyName:     "Введите название факультета",
+        adminErrFacultyDuplicate:"Факультет с таким названием уже есть",
+        adminDeleteFacultyConfirm: "Удалить факультет «{0}»?",
+        adminLogFacultyAdded:    "Создан факультет: {0}",
+        adminLogFacultyUpdated:  "Изменён факультет: {0}",
+        adminLogFacultyDeleted:  "Удалён факультет: {0}",
         adminAddDirection:       "Добавить направление",
         adminEditDirection:      "Редактировать направление",
         adminDirectionName:      "Название направления",
@@ -6167,6 +6184,17 @@
         adminManagerModalTitle: "«{0}» yo'nalishiga menejer tayinlash",
         // Yo'nalishlar
         adminDirectionsSubtitle: "Yo'nalishlar, guruhlar va menejerlar",
+        adminAddFaculty:         "Fakultet qo'shish",
+        adminEditFaculty:        "Fakultetni tahrirlash",
+        adminFacultyName:        "Fakultet nomi",
+        adminFacultyNamePh:      "Masalan, Tibbiyot fakulteti",
+        adminFacultyDirections:  "Fakultet yo'nalishlari",
+        adminErrFacultyName:     "Fakultet nomini kiriting",
+        adminErrFacultyDuplicate:"Bunday nomli fakultet allaqachon mavjud",
+        adminDeleteFacultyConfirm: "«{0}» fakultetini o'chirish?",
+        adminLogFacultyAdded:    "Fakultet yaratildi: {0}",
+        adminLogFacultyUpdated:  "Fakultet o'zgartirildi: {0}",
+        adminLogFacultyDeleted:  "Fakultet o'chirildi: {0}",
         adminAddDirection:       "Yo'nalish qo'shish",
         adminEditDirection:      "Yo'nalishni tahrirlash",
         adminDirectionName:      "Yo'nalish nomi",
@@ -6765,6 +6793,17 @@
         adminManagerModalTitle: "Assign a manager to “{0}”",
         // Directions
         adminDirectionsSubtitle: "Directions, groups and managers",
+        adminAddFaculty:         "Add faculty",
+        adminEditFaculty:        "Edit faculty",
+        adminFacultyName:        "Faculty name",
+        adminFacultyNamePh:      "For example, Faculty of Medicine",
+        adminFacultyDirections:  "Faculty directions",
+        adminErrFacultyName:     "Enter the faculty name",
+        adminErrFacultyDuplicate:"A faculty with this name already exists",
+        adminDeleteFacultyConfirm: "Delete faculty “{0}”?",
+        adminLogFacultyAdded:    "Faculty created: {0}",
+        adminLogFacultyUpdated:  "Faculty updated: {0}",
+        adminLogFacultyDeleted:  "Faculty deleted: {0}",
         adminAddDirection:       "Add direction",
         adminEditDirection:      "Edit direction",
         adminDirectionName:      "Direction name",
@@ -6976,7 +7015,6 @@
         { id: "dashboard", icon: "fa-gauge-high",       label: "dashboard" },
         { id: "faculties", icon: "fa-building-columns", label: "faculties" },
         { id: "directions", icon: "fa-compass-drafting", label: "directions" },
-        { id: "courses",   icon: "fa-book",             label: "courses" },
         { id: "groups",    icon: "fa-people-group",     label: "groups" },
         { id: "users",     icon: "fa-users",            label: "users" },
         { id: "managers",  icon: "fa-user-tie",         label: "managers" },
@@ -7107,6 +7145,7 @@
     // Ключ менеджеров (Промт №27): назначение на направления.
     const MANAGERS_KEY = "unitest_managers";
     const DIRECTIONS_KEY = "unitest_directions";
+    const FACULTIES_KEY = "unitest_faculties";
     const ACCOUNTS_KEY = "unitest_accounts";
     // Ключи админки (Промт №29): системные настройки и журнал действий.
     const SETTINGS_KEY = "unitest_settings";
@@ -7265,6 +7304,10 @@
             localStorage.setItem(DIRECTIONS_KEY, JSON.stringify(BASE_DIRECTIONS));
             created = true;
           }
+          if (localStorage.getItem(FACULTIES_KEY) == null) {
+            localStorage.setItem(FACULTIES_KEY, JSON.stringify(BASE_FACULTIES));
+            created = true;
+          }
           dbg("Чистый режим: только администратор, данные пустые.");
           return created;
         }
@@ -7277,6 +7320,7 @@
         seed[GROUPS_KEY] = mockTeacherGroups;
         seed[MANAGERS_KEY] = mockAllManagers;
         seed[DIRECTIONS_KEY] = BASE_DIRECTIONS;
+        seed[FACULTIES_KEY] = BASE_FACULTIES;
         Object.keys(seed).forEach(key => localStorage.setItem(key, JSON.stringify(seed[key])));
         dbg("Демо-база создана при первом запуске:", Object.keys(seed).join(", "));
         return true;
@@ -7516,6 +7560,51 @@
         alert(dict.authCreateError.replace('{0}', e.message || 'network'));
         return false;
       }
+    }
+
+    // Факультеты: название и список направлений.
+    function loadFacultiesFromStorage() {
+      const saved = safeParse(FACULTIES_KEY, null);
+      if (!Array.isArray(saved)) return;
+      try {
+        const loaded = [];
+        saved.forEach((f, index) => {
+          if (!f || typeof f !== 'object') return;
+          const name = String(f.name || '').trim();
+          const nameKey = String(f.nameKey || '').trim();
+          if (!name && !nameKey) return;
+          loaded.push({
+            id: String(f.id || ('f_' + index + '_' + Date.now())),
+            name,
+            nameKey,
+            directions: Array.isArray(f.directions) ? f.directions.map(String) : []
+          });
+        });
+        mockFaculties.length = 0;
+        loaded.forEach(f => mockFaculties.push(f));
+        dbg("Факультеты восстановлены из localStorage:", mockFaculties.length);
+      } catch (e) {
+        console.error("Не удалось восстановить факультеты:", e);
+      }
+    }
+
+    function saveFacultiesToStorage() {
+      const dict = translations[currentLang];
+      try {
+        localStorage.setItem(FACULTIES_KEY, JSON.stringify(mockFaculties));
+        return true;
+      } catch (e) {
+        console.error("Не удалось сохранить факультеты в localStorage:", e);
+        alert(dict.storageFull);
+        return false;
+      }
+    }
+
+    function adminFacultyLabel(faculty) {
+      if (!faculty) return '';
+      if (faculty.name) return faculty.name;
+      const dict = translations[currentLang];
+      return dict[faculty.nameKey] || faculty.nameKey || '';
     }
 
     // Направления: база + пользовательские. Пустой массив — валидное состояние.
@@ -8632,6 +8721,7 @@
       }
       if (currentRole === 'admin' && currentSection === 'faculties') {
         box.innerHTML = renderAdminFaculties();
+        bindAdminFaculties();
         return;
       }
       if (currentRole === 'admin' && currentSection === 'directions') {
@@ -8639,11 +8729,6 @@
         bindAdminDirections();
         return;
       }
-      if (currentRole === 'admin' && currentSection === 'courses') {
-        box.innerHTML = renderAdminCourses();
-        return;
-      }
-
       // Панель администратора: список пользователей (Промт №24)
       if (currentRole === 'admin' && currentSection === 'users') {
         box.innerHTML = renderAdminUsers();
@@ -10090,12 +10175,12 @@
       { id: 's7', name: 'Volkova Olga',   group: '202-DZ', course: 2, form: 'part', category: 'regular' }
     ];
 
-    // Минимальный справочник факультетов (Промт №25): факультет объединяет
-    // направления, а группы и студенты считаются по этим направлениям.
-    const mockFaculties = [
-      { id: 'f1', nameKey: 'facultyIt',        directions: ['programming', 'design'] },
-      { id: 'f2', nameKey: 'facultyEconomics', directions: ['economics'] }
+    // Справочник факультетов: название + направления. Редактируется админом.
+    const BASE_FACULTIES = [
+      { id: 'f1', name: '', nameKey: 'facultyIt',        directions: ['programming', 'design'] },
+      { id: 'f2', name: '', nameKey: 'facultyEconomics', directions: ['economics'] }
     ];
+    let mockFaculties = BASE_FACULTIES.map(f => ({ ...f, directions: f.directions.slice() }));
 
     // Порядок направлений в админке. Незнакомые направления из localStorage
     // добавляются в конец, чтобы созданные данные не терялись.
@@ -12289,17 +12374,12 @@
     function renderAdminFaculties() {
       const dict = translations[currentLang];
       const groups = Array.isArray(mockTeacherGroups) ? mockTeacherGroups : [];
-
-      if (!mockFaculties.length) {
-        return `
-          <p class="admin-ref-subtitle">${escapeHtml(dict.adminFacultiesSubtitle)}</p>
-          ${renderEmptyState('fa-building-columns', dict.adminNoFaculties, dict.emptyGroupsDesc)}`;
-      }
+      const directionKeys = adminDirectionKeys();
 
       const cards = mockFaculties.map(faculty => {
-        const rows = faculty.directions
-          .filter(direction => adminDirectionKeys().includes(direction))
-          .map(direction => {
+        const facultyDirections = (Array.isArray(faculty.directions) ? faculty.directions : [])
+          .filter(direction => directionKeys.includes(direction));
+        const rows = facultyDirections.map(direction => {
           const list = groups.filter(g => g && g.direction === direction);
           return `
             <li class="admin-ref-item">
@@ -12308,25 +12388,189 @@
             </li>`;
         }).join('');
 
-        const facultyGroups = groups.filter(g => g && faculty.directions.includes(g.direction));
+        const facultyGroups = groups.filter(g => g && facultyDirections.includes(g.direction));
         const facultyGroupNames = facultyGroups.map(g => g.name);
         const students = (Array.isArray(mockAllStudents) ? mockAllStudents : [])
           .filter(s => s && facultyGroupNames.includes(s.group)).length;
 
         return `
           <section class="admin-ref-card" data-admin-faculty="${escapeHtml(faculty.id)}">
-            <h3 class="admin-ref-title"><i class="fas fa-building-columns"></i>${escapeHtml(dict[faculty.nameKey] || faculty.nameKey)}</h3>
-            <ul class="admin-ref-list">${rows}</ul>
+            <h3 class="admin-ref-title"><i class="fas fa-building-columns"></i>${escapeHtml(adminFacultyLabel(faculty))}</h3>
+            <ul class="admin-ref-list">${rows || `<li class="admin-ref-item">${escapeHtml(dict.adminNoDirections)}</li>`}</ul>
             <div class="admin-ref-total">
               <span>${escapeHtml(dict.adminRefStudents)}</span>
               <strong>${students}</strong>
             </div>
+            <div class="admin-actions">
+              <button type="button" class="btn-ghost admin-mini-btn" data-admin-edit-faculty="${escapeHtml(faculty.id)}">
+                <i class="fas fa-pen"></i> ${escapeHtml(dict.edit)}
+              </button>
+              <button type="button" class="icon-delete" data-admin-delete-faculty="${escapeHtml(faculty.id)}"
+                      title="${escapeHtml(dict.btnDelete)}" aria-label="${escapeHtml(dict.btnDelete)}">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </section>`;
       }).join('');
 
+      const content = mockFaculties.length
+        ? `<div class="admin-ref-grid">${cards}</div>`
+        : renderEmptyState('fa-building-columns', dict.adminNoFaculties, dict.emptyGroupsDesc);
+
       return `
         <p class="admin-ref-subtitle">${escapeHtml(dict.adminFacultiesSubtitle)}</p>
-        <div class="admin-ref-grid">${cards}</div>`;
+        <div class="manager-toolbar">
+          <button type="button" class="btn-primary" data-admin-action="add-faculty">
+            <i class="fas fa-plus"></i> ${escapeHtml(dict.adminAddFaculty)}
+          </button>
+        </div>
+        ${content}`;
+    }
+
+    let adminFacultyEditingId = null;
+
+    function closeAdminFacultyModal() {
+      const overlay = document.getElementById('adminFacultyOverlay');
+      if (overlay) overlay.remove();
+      adminFacultyEditingId = null;
+      document.removeEventListener('keydown', adminFacultyModalKeydown);
+    }
+
+    function adminFacultyModalKeydown(e) {
+      if (e.key === 'Escape') closeAdminFacultyModal();
+    }
+
+    function openAdminFacultyModal(facultyId) {
+      const dict = translations[currentLang];
+      const faculty = facultyId == null
+        ? null
+        : mockFaculties.find(f => f && String(f.id) === String(facultyId)) || null;
+      adminFacultyEditingId = faculty ? faculty.id : null;
+      const selected = new Set(faculty && Array.isArray(faculty.directions) ? faculty.directions : []);
+
+      const old = document.getElementById('adminFacultyOverlay');
+      if (old) old.remove();
+      document.removeEventListener('keydown', adminFacultyModalKeydown);
+
+      const dirOptions = adminDirectionKeys().map(direction => `
+        <label class="faculty-direction-option">
+          <input type="checkbox" value="${escapeHtml(direction)}"${selected.has(direction) ? ' checked' : ''}>
+          <span>${escapeHtml(adminDirectionLabel(direction))}</span>
+        </label>`).join('');
+
+      const overlay = document.createElement('div');
+      overlay.className = 'admin-modal-overlay';
+      overlay.id = 'adminFacultyOverlay';
+      overlay.innerHTML = `
+        <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="adminFacultyModalTitle">
+          <div class="admin-modal-head">
+            <h3 class="admin-modal-title" id="adminFacultyModalTitle">
+              ${escapeHtml(faculty ? dict.adminEditFaculty : dict.adminAddFaculty)}
+            </h3>
+            <button type="button" class="admin-modal-close" id="adminFacultyClose"
+                    aria-label="${escapeHtml(dict.close)}" title="${escapeHtml(dict.close)}">✕</button>
+          </div>
+          <form class="admin-modal-form" id="adminFacultyForm" novalidate>
+            <label class="field">
+              <span class="field-label">${escapeHtml(dict.adminFacultyName)} <span class="req">*</span></span>
+              <input type="text" class="field-input" id="adminFacultyName" maxlength="80"
+                     placeholder="${escapeHtml(dict.adminFacultyNamePh)}" autocomplete="off">
+            </label>
+            <div class="field">
+              <span class="field-label">${escapeHtml(dict.adminFacultyDirections)}</span>
+              <div class="faculty-direction-options" id="adminFacultyDirections">
+                ${dirOptions || `<span class="admin-ref-subtitle">${escapeHtml(dict.adminNoDirections)}</span>`}
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-ghost" id="adminFacultyCancel">${escapeHtml(dict.cancel)}</button>
+              <button type="submit" class="btn-primary" id="adminFacultySave">
+                <i class="fas fa-floppy-disk"></i> ${escapeHtml(dict.adminSave)}
+              </button>
+            </div>
+          </form>
+        </div>`;
+      document.body.appendChild(overlay);
+
+      const nameInput = document.getElementById('adminFacultyName');
+      if (nameInput && faculty) nameInput.value = adminFacultyLabel(faculty);
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay ||
+            (e.target.closest && (e.target.closest('#adminFacultyClose') || e.target.closest('#adminFacultyCancel')))) {
+          closeAdminFacultyModal();
+        }
+      });
+      document.getElementById('adminFacultyForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        saveAdminFaculty();
+      });
+      document.addEventListener('keydown', adminFacultyModalKeydown);
+      if (nameInput) nameInput.focus();
+    }
+
+    function saveAdminFaculty() {
+      if (!requireRole('admin', 'saveAdminFaculty')) return;
+      const dict = translations[currentLang];
+      const nameInput = document.getElementById('adminFacultyName');
+      if (!nameInput) return;
+      const name = (nameInput.value || '').trim();
+      if (!name) { alert(dict.adminErrFacultyName); nameInput.focus(); return; }
+
+      const duplicate = mockFaculties.some(f =>
+        f && String(f.id) !== String(adminFacultyEditingId) &&
+        adminFacultyLabel(f).toLowerCase() === name.toLowerCase()
+      );
+      if (duplicate) { alert(dict.adminErrFacultyDuplicate); nameInput.focus(); return; }
+
+      const directions = [...document.querySelectorAll('#adminFacultyDirections input:checked')]
+        .map(input => input.value);
+
+      if (adminFacultyEditingId != null) {
+        const faculty = mockFaculties.find(f => String(f.id) === String(adminFacultyEditingId));
+        if (faculty) {
+          faculty.name = name;
+          faculty.directions = directions;
+          addSystemLog(mockAdmin.name, 'adminLogFacultyUpdated', [name]);
+        }
+      } else {
+        mockFaculties.push({ id: 'f_' + Date.now(), name, nameKey: '', directions });
+        addSystemLog(mockAdmin.name, 'adminLogFacultyAdded', [name]);
+      }
+
+      saveFacultiesToStorage();
+      closeAdminFacultyModal();
+      if (currentRole === 'admin' && currentSection === 'faculties') {
+        navigate('faculties', false);
+      }
+    }
+
+    function deleteAdminFaculty(facultyId) {
+      if (!requireRole('admin', 'deleteAdminFaculty')) return;
+      const dict = translations[currentLang];
+      const faculty = mockFaculties.find(f => String(f.id) === String(facultyId));
+      if (!faculty) return;
+      const label = adminFacultyLabel(faculty);
+      if (!confirm(dict.adminDeleteFacultyConfirm.replace('{0}', label))) return;
+      const idx = mockFaculties.findIndex(f => String(f.id) === String(facultyId));
+      if (idx < 0) return;
+      mockFaculties.splice(idx, 1);
+      saveFacultiesToStorage();
+      addSystemLog(mockAdmin.name, 'adminLogFacultyDeleted', [label]);
+      navigate('faculties', false);
+    }
+
+    function bindAdminFaculties() {
+      const box = document.getElementById('sectionContent');
+      if (!box) return;
+      box.onclick = (e) => {
+        const addBtn = e.target.closest('[data-admin-action="add-faculty"]');
+        if (addBtn) { e.preventDefault(); openAdminFacultyModal(null); return; }
+        const editBtn = e.target.closest('[data-admin-edit-faculty]');
+        if (editBtn) { e.preventDefault(); openAdminFacultyModal(editBtn.dataset.adminEditFaculty); return; }
+        const delBtn = e.target.closest('[data-admin-delete-faculty]');
+        if (delBtn) { e.preventDefault(); deleteAdminFaculty(delBtn.dataset.adminDeleteFaculty); return; }
+      };
     }
 
     /* ============================================================
@@ -12536,6 +12780,12 @@
       if (index < 0) return;
       mockDirections.splice(index, 1);
       saveDirectionsToStorage();
+      mockFaculties.forEach(f => {
+        if (f && Array.isArray(f.directions)) {
+          f.directions = f.directions.filter(d => d !== directionId);
+        }
+      });
+      saveFacultiesToStorage();
       addSystemLog(mockAdmin.name, 'adminLogDirectionDeleted', [label]);
       navigate('directions', false);
     }
@@ -17367,6 +17617,7 @@
       loadAccountsFromStorage();
       ensureAdminAccount();
       loadDirectionsFromStorage();
+      loadFacultiesFromStorage();
       // Восстанавливаем группы из unitest_groups (созданные админом, Промт №25)
       loadGroupsFromStorage();
       // Восстанавливаем пользователей из uniteststudents / unitestteachers (Промт №26)

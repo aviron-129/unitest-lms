@@ -172,7 +172,7 @@ D.getElementById("adminGroupCancel").click();
 T("«Отмена» закрывает модалку", !overlay());
 T("дубль не создан (5 групп)", w.eval("mockTeacherGroups.length") === 5, w.eval("mockTeacherGroups.length"));
 
-console.log("\n[7] Справочники факультетов и курсов (не заглушки)");
+console.log("\n[7] Справочник факультетов (не заглушка)");
 w.navigate("faculties");
 T("справочник факультетов отрисован", D.querySelectorAll("#sectionContent .admin-ref-card").length === 2,
   D.querySelectorAll("#sectionContent .admin-ref-card").length);
@@ -180,14 +180,11 @@ T("факультет ИТ", sectionText().includes("Факультет инфо
 T("экономический факультет", sectionText().includes("Экономический факультет"));
 T("направления и группы", sectionText().includes("Программирование") && sectionText().includes("Группы:"));
 T("нет заглушки «в разработке»", !sectionText().includes("в разработке"), sectionText().slice(0, 240));
-
-w.navigate("courses");
-T("справочник 5 курсов", D.querySelectorAll("#sectionContent .admin-ref-card").length === 5,
-  D.querySelectorAll("#sectionContent .admin-ref-card").length);
-T("курс 1 и 2", sectionText().includes("1 курс") && sectionText().includes("2 курс"));
-T("группы/студенты/форма", sectionText().includes("Группы") && sectionText().includes("Студенты")
-  && sectionText().includes("Форма обучения"));
-T("нет заглушки «в разработке»", !sectionText().includes("в разработке"), sectionText().slice(0, 240));
+T("курсы убраны из меню", !D.querySelector('#sidebarMenu [data-section="courses"]'));
+T("кнопка добавления факультета", !!D.querySelector('[data-admin-action="add-faculty"]'));
+T("у факультета есть редактирование и удаление",
+  D.querySelectorAll('[data-admin-edit-faculty]').length === 2 &&
+  D.querySelectorAll('[data-admin-delete-faculty]').length === 2);
 
 console.log("\n[8] Переводы ru/uz/en");
 const keys = ["adminCreateGroup", "adminEditGroup", "adminGroupName", "adminGroupNamePh",
@@ -230,8 +227,6 @@ T("кнопка создания осталась", !!D.querySelector('[data-adm
 T("лог 0 групп", hasLog("Всего групп в системе: 0"), logs.log.slice(-3).join(" | "));
 w.navigate("faculties");
 T("факультеты при 0 групп", !/undefined|\bNaN\b|\[object Object\]/.test(sectionText()));
-w.navigate("courses");
-T("курсы при 0 групп показывают пустое состояние", sectionText().includes("Курсы пока не заданы"), sectionText().slice(0, 200));
 
 w.eval(`mockTeacherGroups.length = 0; JSON.parse(${JSON.stringify(saved)}).forEach(x => mockTeacherGroups.push(x))`);
 w.navigate("groups");

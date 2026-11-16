@@ -84,9 +84,32 @@ d.querySelector('[data-admin-delete-direction="programming"]').click();
 T("направление с группой не удалено", w.eval("mockDirections.some(x => x.id === 'programming')"));
 T("показана ошибка", app.alerts.some(x => x.includes("Нельзя удалить")), JSON.stringify(app.alerts));
 
-console.log("\n[6] Переводы");
+console.log("\n[6] Факультеты: добавление, редактирование, удаление");
+w.navigate("faculties");
+T("2 базовых факультета", w.eval("mockFaculties.length") === 2, w.eval("mockFaculties.length"));
+T("кнопка добавления факультета", !!d.querySelector('[data-admin-action="add-faculty"]'));
+d.querySelector('[data-admin-action="add-faculty"]').click();
+T("модалка факультета открыта", !!d.getElementById("adminFacultyOverlay"));
+d.getElementById("adminFacultyName").value = "Медицинский факультет";
+const facultyChecks = d.querySelectorAll("#adminFacultyDirections input");
+if (facultyChecks[0]) facultyChecks[0].checked = true;
+d.getElementById("adminFacultyForm").dispatchEvent(new w.Event("submit", { bubbles: true, cancelable: true }));
+T("факультет добавлен", w.eval("mockFaculties.length") === 3, w.eval("mockFaculties.length"));
+const newFaculty = JSON.parse(w.localStorage.getItem("unitest_faculties")).find(f => f.name === "Медицинский факультет");
+T("факультет сохранён в unitest_faculties", !!newFaculty);
+
+d.querySelector(`[data-admin-edit-faculty="${newFaculty.id}"]`).click();
+d.getElementById("adminFacultyName").value = "Медицинский факультет имени Пирогова";
+d.getElementById("adminFacultyForm").dispatchEvent(new w.Event("submit", { bubbles: true, cancelable: true }));
+T("факультет переименован",
+  JSON.parse(w.localStorage.getItem("unitest_faculties")).some(f => f.id === newFaculty.id && f.name.includes("Пирогова")));
+d.querySelector(`[data-admin-delete-faculty="${newFaculty.id}"]`).click();
+T("факультет удалён", w.eval("mockFaculties.length") === 2, w.eval("mockFaculties.length"));
+
+console.log("\n[7] Переводы");
 const keys = ["directions", "adminAddDirection", "adminEditDirection", "adminDeleteDirectionConfirm",
-  "adminDeleteGroupConfirm", "adminDeleteManagerConfirm", "adminDeleteUserConfirm"];
+  "adminDeleteGroupConfirm", "adminDeleteManagerConfirm", "adminDeleteUserConfirm",
+  "adminAddFaculty", "adminEditFaculty", "adminDeleteFacultyConfirm"];
 T("ключи есть в ru/uz/en",
   ["ru", "uz", "en"].every(l => keys.every(k => typeof w.eval(`translations.${l}`)[k] === "string")));
 T("console.error пуст", app.errors.length === 0, JSON.stringify(app.errors));

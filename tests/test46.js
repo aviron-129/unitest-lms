@@ -61,11 +61,11 @@ T("группы пустые", w.eval("mockTeacherGroups.length") === 0);
 const groupsText = txt(d.getElementById("sectionContent"));
 T("заглушка групп", groupsText.includes("Пока нет групп") || groupsText.includes("групп"));
 
-w.navigate("courses");
-T("курсы пустые", txt(d.getElementById("sectionContent")).includes("Курсы пока не заданы"));
+T("курсы убраны из меню", !d.querySelector('#sidebarMenu [data-section="courses"]'));
 
 w.navigate("faculties");
-T("факультеты пустые", txt(d.getElementById("sectionContent")).includes("Факультеты пока не добавлены"));
+T("2 базовых факультета", w.eval("mockFaculties.length") === 2, w.eval("mockFaculties.length"));
+T("есть кнопка добавления факультета", !!d.querySelector('[data-admin-action="add-faculty"]'));
 
 w.navigate("directions");
 T("3 базовых направления", w.eval("mockDirections.length") === 3, w.eval("mockDirections.length"));
